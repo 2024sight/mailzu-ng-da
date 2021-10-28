@@ -50,29 +50,29 @@ if ($use_link) {
 class Pager
 {
     // Application set variables
-    var $cur_page;
+    var ?int $cur_page = null;
     var $query_string;
     var $tot_pages;
-    var $page_var;
-    var $limit_var;
+    var ?string $page_var = null;
+    var ?string $limit_var = null;
 
     // Application variables with user modify option
-    var $limit;
-    var $tot_records;
-    var $print_limit_select = true;
+    var ?int $limit = null;
+    var ?int $tot_records = null;
+    var bool $print_limit_select = true;
 
     // User modifiable variables
-    var $prev_link = '&laquo;';
-    var $next_link = '&raquo;';
+    var string $prev_link = '&laquo;';
+    var string $next_link = '&raquo;';
     var $limits = array(10, 25, 50, 100);
-    var $view_pages = 3;
-    var $table_width = '100%';
-    var $table_align = 'center';
-    var $link_class;
-    var $tb_class;
-    var $tb_style;
-    var $text_class;
-    var $text_style;
+    var int $view_pages = 3;
+    var string $table_width = '100%';
+    var string $table_align = 'center';
+    var ?string $link_class = null;
+    var ?string $tb_class = null;
+    var ?string $tb_style = null;
+    var ?string $text_class = null;
+    var ?string $text_style = null;
 
     /**
      * Pager Constructor
@@ -89,7 +89,7 @@ class Pager
      * @param string $page_var optional name of var to use in querystring for page value
      * @param string $limit_var optional name of var to use in querystring for limit value
      */
-    function Pager($tot_records = 0, $limit = 25, $page_var = 'page', $limit_var = 'limit')
+    function __construct($tot_records = 0, $limit = 25, $page_var = 'page', $limit_var = 'limit')
     {
         $this->tot_records = $tot_records;
         $this->limit = $limit;
@@ -223,7 +223,7 @@ class Pager
             $this->query_string = str_replace('&', '&amp;', preg_replace("/(&|&amp;)?$this->page_var=\d*/", '', $_SERVER['QUERY_STRING']));
 
             // Insert limit into querystring, if it's not there
-            if (!strstr($this->query_string, "$this->limit_var="))
+            if (!strstr($this->query_string, (string) "$this->limit_var="))
                 $this->query_string .= "&amp;$this->limit_var=" . $this->limit;
         } else {
             $this->query_string = '';
@@ -347,7 +347,7 @@ class Pager
         echo "<td align=\"right\">\n"
             . "<form name=\"limit_jump\" id=\"limit_jump\" method=\"post\" action=\"" . $_SERVER['PHP_SELF'] . "?" . preg_replace("/(&|&amp;)?$this->limit_var=\d*/", "", $this->query_string) . "\" style=\"margin: 0px;\">\n"
             . translate('Per page') . " <select name=\"$this->limit_var\" onchange=\"document.limit_jump.submit();\" class=\"$this->tb_class\" style=\"$this->tb_style\">\n";
-        for ($i = 0; $i < count($limits); $i++) {
+        for ($i = 0; $i < (is_countable($limits) ? count($limits) : 0); $i++) {
             echo '<option value="' . $limits[$i] . '"';
             if ($limits[$i] == $this->limit)
                 echo ' selected="selected"';

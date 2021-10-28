@@ -28,7 +28,7 @@ include_once('templates/common.template.php');
 include_once('templates/quarantine.template.php');
 
 if (!Auth::is_logged_in()) {
-    Auth::print_login_msg();    // Check if user is logged in
+    (new Auth())->print_login_msg();    // Check if user is logged in
 }
 
 //Turn off all error reporting, useless for users
@@ -60,8 +60,6 @@ switch ($_SESSION['sessionNav']) {
         $referral = 'messagesAdmin.php';
         break;
     case 'My Pending Requests':
-        $referral = 'messagesPending.php';
-        break;
     case 'Site Pending Requests':
         $referral = 'messagesPending.php';
         break;

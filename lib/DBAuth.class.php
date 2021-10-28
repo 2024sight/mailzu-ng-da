@@ -20,15 +20,6 @@
  * CmnFns class
  */
 include_once('lib/CmnFns.class.php');
-/**
- * Pear::DB
- */
-if ($GLOBALS['conf']['app']['safeMode']) {
-    ini_set('include_path', (dirname(__FILE__) . '/pear/' . PATH_SEPARATOR . ini_get('include_path')));
-    include_once('pear/DB.php');
-} else {
-    include_once('DB.php');
-}
 
 /**
  * Provide all database access/manipulation functionality for SQL Auth
@@ -108,28 +99,33 @@ class DBAuth
     function db_connect()
     {
         /***********************************************************
-         * / This uses PEAR::DB
-         * / See http://www.pear.php.net/manual/en/package.database.php#package.database.db
-         * / for more information and syntax on PEAR::DB
+         * / This uses PDO
+         * / See https://www.php.net/manual/en/book.pdo.php
+         * / for more information and syntax on PDO
          * /**********************************************************/
 
         // Data Source Name: This is the universal connection string
-        // See http://www.pear.php.net/manual/en/package.database.php#package.database.db
+        // See https://www.php.net/manual/en/pdo.connections.php
         // for more information on DSN
-
-        $dsn = $this->dbType . '://' . $this->dbUser . ':' . $this->dbPass
-            . '@' . $this->dbHost . '/' . $this->dbName;
-
-        // Make persistant connection to database
-        $db = DB::connect($dsn, true);
-
-        // If there is an error, print to browser, print to logfile and kill app
-        if (DB::isError($db)) {
-            die ('Error connecting to database: ' . $db->getMessage());
+        // Set utf8 as client charset
+        switch ($this->dbType) {
+            case "mysql":
+                $dsn = $this->dbType . ':host=' . $this->dbHost . ';dbname=' . $this->dbName.';charset=utf8';
+                break;
+            default:
+                $dsn = $this->dbType . ':host=' . $this->dbHost . ';dbname=' . $this->dbName;
+                break;
         }
 
+        try {
+            $db = new PDO($dsn, $this->dbUser, $this->dbPass);
+        } catch (PDOException $e) {
+            die ('Error connecting to database: ' . $e->getMessage());
+        }
+
+
         // Set fetch mode to return associatve array
-        $db->setFetchMode(DB_FETCHMODE_ASSOC);
+        $db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE,PDO::FETCH_ASSOC);
 
         $this->db = $db;
     }
@@ -159,38 +155,42 @@ class DBAuth
         // Prepare query
         $q = $this->db->prepare($query);
         // Execute query
-        $result = $this->db->execute($q, $values);
+        $result = $q->execute($values);
         // Check if error
-        $this->check_for_error($result);
+        $this->check_for_error($result, $q);
 
-        if ($result->numRows() <= 0) {
-            $this->err_msg = translate('There are no records in the table.');
-            return false;
-        } else {
-            // Fetch the first row of data
-            $rs = $this->cleanRow($result->fetchRow());
+        // Fetch the first row of data
+        if ( $rs = $q->fetch(PDO::FETCH_ASSOC) ) {
+            $rs = $this->cleanRow($rs);
 
             $this->logonName = $rs[$this->dbTableUsername];
             $this->firstName = (!empty($rs[$this->dbTableName]) ?
                 $rs[$this->dbTableName] : $rs[$this->dbTableUsername]);
             $this->emailAddress = array($rs[$this->dbTableMail]);
 
-            $result->free();
+            $q->closeCursor();
 
             return true;
+        } else {
+            $this->err_msg = translate('There are no records in the table.');
+            return false;
         }
     }
 
     /**
      * Checks to see if there was a database error and die if there was
-     * @param object $result result object of query
+     * @param bool $result result boolean
+     * @param object $q statement object
      */
-    function check_for_error($result)
+    function check_for_error($result, $q)
     {
-        if (DB::isError($result))
+        if ( $result === false ) {
+            $err_array = $q->errorInfo();
+            $this->err_msg = 'Error['.$err_array[1].']: '.$err_array[2].' SQLSTATE='.$err_array[0];
             CmnFns::do_error_box(translate('There was an error executing your query') . '<br />'
-                . $result->getMessage()
+                . $this->err_msg
                 . '<br />' . '<a href="javascript: history.back();">' . translate('Back') . '</a>');
+        }
         return false;
     }
 

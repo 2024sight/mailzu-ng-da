@@ -27,7 +27,7 @@ include_once('templates/common.template.php');
 include_once('templates/quarantine.template.php');
 
 if (!Auth::is_logged_in()) {
-    Auth::print_login_msg();    // Check if user is logged in
+    (new Auth())->print_login_msg();    // Check if user is logged in
 }
 
 // grab the display size limit set in config.php
@@ -55,7 +55,7 @@ if (!Auth::isMailAdmin()) {
     CmnFns::do_error_box(translate('Access Denied'));
 } else {
     // Draw search engine
-    $content_type = (CmnFns::get_ctype() ? CmnFns::get_ctype() : 'A');
+    $content_type = (CmnFns::get_ctype() ?: 'A');
     printSearchEngine($content_type, $_SERVER['PHP_SELF'], 1);
     echo '<br>';
 

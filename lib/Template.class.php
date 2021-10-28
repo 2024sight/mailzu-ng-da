@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file provides output functions
  * @author Nick Korbel <lqqkout13@users.sourceforge.net>
@@ -13,19 +14,18 @@
 /**
  * Base directory of application
  */
-@define('BASE_DIR', dirname(__FILE__) . '/..');
+@define('BASE_DIR', __DIR__ . '/..');
 /**
  * Include Auth class
  */
 include_once('Auth.class.php');
-
 /**
  * Provides functions for outputting template HTML
  */
 class Template
 {
     var $title;
-    var $link;
+    var \link $link;
     var $dir_path;
 
     /**
@@ -33,7 +33,7 @@ class Template
      * @param string $title title of page
      * @param int $depth depth of the current page relative to MailZu root
      */
-    function Template($title = '', $depth = 0)
+    function __construct($title = '', $depth = 0)
     {
         global $conf;
 
@@ -199,5 +199,3 @@ function endMain()
         $this->title = $title;
     }
 }
-
-?>

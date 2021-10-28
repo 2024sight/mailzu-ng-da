@@ -30,7 +30,7 @@ include_once('templates/viewmail.template.php');
 include_once('lib/MailEngine.class.php');
 
 if (!Auth::is_logged_in()) {
-    Auth::print_login_msg();    // Check if user is logged in
+    (new Auth())->print_login_msg();    // Check if user is logged in
 }
 
 $t = new Template(translate('ViewOriginal'));

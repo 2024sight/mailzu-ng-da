@@ -79,7 +79,7 @@ function showSummary($count_array)
                     foreach ($count_array as $key => $val) {
                         echo '<tr class="' . 'cellColor' . ($i++ % 2) . ' align="center">';
                         echo ($key == 'Total' ? '<td class="rowTotals">' : '<td class="rowNumValues">') . "$key</td> \n";
-                        foreach ($val as $subkey => $subval) {
+                        foreach ($val as $subval) {
                             echo ($key == 'Total' ? '<td class="rowTotals">' : '<td class="rowNumValues">') . "$subval</td> \n";
                         }
                         echo '</tr>';

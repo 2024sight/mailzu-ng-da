@@ -24,7 +24,7 @@ include_once('templates/common.template.php');
 include_once('templates/quarantine.template.php');
 
 if (!Auth::is_logged_in()) {
-    Auth::print_login_msg();    // Check if user is logged in
+    (new Auth())->print_login_msg();    // Check if user is logged in
 }
 
 // grab the display size limit set in config.php
@@ -32,7 +32,7 @@ $sizeLimit = isset ($conf['app']['displaySizeLimit']) && is_numeric($conf['app']
     $conf['app']['displaySizeLimit'] : 50;
 
 //Get content type
-$content_type = (CmnFns::get_ctype() ? CmnFns::get_ctype() : 'A');
+$content_type = (CmnFns::get_ctype() ?: 'A');
 
 $order = array('msgs.time_num', 'from_addr', 'msgs.subject', 'spam_level', 'recip.email', 'msgs.content', 'mail_id');
 // Get current page number
@@ -53,7 +53,7 @@ showQuickLinks();        // Print out My Quick Links
 startDataDisplayCol();
 
 // Draw search engine
-printSearchEngine($content_type, $_SERVER['PHP_SELF'], (count($_SESSION['sessionMail']) > 1));
+printSearchEngine($content_type, $_SERVER['PHP_SELF'], ((is_countable($_SESSION['sessionMail']) ? count($_SESSION['sessionMail']) : 0) > 1));
 echo '<br>';
 
 if (CmnFns::getGlobalVar('search_action', GET) == translate('Clear search results')) CmnFns::redirect_js($_SERVER['PHP_SELF']);

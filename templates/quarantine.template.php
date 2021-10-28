@@ -55,7 +55,7 @@ function showMessagesTable($content_type, $res, $page, $order, $vert, $numRows =
         // Its number of rows is $sizeLimit
         $count = $numRows;
         $start_entry = 0;
-        $end_entry = count($res);
+        $end_entry = is_countable($res) ? count($res) : 0;
         $query_string = $_SERVER['QUERY_STRING'];
 
         $pager_html = ($count > $sizeLimit) ? CmnFns::genMultiPagesLinks($page, $sizeLimit, $count) : ''; ?>
@@ -96,7 +96,7 @@ function showMessagesTable($content_type, $res, $page, $order, $vert, $numRows =
                             <!-- Print table's headers -->
                             <tr class="rowHeaders quarcell">
                                 <td width="2%">&nbsp;</td>
-                                <?php if ((count($_SESSION['sessionMail']) > 1) || ((Auth::isMailAdmin()) &&
+                                <?php if (((is_countable($_SESSION['sessionMail']) ? count($_SESSION['sessionMail']) : 0) > 1) || ((Auth::isMailAdmin()) &&
                                         ("Site Quarantine" == $_SESSION['sessionNav'] || "Site Pending Requests" == $_SESSION['sessionNav']))) { ?>
                                     <td width="15%" <?php echo "recip.email" == $order ? ' class="reservedCell"' : ''; ?>>
                                         <?php $link->doLink($_SERVER['PHP_SELF'] . '?' . CmnFns::querystring_exclude_vars(array('order', 'vert'))
@@ -141,7 +141,7 @@ function showMessagesTable($content_type, $res, $page, $order, $vert, $numRows =
 //					$subject = $rs['subject'] ? htmlspecialchars(mb_convert_encoding($rs['subject'],'UTF-8' )) : '(none)';
                                 $subject = $rs['subject'] ? mb_encode_numericentity($rs['subject'], array(0x80, 0xff, 0, 0xff), 'UTF-8') : '(none)';
                                 $from = $rs['from_addr'] ? htmlspecialchars($rs['from_addr'], ENT_SUBSTITUTE) : '(none)';
-                                if ((count($_SESSION['sessionMail']) > 1) || (Auth::isMailAdmin() &&
+                                if (((is_countable($_SESSION['sessionMail']) ? count($_SESSION['sessionMail']) : 0) > 1) || (Auth::isMailAdmin() &&
                                         ("Site Quarantine" == $_SESSION['sessionNav'] || "Site Pending Requests" == $_SESSION['sessionNav']))) {
                                     $to = $rs['email'] ? htmlspecialchars($rs['email']) : '(none)';
                                 }
@@ -150,7 +150,7 @@ function showMessagesTable($content_type, $res, $page, $order, $vert, $numRows =
 
                                 echo '  <td><input type="checkbox" onclick="ColorRow(this,\'lightyellow\')" 
 						name="mail_id_array[]" value="' . $rs['mail_id'] . '_' . $rs['email'] . '"></td>';
-                                if ((count($_SESSION['sessionMail']) > 1) || (Auth::isMailAdmin() &&
+                                if (((is_countable($_SESSION['sessionMail']) ? count($_SESSION['sessionMail']) : 0) > 1) || (Auth::isMailAdmin() &&
                                         ("Site Quarantine" == $_SESSION['sessionNav'] || "Site Pending Requests" == $_SESSION['sessionNav']))) {
                                     echo '  <td class="quarcell">' . $to . '</td>';
                                 }
@@ -364,7 +364,7 @@ function showFailedMessagesTable($action, $content_type, $res)
                     <?php
                     for ($i = 0; is_array($res) && $i < count($res); $i++) {
                         $rs = $res[$i];
-                        $subject = $rs['subject'] ? $rs['subject'] : '(none)';
+                        $subject = $rs['subject'] ?: '(none)';
                         $class = 'cellColor' . ($i % 2);
                         echo "<tr class=\"$class\" align=\"center\">"
                             . ' <td>' . $rs['from_addr'] . '</td>'

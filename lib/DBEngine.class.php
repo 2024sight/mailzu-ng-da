@@ -28,15 +28,6 @@ include_once('lib/CmnFns.class.php');
  * Auth class
  */
 include_once('lib/Auth.class.php');
-/**
- * Pear::DB
- */
-if ($GLOBALS['conf']['app']['safeMode']) {
-    ini_set('include_path', (dirname(__FILE__) . '/pear/' . PATH_SEPARATOR . ini_get('include_path')));
-    include_once('pear/DB.php');
-} else {
-    include_once('DB.php');
-}
 
 /**
  * Provide all database access/manipulation functionality
@@ -87,41 +78,34 @@ class DBEngine
     function db_connect()
     {
         /***********************************************************
-         * / This uses PEAR::DB
-         * / See http://www.pear.php.net/manual/en/package.database.php#package.database.db
-         * / for more information and syntax on PEAR::DB
+         * / This uses PDO
+         * / See https://www.php.net/manual/en/book.pdo.php
+         * / for more information and syntax on PDO
          * /**********************************************************/
 
         // Data Source Name: This is the universal connection string
-        // See http://www.pear.php.net/manual/en/package.database.php#package.database.db
+        // See https://www.php.net/manual/en/pdo.connections.php
         // for more information on DSN
-        $dsn = $this->dbType . '://' . $this->dbUser . ':' . $this->dbPass
-            . '@' . $this->dbHost . '/' . $this->dbName;
-
-        // Make persistant connection to database
-        $db = DB::connect($dsn, true);
-
-        // If there is an error, print to browser, print to logfile and kill app
-        if (DB::isError($db)) {
-            CmnFns::write_log('Error connecting to database: ' . $db->getMessage(), $_SESSION['sessionID']);
-            die ('Error connecting to database: ' . $db->getMessage());
-        }
-
         // Set utf8 as client charset
         switch ($this->dbType) {
             case "mysql":
-                mysql_set_charset('utf8');
-                break;
-            case "mysqli":
-                $db->connection->set_charset('utf8');
+                $dsn = $this->dbType . ':host=' . $this->dbHost . ';dbname=' . $this->dbName.';charset=utf8';
                 break;
             default:
+                $dsn = $this->dbType . ':host=' . $this->dbHost . ';dbname=' . $this->dbName;
                 break;
+        }
+
+        try {
+            $db = new PDO($dsn, $this->dbUser, $this->dbPass);
+        } catch (PDOException $e) {
+            CmnFns::write_log('Error connecting to database: ' . $e->getMessage(), $_SESSION['sessionID']);
+            die ('Error connecting to database: ' . $e->getMessage());
         }
 
 
         // Set fetch mode to return associatve array
-        $db->setFetchMode(DB_FETCHMODE_ASSOC);
+        $db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE,PDO::FETCH_ASSOC);
 
         $this->db = $db;
     }
@@ -205,11 +189,12 @@ class DBEngine
         // Prepare query
         $q = $this->db->prepare($query);
         // Execute query
-        $result = $this->db->execute($q);
+        $result = $q->execute();
         // Check if error
-        $this->check_for_error($result, $query);
+        $this->check_for_error($result, $q);
 
-        while ($rs = $result->fetchRow()) {
+        while ( $rs = $q->fetch(PDO::FETCH_ASSOC) )
+        {
             $timestamp = CmnFns::formatDateISO($rs['date']);
             $date = CmnFns::formatDate($timestamp);
             $totalthisdate = $rs['spam'] + $rs['banned'] + $rs['viruses'] + $rs['badheaders'] + $rs['pending'];
@@ -229,7 +214,7 @@ class DBEngine
         }
 
         $rval['Total'] = $total;
-        $result->free();
+        $q->closeCursor();
 
         return $rval;
     }
@@ -252,7 +237,7 @@ class DBEngine
         $recipEmailClause = $this->convertEmailaddresses2SQL($emailaddresses);
 
         # mysql seems to run faster with a left join
-        if (($conf['db']['dbType'] == 'mysql') || ($conf['db']['dbType'] == 'mysqli')) {
+        if ($conf['db']['dbType'] == 'mysql') {
             $join_type = ' LEFT JOIN';
         } else {
             $join_type = ' INNER JOIN';
@@ -331,11 +316,12 @@ class DBEngine
         // Prepare query
         $q = $this->db->prepare($query);
         // Execute query
-        $result = $this->db->execute($q);
+        $result = $q->execute();
         // Check if error
-        $this->check_for_error($result, $query);
+        $this->check_for_error($result, $q);
 
-        while ($rs = $result->fetchRow()) {
+        while ( $rs = $q->fetch(PDO::FETCH_ASSOC) )
+        {
             $timestamp = CmnFns::formatDateISO($rs['date']);
             $date = CmnFns::formatDate($timestamp);
             $totalthisdate = $rs['spam'] + $rs['banned'] + $rs['viruses'] + $rs['badheaders'] + $rs['pending'];
@@ -355,7 +341,7 @@ class DBEngine
         }
 
         $rval['Total'] = $total;
-        $result->free();
+        $q->closeCursor();
 
         return $rval;
     }
@@ -378,7 +364,7 @@ class DBEngine
         global $conf;
 
         # MySQL seems to run faster with a LEFT JOIN
-        if (($conf['db']['dbType'] == 'mysql') || ($conf['db']['dbType'] == 'mysqli')) {
+        if ($conf['db']['dbType'] == 'mysql') {
             $join_type = ' LEFT JOIN';
         } else {
             $join_type = ' INNER JOIN';
@@ -396,6 +382,7 @@ class DBEngine
         }
 
 
+        $rowsval = array();
         $rval = array();
 
         if (is_array($search_array)) {
@@ -467,24 +454,25 @@ class DBEngine
             // Prepend the content type if we want a specific type of mail
             $values = array($content_type);
             // Execute query
-            $result = $this->db->execute($q, $values);
+            $result = $q->execute($values);
         } else {
-            $result = $this->db->execute($q);
+            $result = $q->execute();
         }
 
         // Check if error
-        $this->check_for_error($result, $query);
+        $this->check_for_error($result, $q);
 
-        $this->numRows = $result->numRows();
+        while ( $rs = $q->fetch(PDO::FETCH_ASSOC) ) {
+            $rowsval[] = $this->cleanRow($rs);
+        }
+        $this->numRows = count($rowsval);
 
         if ($this->numRows <= 0) {
             return NULL;
         }
 
         if ($get_all) {
-            while ($rs = $result->fetchRow()) {
-                $rval[] = $this->cleanRow($rs);
-            }
+            return $rowsval;
         } else {
             // the row to start fetching
             $from = $page * $sizeLimit;
@@ -493,14 +481,14 @@ class DBEngine
             // the last row to fetch for this page
             $to = $from + $res_per_page - 1;
             foreach (range($from, $to) as $rownum) {
-                if (!$row = $result->fetchrow(DB_FETCHMODE_ASSOC, $rownum)) {
+                if (!$row = $rowsval[$rownum])) {
                     break;
                 }
                 $rval[] = $this->cleanRow($row);
             }
         }
 
-        $result->free();
+        $q->closeCursor();
 
         return $rval;
     }
@@ -517,7 +505,7 @@ class DBEngine
         global $conf;
 
         # MySQL seems to run faster with a LEFT JOIN
-        if (($conf['db']['dbType'] == 'mysql') || ($conf['db']['dbType'] == 'mysqli')) {
+        if ($conf['db']['dbType'] == 'mysql') {
             $join_type = ' LEFT JOIN';
         } else {
             $join_type = ' INNER JOIN';
@@ -541,18 +529,21 @@ class DBEngine
         // Prepare query
         $q = $this->db->prepare($query);
         // Execute query
-        $result = $this->db->execute($q, $values);
+        $result = $q->execute($values);
         // Check if error
-        $this->check_for_error($result, $query);
+        $this->check_for_error($result, $q);
 
-        if ($result->numRows() <= 0) {
-            return NULL;
-        }
-        while ($rs = $result->fetchRow()) {
+        while ( $rs = $q->fetch(PDO::FETCH_ASSOC) )
+        {
             $rval[] = $this->cleanRow($rs);
         }
 
-        $result->free();
+        $this>numRows = count($rval);
+        if ($this->numRows <= 0) {
+            return NULL;
+        }
+
+        $q->closeCursor();
 
         return $rval;
     }
@@ -581,9 +572,9 @@ class DBEngine
         // Prepare query
         $q = $this->db->prepare($query);
         // Execute query
-        $result = $this->db->execute($q, $values);
+        $result = $q->execute($values);
         // Check if error
-        $this->check_for_error($result, $query);
+        $this->check_for_error($result, $q);
 
         return true;
     }
@@ -612,13 +603,13 @@ class DBEngine
         // Prepare query
         $q = $this->db->prepare($query);
         // Execute query
-        $result = $this->db->execute($q, $values);
+        $result = $q->execute($values);
         // Check if error
-        $this->check_for_error($result, $query);
+        $this->check_for_error($result, $q);
 
-        $count = $result->numRows();
+        $count = @count($q->fetchAll());
 
-        $result->free();
+        $q->closeCursor();
 
         return $count;
     }
@@ -637,7 +628,7 @@ class DBEngine
         # If using the bytea or BLOB type for sql quarantine use proper conversion
         # (since amavisd 2.4.4
         if ($conf['db']['binquar']) {
-            if (($conf['db']['dbType'] == 'mysql') || ($conf['db']['dbType'] == 'mysqli')) {
+            if ($conf['db']['dbType'] == 'mysql') {
                 $mail_text_column = ' CONVERT(mail_text USING utf8) AS mail_text';
             } else {
                 $mail_text_column = " encode(mail_text,'escape') AS mail_text";
@@ -659,42 +650,40 @@ class DBEngine
         // Prepare query
         $q = $this->db->prepare($query);
         // Execute query
-        $result = $this->db->execute($q, $values);
+        $result = $q->execute($values);
         // Check if error
-        $this->check_for_error($result, $query);
+        $this->check_for_error($result, $q);
 
-        if ($result->numRows() <= 0) {
-            return false;
-        }
         $rval = "";
         while ($rs = $result->fetchRow()) {
             $rval .= $rs['mail_text'];
         }
 
-        $result->free();
+        $q->closeCursor();
 
         return $rval;
     }
 
     /**
      * Checks to see if there was a database error, log in file and die if there was
-     * @param object $result result object of query
-     * @param SQL query $query
+     * @param bool $result result boolean
+     * @param object $q statement object
      */
-    function check_for_error($result, $query)
+    function check_for_error($result, $q)
     {
         global $conf;
-        if (DB::isError($result)) {
-            $this->err_msg = $result->getMessage();
+        if ( $result === false ) {
+            $err_array = $q->errorInfo();
+            $this->err_msg = 'Error['.$err_array[1].']: '.$err_array[2].' SQLSTATE='.$err_array[0];
             CmnFns::write_log($this->err_msg, $_SESSION['sessionID']);
             CmnFns::write_log('There was an error executing your query' . ' '
-                . $query, $_SESSION['sessionID']);
+                . $q->queryString, $_SESSION['sessionID']);
             CmnFns::do_error_box(translate('There was an error executing your query') . '<br />'
                 . $this->err_msg
                 . '<br />' . '<a href="javascript: history.back();">' . translate('Back') . '</a>');
         } else {
             if ($conf['app']['debug']) {
-                CmnFns::write_log("[DEBUG SQL QUERY]: $query");
+                CmnFns::write_log("[DEBUG SQL QUERY]: ".$q->queryString);
             }
 
         }
