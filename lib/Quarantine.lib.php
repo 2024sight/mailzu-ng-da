@@ -59,8 +59,10 @@ function releaseMessages($emailaddresses, $mail_id_array)
     $db = new DBEngine();
 
     // Set autocommit to false to improve speed of 'RS' flag set up
-    $result = $db->db->autoCommit(false);
-    $db->check_for_error($result, 'PEAR DB autoCommit(false)');
+    // $result = $db->db->autoCommit(false);
+    // $db->check_for_error($result, 'PEAR DB autoCommit(false)');
+    $result = $db->db->beginTransaction();
+    $db->check_for_error($result, $db->db);
 
     // Fill the arrays
     foreach ($mail_id_array as $mail_id_recip) {
@@ -178,9 +180,9 @@ function releaseMessages($emailaddresses, $mail_id_array)
 
     // Commit, then set autocommit back to true
     $result = $db->db->commit();
-    $db->check_for_error($result, 'PEAR DB commit()');
-    $result = $db->db->autoCommit(true);
-    $db->check_for_error($result, 'PEAR DB autoCommit(true)');
+    $db->check_for_error($result, $db->db);
+    // $result = $db->db->autoCommit(true);
+    // $db->check_for_error($result, 'PEAR DB autoCommit(true)');
 
     // Build array of messages whose release failed
     $failed_array = array();
@@ -227,8 +229,10 @@ function updateMessages($flag, $content_type, $emailaddresses, $mail_id_array, $
     $db = new DBEngine();
 
     // Set autocommit to false to improve speed of $flag set
-    $result = $db->db->autoCommit(false);
-    $db->check_for_error($result, 'PEAR DB autoCommit(false)');
+    //$result = $db->db->autoCommit(false);
+    //$db->check_for_error($result, 'PEAR DB autoCommit(false)');
+    $result = $db->db->beginTransaction();
+    $db->check_for_error($result, $db->db);
 
     if ($all) {
         $res = $db->get_user_messages($content_type, $emailaddresses, 'msgs.time_num', 'DESC', '', false, 0, 0, true);
@@ -284,9 +288,9 @@ function updateMessages($flag, $content_type, $emailaddresses, $mail_id_array, $
 
     // Commit, then set autocommit back to true
     $result = $db->db->commit();
-    $db->check_for_error($result, 'PEAR DB commit()');
-    $result = $db->db->autoCommit(true);
-    $db->check_for_error($result, 'PEAR DB autoCommit(true)');
+    $db->check_for_error($result, $db->db);
+    //$result = $db->db->autoCommit(true);
+    //$db->check_for_error($result, 'PEAR DB autoCommit(true)');
 
     // Return array of messages whose release failed
     return $result_array;

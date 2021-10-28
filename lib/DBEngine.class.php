@@ -481,7 +481,7 @@ class DBEngine
             // the last row to fetch for this page
             $to = $from + $res_per_page - 1;
             foreach (range($from, $to) as $rownum) {
-                if (!$row = $rowsval[$rownum])) {
+                if (!$row = $rowsval[$rownum]) {
                     break;
                 }
                 $rval[] = $this->cleanRow($row);
@@ -538,7 +538,7 @@ class DBEngine
             $rval[] = $this->cleanRow($rs);
         }
 
-        $this>numRows = count($rval);
+        $this->numRows = count($rval);
         if ($this->numRows <= 0) {
             return NULL;
         }
@@ -655,7 +655,7 @@ class DBEngine
         $this->check_for_error($result, $q);
 
         $rval = "";
-        while ($rs = $result->fetchRow()) {
+        while ( $rs = $q->fetch(PDO::FETCH_ASSOC) ) {
             $rval .= $rs['mail_text'];
         }
 
