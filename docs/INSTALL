@@ -23,10 +23,10 @@ The requirements for running MailZu is as follows:
 
 1) Amavisd-new greater than 2.7.0. 
 2) A PHP-compatible web server
-3) PHP 5.6.x or greater with socket support ( --enable-sockets )
+3) PHP 7.4.x or greater with socket support ( --enable-sockets )
 4) PEAR::PEAR
-5) PEAR::DB 
-6) PEAR::Mail_Mime
+5) PEAR::Mail_Mime
+6) PEAR::Mail_mimeDecode
 7) PEAR::Net_Socket
 
 PHP must also be built with the respective driver for your backend. 
@@ -61,7 +61,7 @@ later.
 Unpacking the distribution
 ============================
 
-Fetch the latest tarball from http://www.mailzu.net. The file has a format
+Fetch the latest tarball from https://github.com/gnanet/mailzu. The file has a format
 of mailzu-x.y.tar.gz where 'x' is the version and 'y' is the revision.
 
 Extract the archive with:
@@ -243,7 +243,7 @@ is populating.
   $conf['db']['hostSpec'] = 'hostname.example.com:port';
 
 These settings should correspond to the credentials entered for the amavisd-new
-configuration. The 'dbType' can be any PEAR DB compatible database. Please see
+configuration. The 'dbType' can be any PDO compatible database. Please see
 the config/config.php file for more information.
 
 Note: If you are using MySQL database, the preferred version is 4.1.0 or later.
@@ -260,7 +260,7 @@ You can have a user authenticate to any of the following backends.
   /* Options are:
         ldap -> Standard LDAP server, e.g. OpenLDAP
         ad   -> MS Active Directory
-        sql  -> PHP PEAR compatible database
+        sql  -> PHP PDO compatible database
         exchange  -> MS Exchange 5.5
         imap  -> IMAP protocol
   */
@@ -400,11 +400,11 @@ Set this option if you want to allow the language selection
   // Default is 1
   $conf['app']['selectLanguage'] = '1';
 
-Set this option to 1 if you want to use the Pear DB and Mail_Mime libraries included
+Set this option to 1 if you want to use the PEAR Net_Socket, Mail_Mime, Mail_mimeDecode libraries included
 with MailZu:
 
   // If you are running PHP in safe mode, set this value to 1.
-  // This toggles if we use the included Pear DB and Mail_Mime libraries included
+  // This toggles if we use the included PEAR Net_Socket, Mail_Mime, Mail_mimeDecode libraries included
   // with this distribution
   $conf['app']['safeMode'] = 1;
 

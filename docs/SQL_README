@@ -1,7 +1,7 @@
 SQL Autentication Settings
 -------------------------------
 
-To configure MailZu to authenticate users against a PEAR compatible SQL 
+To configure MailZu to authenticate users against a PDO compatible SQL 
 database...
 
   // Set an authentication method: 'ldap','ad', or 'sql'
@@ -9,18 +9,10 @@ database...
 
 Set the type of database to authenticate to...
   /*** Database Authentication Settings ***/
-  // Database type to be used by PEAR
+  // Database type to be used by PDO
   /* Options are:
         mysql  -> MySQL
         pgsql  -> PostgreSQL
-        ibase  -> InterBase
-        msql   -> Mini SQL
-        mssql  -> Microsoft SQL Server
-        oci8   -> Oracle 7/8/8i
-        odbc   -> ODBC (Open Database Connectivity)
-        sybase -> SyBase
-        ifx    -> Informix
-        fbsql  -> FrontBase
   */
   $conf['auth']['dbType'] = 'mysql';
 

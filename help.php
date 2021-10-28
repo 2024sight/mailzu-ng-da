@@ -16,6 +16,9 @@ include_once('config/config.php');
 global $languages;
 global $lang;
 global $charset;
+if (file_exists('css.css')) {
+    $path = '';
+}
 
 echo "<?xml version=\"1.0\" encoding=\"$charset\"?" . ">\n";
 ?>
@@ -66,7 +69,7 @@ echo "<?xml version=\"1.0\" encoding=\"$charset\"?" . ">\n";
         -->
     </style>
     <style type="text/css">
-        @import url(<?php echo $path?> css.css);
+        @import url("<?php echo $path; ?>css.css?v=<?php echo md5_file($path.'css.css'); ?>");
     </style>
 
 </head>

@@ -30,7 +30,7 @@
 ?>
 <div align="center">
     <h3><a name="top" id="top"></a>Introduzione a MailZu</h3>
-    <p><a href="http://mailzu.net" target="_blank">http://mailzu.net</a></p>
+    <p><a href="https://github.com/gnanet/mailzu" target="_blank">https://github.com/gnanet/mailzu</a></p>
     <table width="100%" border="0" cellspacing="0" cellpadding="5" style="border: solid #CCCCCC 1px">
         <tr>
             <td bgcolor="#FAFAFA">

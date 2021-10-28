@@ -4,10 +4,10 @@
  *  translating the text
  * A few ideas and techniques were taken from the phpMyAdmin project
  * @author Nick Korbel <lqqkout13@users.sourceforge.net>
- * @version 26-08-2018
+ * @version 28-10-2021
  * @package Languages
  *
- * Copyright (C) 2003 - 2005 phpScheduleIt
+ * Copyright (C) 2003 - 2021 MailZu
  * License: GPL, see LICENSE
  */
 

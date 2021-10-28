@@ -7,19 +7,20 @@
 * @author Samuel Tran <stran2005@users.sourceforge.net>
 * @author Brian Wong <bwsource@users.sourceforge.net>
 * @author Jeremy Fowler <jfowler06@users.sourceforge.net>
-* @version 29-08-2017
+* @author Gerely Nagy <gna@r-us.hu>
+* @version 28-10-2021
 * @package MailZu
 */
 /***************************************
 * MailZu                               *
-* Version 0.9                          *
-* http://www.mailzu.net                *
+* Version 0.10                         *
+* https://github.com/gnanet/mailzu-ng  *
 *                                      *
 /***************************************/
 /**
 * Please refer to readme.html and LICENSE for any additional information
 *
-* Copyright (C) 2003 - 2017 MailZu 
+* Copyright (C) 2003 - 2021 MailZu
 * This program is free software; you can redistribute it and/or modify it
 * under the terms of the GNU General Public License as published by the 
 * Free Software Foundation; either version 2 of the License, or (at your option) 
@@ -66,21 +67,12 @@ $conf['amavisd']['spam_release_port'] = '9998';
 // Set Amavisd-new host, if AM.PDP only allowed over localhost
 //$conf['amavisd']['host'] = '127.0.0.1';
 
-// Database type to be used by PEAR [mysqli]
+// Database type to be used by PDO [mysql]
 /* Options are:
-	mysqli -> MySQLi - Should be compatible with php 7.2
-	mysql  -> MySQL - deprecated as 5.6, 7.0
+	mysql  -> MySQL
 	pgsql  -> PostgreSQL
-	ibase  -> InterBase
-	msql   -> Mini SQL
-	mssql  -> Microsoft SQL Server
-	oci8   -> Oracle 7/8/8i
-	odbc   -> ODBC (Open Database Connectivity)
-	sybase -> SyBase
-	ifx    -> Informix
-	fbsql  -> FrontBase
 */
-$conf['db']['dbType'] = 'mysqli';
+$conf['db']['dbType'] = 'mysql';
 
 // Database user who can access the amavisd database
 $conf['db']['dbUser'] = 'user';
@@ -109,7 +101,7 @@ $conf['db']['binquar'] = true;
 /* Options are:
 	ldap -> Standard LDAP server, e.g. OpenLDAP
 	ad   -> MS Active Directory
-	sql  -> PHP PEAR compatible database
+	sql  -> PHP PDO compatible database
 	exchange  -> MS Exchange 5.5
 	imap  -> IMAP protocol
 */
@@ -201,21 +193,12 @@ $conf['auth']['ad_searchPassword'] = 'secret';
 
 
 /*** Database Authentication Settings ***/
-// Database type to be used by PEAR
+// Database type to be used by PDO
 /* Options are:
-	mysqli -> MySQLi - Should be compatible with php 7.2
-	mysql  -> MySQL - deprecated as 5.6, 7.0
+	mysql  -> MySQL
 	pgsql  -> PostgreSQL
-	ibase  -> InterBase
-	msql   -> Mini SQL
-	mssql  -> Microsoft SQL Server
-	oci8   -> Oracle 7/8/8i
-	odbc   -> ODBC (Open Database Connectivity)
-	sybase -> SyBase
-	ifx    -> Informix
-	fbsql  -> FrontBase
 */
-$conf['auth']['dbType'] = 'mysqli';
+$conf['auth']['dbType'] = 'mysql';
 
 // Database host specification (hostname[:port]) [localhost]
 $conf['auth']['dbHostSpec'] = '';
@@ -427,14 +410,14 @@ $conf['app']['defaultLanguage'] = 'en_US';
 $conf['app']['selectLanguage'] = '1';
 
 // If you are running PHP in safe mode, set this value to 1.
-// This toggles if we use the included Pear DB and Mail_Mime libraries included
+// This toggles if we use the included PEAR Mail_Mime Mail_mimeDecode Net_Socket libraries included
 // with this distribution
 $conf['app']['safeMode'] = 0;
 
 // View time in 12 or 24 hour format [12]
 // Only acceptable values are 12 and 24 (if an invalid number is set, 12 hour
 // time will be used)
-$conf['app']['timeFormat'] = 12;
+$conf['app']['timeFormat'] = 24;
 
 // Title of application ['MailZu']
 // Will be used for page titles and in 'From' field of email responses

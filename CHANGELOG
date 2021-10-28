@@ -1,3 +1,17 @@
+MailZu-ng 0.10.php74_pdo-mailzu-ng (28.10.2021):
+----------
+- The first version of MailZu-ng requiring at least PHP 7.4, it contains backward-incompatible changes
+- replaced PEAR/DB implementation with PDO
+- updated code for most PHP7.4 compatibility using rector-php
+- updated config/init.php to reflect the version change
+
+MailZu-ng 0.10.php72_pdo-mailzu-ng (28.10.2021):
+----------
+- The first version of MailZu-ng aiming to be PHP7.2+ compatible, clean code
+- replaced PEAR/DB implementation with PDO
+- updated code for most PHP7.2 compatibility
+- updated config/init.php to reflect the version change
+
 MailZu 0.9.5-github-gnafixes (14.10.2019):
 ----------
 - Added polish translation from FreeBSD Ports, credits go to Krzysztof <ports@bsdserwis.com>
