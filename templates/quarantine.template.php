@@ -103,11 +103,11 @@ function showMessagesTable($content_type, $res, $page, $order, $vert, $numRows =
                                             . '&amp;order=recip.email&amp;vert=' . $new_vert, translate('To'), '', '', $mouseover_text) ?>
                                     </td>
                                 <?php } ?>
-                                <td width="25%" <?php echo "from_addr" == $order ? ' class="reservedCell"' : ''; ?>>
+                                <td width="24%" <?php echo "from_addr" == $order ? ' class="reservedCell"' : ''; ?>>
                                     <?php $link->doLink($_SERVER['PHP_SELF'] . '?' . CmnFns::querystring_exclude_vars(array('order', 'vert'))
                                         . '&amp;order=from_addr&amp;vert=' . $new_vert, translate('From'), '', '', $mouseover_text) ?>
                                 </td>
-                                <td width="33%" <?php echo "msgs.subject" == $order ? ' class="reservedCell"' : ''; ?>>
+                                <td width="32%" <?php echo "msgs.subject" == $order ? ' class="reservedCell"' : ''; ?>>
                                     <?php $link->doLink($_SERVER['PHP_SELF'] . '?' . CmnFns::querystring_exclude_vars(array('order', 'vert'))
                                         . '&amp;order=msgs.subject&amp;vert=' . $new_vert, translate('Subject'), '', '', $mouseover_text) ?>
                                 </td>
@@ -125,7 +125,7 @@ function showMessagesTable($content_type, $res, $page, $order, $vert, $numRows =
                                 </td>
                                 <?php if ((Auth::isMailAdmin()) &&
                                     ("Site Quarantine" == $_SESSION['sessionNav'] || "Site Pending Requests" == $_SESSION['sessionNav'])) { ?>
-                                    <td width="8%" <?php echo "mail_id" == $order ? ' class="reservedCell"' : ''; ?>>
+                                    <td width="10%" <?php echo "mail_id" == $order ? ' class="reservedCell"' : ''; ?>>
                                         <?php $link->doLink($_SERVER['PHP_SELF'] . '?' . CmnFns::querystring_exclude_vars(array('order', 'vert'))
                                             . '&amp;order=mail_id&amp;vert=' . $new_vert, translate('Mail ID'), '', '', $mouseover_text) ?>
                                     </td>
@@ -187,7 +187,11 @@ function showMessagesTable($content_type, $res, $page, $order, $vert, $numRows =
 
                                 if (Auth::isMailAdmin() &&
                                     ("Site Quarantine" == $_SESSION['sessionNav'] || "Site Pending Requests" == $_SESSION['sessionNav'])) {
-                                    echo '  <td class="quarcell">' . $rs['mail_id'] . '</td>';
+                                    if ( isset($rs['partition_tag']) ) {
+                                        echo '  <td class="quarcell">' . $rs['mail_id'] .'['. $rs['partition_tag'] .']</td>';
+                                    } else {
+                                        echo '  <td class="quarcell">' . $rs['mail_id'] . '</td>';
+                                    }
                                 }
 
                                 echo "</tr>\n";

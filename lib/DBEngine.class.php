@@ -421,6 +421,7 @@ class DBEngine
 			msgs.time_num,
 			msgs.from_addr,
 			msgs.mail_id,
+			msgs.partition_tag,
 			msgs.subject,
 			msgs.spam_level,
 			msgs.content,
@@ -507,7 +508,7 @@ class DBEngine
 
         $rval = array();
 
-        $query = 'SELECT msgs.time_num, msgs.secret_id, msgs.subject, msgs.from_addr, msgs.spam_level,'
+        $query = 'SELECT msgs.time_num, msgs.secret_id, msgs.partition_tag, msgs.subject, msgs.from_addr, msgs.spam_level,'
             . ' msgrcpt.rs, recip.email, msgs.host, msgs.content, msgs.quar_type, msgs.quar_loc'
             . ' FROM msgs'
             . ' INNER JOIN msgrcpt ON msgs.mail_id=msgrcpt.mail_id'
@@ -555,11 +556,13 @@ class DBEngine
         $msg_status = $cur_msg_array[0];
         if ($msg_status['rs'] == 'p' && $flag == 'v') return true;
 
+        $partition_tag = isset($msg_status['partition_tag']) ? $msg_status['partition_tag'] : 0;
+
         $query = 'UPDATE msgrcpt SET rs=?'
             . ' WHERE mail_id=?'
-            . ' AND rid=(SELECT id FROM maddr WHERE partition_tag=0 AND email=?)';
+            . ' AND rid=(SELECT id FROM maddr WHERE partition_tag=? AND email=?)';
 
-        $values = array($flag, $mail_id, $mail_rcpt);
+        $values = array($flag, $mail_id, $partition_tag, $mail_rcpt);
 
         // Prepare query
         $q = $this->db->prepare($query);
