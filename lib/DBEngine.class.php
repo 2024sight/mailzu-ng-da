@@ -557,7 +557,7 @@ class DBEngine
 
         $query = 'UPDATE msgrcpt SET rs=?'
             . ' WHERE mail_id=?'
-            . ' AND rid=(SELECT id FROM maddr WHERE email=?)';
+            . ' AND rid=(SELECT id FROM maddr WHERE partition_tag=0 AND email=?)';
 
         $values = array($flag, $mail_id, $mail_rcpt);
 
