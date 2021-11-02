@@ -14,9 +14,9 @@
  * License: GPL, see LICENSE
  */
 /**
- * Include Template class
+ * Include autoloader
  */
-include_once('lib/Template.class.php');
+include_once('lib/autoload.php');
 /**
  * Include common output functions
  */

@@ -11,9 +11,9 @@
  * License: GPL, see LICENSE
  */
 /**
- * Include Template class
+ * Include autoloader
  */
-include_once('lib/Template.class.php');
+include_once('lib/autoload.php');
 /**
  * Include common output functions
  */
@@ -53,7 +53,7 @@ showQuickLinks();        // Print out My Quick Links
 startDataDisplayCol();
 
 // Draw search engine
-printSearchEngine($content_type, $_SERVER['PHP_SELF'], ((is_countable($_SESSION['sessionMail']) ? count($_SESSION['sessionMail']) : 0) > 1));
+printSearchEngine($content_type, $_SERVER['PHP_SELF'], (count($_SESSION['sessionMail']) > 1));
 echo '<br>';
 
 if (CmnFns::getGlobalVar('search_action', GET) == translate('Clear search results')) CmnFns::redirect_js($_SERVER['PHP_SELF']);

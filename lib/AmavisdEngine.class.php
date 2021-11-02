@@ -12,24 +12,8 @@
 /**
  * Base directory of application
  */
-@define('BASE_DIR', dirname(__FILE__) . '/..');
+@define('BASE_DIR', __DIR__ . '/..');
 
-/**
- * CmnFns class
- */
-include_once('lib/CmnFns.class.php');
-
-/**
- *    PEAR::Net_Socket Library
- */
-if ($GLOBALS['conf']['app']['safeMode']) {
-    ini_set('include_path', (dirname(__FILE__) . '/pear/' . PATH_SEPARATOR . ini_get('include_path')));
-    include_once('pear/PEAR.php');
-    include_once('pear/Net/Socket.php');
-} else {
-    include_once 'PEAR.php';
-    include_once 'Net/Socket.php';
-}
 
 /**
  * Provide all access/communication to Amavisd AM.PDP
@@ -46,7 +30,7 @@ class AmavisdEngine
      * $param none
      * $return object Amavisd object
      */
-    function AmavisdEngine($host)
+    function __construct($host)
     {
         if ($GLOBALS['conf']['amavisd']['host']) {
             $host = $GLOBALS['conf']['amavisd']['host'];

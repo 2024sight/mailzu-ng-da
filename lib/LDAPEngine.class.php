@@ -11,11 +11,7 @@
 /**
  * Base directory of application
  */
-@define('BASE_DIR', dirname(__FILE__) . '/..');
-/**
- * CmnFns class
- */
-include_once('lib/CmnFns.class.php');
+@define('BASE_DIR', __DIR__ . '/..');
 
 class LDAPEngine
 {
@@ -93,7 +89,7 @@ class LDAPEngine
     /**
      * LDAPEngine constructor to initialize object
      */
-    function LDAPEngine()
+    function __construct()
     {
         global $conf;
 

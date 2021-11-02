@@ -11,22 +11,10 @@
  * License: GPL, see LICENSE
  */
 
-include_once('lib/Auth.class.php');
-include_once('lib/MailMime.class.php');
-
-// empty stub because MsgParseBody calls it but we don't want to print
-function MsgBodyPlainText()
-{
-}
-function MsgBodyHtmlText()
-{
-}
-
-
-/*
-* Include MailEngine class
-*/
-include_once('lib/MailEngine.class.php');
+/**
+ * Include autoloader
+ */
+include_once('lib/autoload.php');
 
 if (!Auth::is_logged_in()) {
     Auth::print_login_msg();    // Check if user is logged in
@@ -48,7 +36,7 @@ if (!Auth::isMailAdmin() && !in_array($recip_email, $_SESSION['sessionMail'])) {
 
     } else {
 
-        MsgParseBody($m->struct, true);
+        MailMime::MsgParseBody($m->struct, true);
 
         if (isset($fileContent[$_GET['fileid']])) {
 
@@ -66,6 +54,4 @@ if (!Auth::isMailAdmin() && !in_array($recip_email, $_SESSION['sessionMail'])) {
 
     }
 }
-
-
 

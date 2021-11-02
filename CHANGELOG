@@ -1,3 +1,16 @@
+MailZu-ng 0.11.mailzu-ng-php72 (02.11.2021):
+----------
+-   mailzu-ng-php72 the PHP 7.2 (and hopefully PHP 7.3) compatible rewrite branch
+ -  Removed the included PEAR/DB package
+ -  First try to rewrite class-loading, adding autoload.php
+ -  Loading of class and lib files require ordering (until real autoloader for on demand classloading is implemented)
+ -  Change MailMime group-of-funtions to a class, update references in code
+ -  Fix MailMime class vars
+ -  Fix filename Smtp.class.php to reflect uppercase class name SMTP
+ -  Update loader with upper-case filename SMTP.class.php
+ -  Apply small trick to DBEngine class to silence the notice if the index key doesn't exist on message listings
+
+
 MailZu-ng 0.10.php74_pdo-mailzu-ng (28.10.2021):
 ----------
 - The first version of MailZu-ng requiring at least PHP 7.4, it contains backward-incompatible changes

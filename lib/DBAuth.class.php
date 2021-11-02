@@ -15,11 +15,7 @@
 /**
  * Base directory of application
  */
-@define('BASE_DIR', dirname(__FILE__) . '/..');
-/**
- * CmnFns class
- */
-include_once('lib/CmnFns.class.php');
+@define('BASE_DIR', __DIR__ . '/..');
 
 /**
  * Provide all database access/manipulation functionality for SQL Auth
@@ -71,7 +67,7 @@ class DBAuth
      * DBEngine constructor to initialize object
      * @param none
      */
-    function DBAuth()
+    function __construct()
     {
         global $conf;
 

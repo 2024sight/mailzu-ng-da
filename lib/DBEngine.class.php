@@ -19,15 +19,7 @@
 /**
  * Base directory of application
  */
-@define('BASE_DIR', dirname(__FILE__) . '/..');
-/**
- * CmnFns class
- */
-include_once('lib/CmnFns.class.php');
-/**
- * Auth class
- */
-include_once('lib/Auth.class.php');
+@define('BASE_DIR', __DIR__ . '/..');
 
 /**
  * Provide all database access/manipulation functionality
@@ -57,7 +49,7 @@ class DBEngine
      * DBEngine constructor to initialize object
      * @param none
      */
-    function DBEngine()
+    function __construct()
     {
         global $conf;
 
@@ -373,7 +365,7 @@ class DBEngine
         // grab the display size limit set in config.php
 //		$sizeLimit = isset ( $conf['app']['displaySizeLimit'] ) &&
 //				is_numeric( $conf['app']['displaySizeLimit'] ) ? $conf['app']['displaySizeLimit'] : 50;
-        if (Auth::isMailAdmin()) {
+        if (isset($_SESSION['sessionMailAdmin']) || isset($_SESSION['sessionAdmin'])) {
             $sizeLimit = isset ($conf['app']['displaySizeLimitAdmin']) && is_numeric($conf['app']['displaySizeLimitAdmin']) ?
                 $conf['app']['displaySizeLimitAdmin'] : 100;
         } else {
@@ -413,7 +405,7 @@ class DBEngine
                 $rs_clause = '';
         }
 
-        if (Auth::isMailAdmin()) {
+        if (isset($_SESSION['sessionMailAdmin']) || isset($_SESSION['sessionAdmin'])) {
             $type_clause = ($content_type == 'A' ? ' msgs.content in (\'S\', \'B\', \'V\', \'H\')' : ' msgs.content=?');
         } else {
             if ($content_type == 'A') {
@@ -481,7 +473,7 @@ class DBEngine
             // the last row to fetch for this page
             $to = $from + $res_per_page - 1;
             foreach (range($from, $to) as $rownum) {
-                if (!$row = $rowsval[$rownum]) {
+                if (!$row = @$rowsval[$rownum]) {
                     break;
                 }
                 $rval[] = $this->cleanRow($row);
@@ -635,7 +627,7 @@ class DBEngine
             }
         }
 
-        if (Auth::isMailAdmin()) {
+        if (isset($_SESSION['sessionMailAdmin']) || isset($_SESSION['sessionAdmin'])) {
             $values = array($mail_id);
             $query = 'SELECT' . $mail_text_column . ' FROM quarantine ' .
                 'WHERE mail_id=?';

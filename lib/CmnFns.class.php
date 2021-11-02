@@ -21,19 +21,7 @@
 /**
  * Base directory of application
  */
-@define('BASE_DIR', dirname(__FILE__) . '/..');
-/**
- * Include configuration file
- **/
-include_once(BASE_DIR . '/config/config.php');
-/**
- * Include Link class
- */
-include_once('Link.class.php');
-/**
- * Include Pager class
- */
-include_once('Pager.class.php');
+@define('BASE_DIR', __DIR__ . '/..');
 
 // Define constants for method getGlobalVar()
 @define('INORDER', 0);

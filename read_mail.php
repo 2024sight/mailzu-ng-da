@@ -15,9 +15,9 @@
  * License: GPL, see LICENSE
  */
 /**
- * Include Template class
+ * Include autoloader
  */
-include_once('lib/Template.class.php');
+include_once('lib/autoload.php');
 /**
  * Include control panel-specific output functions
  */
@@ -26,10 +26,6 @@ include_once('templates/common.template.php');
  * Include viewmail template class
  */
 include_once('templates/viewmail.template.php');
-/**
- * Include MailEngine class
- */
-include_once('lib/MailEngine.class.php');
 
 if (!Auth::is_logged_in()) {
     (new Auth())->print_login_msg();    // Check if user is logged in

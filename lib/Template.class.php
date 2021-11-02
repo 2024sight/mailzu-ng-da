@@ -15,17 +15,14 @@
  * Base directory of application
  */
 @define('BASE_DIR', __DIR__ . '/..');
-/**
- * Include Auth class
- */
-include_once('Auth.class.php');
+
 /**
  * Provides functions for outputting template HTML
  */
 class Template
 {
     var $title;
-    var \link $link;
+    var $link;
     var $dir_path;
 
     /**

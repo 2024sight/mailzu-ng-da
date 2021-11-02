@@ -11,22 +11,7 @@
 /**
  * Base directory of application
  */
-@define('BASE_DIR', dirname(__FILE__) . '/..');
-/**
- * CmnFns class
- */
-include_once('lib/CmnFns.class.php');
-/**
- * Pear::DB
- */
-if ($GLOBALS['conf']['app']['safeMode']) {
-    ini_set('include_path', (dirname(__FILE__) . '/pear/' . PATH_SEPARATOR . ini_get('include_path')));
-    include_once('pear/PEAR.php');
-    include_once('pear/Mail/mimeDecode.php');
-} else {
-    include_once('PEAR.php');
-    include_once('Mail/mimeDecode.php');
-}
+@define('BASE_DIR', __DIR__ . '/..');
 
 /**
  * Provide all mail access/manipulation functionality
@@ -46,7 +31,7 @@ class MailEngine
      * $param string The mail addr of the reader
      * $return object MailEngine object
      */
-    function MailEngine($mail_id, $recip)
+    function __construct($mail_id, $recip)
     {
         $this->recipient = $recip;
         $this->getRawContent($mail_id);

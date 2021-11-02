@@ -231,7 +231,7 @@ class PHPMailer
      * @param none
      * @return void
      */
-    function PHPMailer()
+    function __construct()
     {
         global $conf;
         global $charset;

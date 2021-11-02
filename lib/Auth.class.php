@@ -12,15 +12,7 @@
 /**
  * Base directory of application
  */
-@define('BASE_DIR', dirname(__FILE__) . '/..');
-/**
- * DBEngine class
- */
-include_once(BASE_DIR . '/lib/DBEngine.class.php');
-/**
- * PHPMailer
- */
-include_once('PHPMailer.class.php');
+@define('BASE_DIR', __DIR__ . '/..');
 /**
  * Include Auth template functions
  */
@@ -36,7 +28,6 @@ class Auth
     var $is_loggedin = false;
     var $login_msg = '';
     var $is_attempt = false;
-    //var $db;
     var $success;
 
     /**

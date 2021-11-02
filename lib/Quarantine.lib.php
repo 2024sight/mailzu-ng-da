@@ -13,18 +13,6 @@
  * Base directory of application
  */
 @define('BASE_DIR', __DIR__ . '/..');
-/**
- * CmnFns class
- */
-include_once('lib/CmnFns.class.php');
-/**
- * Include AmavisdEngine class
- */
-include_once('lib/AmavisdEngine.class.php');
-/**
- * PHPMailer
- */
-include_once('lib/PHPMailer.class.php');
 
 /**
  * Provide quarantine related functions
@@ -58,9 +46,7 @@ function releaseMessages($emailaddresses, $mail_id_array)
 
     $db = new DBEngine();
 
-    // Set autocommit to false to improve speed of 'RS' flag set up
-    // $result = $db->db->autoCommit(false);
-    // $db->check_for_error($result, 'PEAR DB autoCommit(false)');
+    // Use beginTransaction to improve speed of 'RS' flag set up
     $result = $db->db->beginTransaction();
     $db->check_for_error($result, $db->db);
 
@@ -178,11 +164,9 @@ function releaseMessages($emailaddresses, $mail_id_array)
 
     }
 
-    // Commit, then set autocommit back to true
+    // Commit
     $result = $db->db->commit();
     $db->check_for_error($result, $db->db);
-    // $result = $db->db->autoCommit(true);
-    // $db->check_for_error($result, 'PEAR DB autoCommit(true)');
 
     // Build array of messages whose release failed
     $failed_array = array();
@@ -228,9 +212,7 @@ function updateMessages($flag, $content_type, $emailaddresses, $mail_id_array, $
     $result_array = array();
     $db = new DBEngine();
 
-    // Set autocommit to false to improve speed of $flag set
-    //$result = $db->db->autoCommit(false);
-    //$db->check_for_error($result, 'PEAR DB autoCommit(false)');
+    // Use beginTransaction to improve speed of $flag set
     $result = $db->db->beginTransaction();
     $db->check_for_error($result, $db->db);
 
@@ -286,11 +268,9 @@ function updateMessages($flag, $content_type, $emailaddresses, $mail_id_array, $
         }
     }
 
-    // Commit, then set autocommit back to true
+    // Commit
     $result = $db->db->commit();
     $db->check_for_error($result, $db->db);
-    //$result = $db->db->autoCommit(true);
-    //$db->check_for_error($result, 'PEAR DB autoCommit(true)');
 
     // Return array of messages whose release failed
     return $result_array;

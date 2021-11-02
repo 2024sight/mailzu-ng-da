@@ -3,7 +3,7 @@
  * Initialization file.  Please do not edit.
  * @author Nick Korbel <lqqkout13@users.sourceforge.net>
  * @author Gerely Nagy <gna@r-us.hu>
- * @version 28-10-2021
+ * @version 02-11-2021
  * @package MailZu
  */
 /**
@@ -35,7 +35,7 @@
 // Start the session (do not edit!)
 session_start();
 
-$conf['app']['version'] = '0.10.php74_pdo-mailzu-ng';
+$conf['app']['version'] = '0.11.mailzu-ng-php72';
 $conf['app']['footlink'] = 'https://github.com/gnanet/mailzu';
 
 include_once('constants.php');
@@ -45,5 +45,6 @@ if ($lang = determine_language()) {    // Functions exist in the langs.php file
     set_language($lang);
     load_language_file($lang);
 }
-/********************************************************************/
+
+
 ?>

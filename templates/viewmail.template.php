@@ -199,33 +199,12 @@ function MsgDisplayBody($struct)
     echo '<table width="100%" border="0" cellspacing="0" cellpadding="1" align="center">';
     echo '  <tr>';
     echo '    <td class="stdFont">';
-    MsgParseBody($struct);
+    MailMime::MsgParseBody($struct);
     echo '      <br>';
     echo '    </td>';
     echo '  </tr>';
     echo '</table>';
     MsgDisplayFooter();
-}
-
-/**
- * Print text of text/plain MIME entity
- * $param The body of a mime structure object
- */
-function MsgBodyPlainText($text)
-{
-//	echo nl2br(htmlspecialchars($text));
-    echo "<pre>";
-    echo htmlspecialchars($text);
-    echo "</pre>";
-}
-
-/**
- * Print HTML of text/html MIME entity
- * $param The body of a mime structure object
- */
-function MsgBodyHtmlText($text)
-{
-    echo sanitizeHTML($text);
 }
 
 /**

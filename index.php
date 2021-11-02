@@ -11,11 +11,10 @@
  * License: GPL, see LICENSE
  */
 /**
- * Include Template class
+ * Include autoloader
  */
-include_once('lib/Template.class.php');
+include_once('lib/autoload.php');
 
-// Auth included in Template.php
 $auth = new Auth();
 $t = new Template();
 $msg = '';

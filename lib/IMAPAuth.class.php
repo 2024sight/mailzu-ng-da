@@ -11,11 +11,7 @@
 /**
  * Base directory of application
  */
-@define('BASE_DIR', dirname(__FILE__) . '/..');
-/**
- * CmnFns class
- */
-include_once('lib/CmnFns.class.php');
+@define('BASE_DIR', __DIR__ . '/..');
 
 /**
  * Provide all database access/manipulation functionality for IMAP Auth
@@ -36,7 +32,7 @@ class IMAPAuth
      * Constructor to initialize object
      * @param none
      */
-    function IMAPAuth()
+    function __construct()
     {
         global $conf;
 
