@@ -82,8 +82,45 @@ if ( $result === false ) {
 }
 $q->closeCursor();
 
+$query="DELETE msgs FROM msgs LEFT JOIN msgrcpt ON msgrcpt.mail_id = msgs.mail_id WHERE msgrcpt.rs = 'D';";
+// Prepare query
+$q = $db->prepare($query);
+// Execute query
+$result = $q->execute();
+if ( $result === false ) {
+    $err_array = $q->errorInfo();
+    $err_msg = 'Error['.$err_array[1].']: '.$err_array[2].' SQLSTATE='.$err_array[0];
+    die ('There was an error executing your query ' . $err_msg . PHP_EOL);
+}
+$q->closeCursor();
+
+$query="DELETE FROM quarantine WHERE mail_id IN (SELECT mail_id FROM msgrcpt WHERE rs = 'D');";
+// Prepare query
+$q = $db->prepare($query);
+// Execute query
+$result = $q->execute();
+if ( $result === false ) {
+    $err_array = $q->errorInfo();
+    $err_msg = 'Error['.$err_array[1].']: '.$err_array[2].' SQLSTATE='.$err_array[0];
+    die ('There was an error executing your query ' . $err_msg . PHP_EOL);
+}
+$q->closeCursor();
+
+
+$query="DELETE FROM msgrcpt WHERE rs = 'D';";
+// Prepare query
+$q = $db->prepare($query);
+// Execute query
+$result = $q->execute();
+if ( $result === false ) {
+    $err_array = $q->errorInfo();
+    $err_msg = 'Error['.$err_array[1].']: '.$err_array[2].' SQLSTATE='.$err_array[0];
+    die ('There was an error executing your query ' . $err_msg . PHP_EOL);
+}
+$q->closeCursor();
+
 // Delete unreferenced e-mail addresses
-$query="DELETE FROM maddr WHERE NOT EXISTS (SELECT 1 FROM msgs WHERE sid=id) AND NOT EXISTS (SELECT 1 FROM msgrcpt WHERE rid=id);";
+$query="DELETE FROM maddr WHERE id NOT IN (SELECT sid FROM msgs) AND id NOT IN (SELECT rid FROM msgrcpt);";
 // Prepare query
 $q = $db->prepare($query);
 // Execute query
