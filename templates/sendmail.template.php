@@ -7,7 +7,7 @@
  * License: GPL, see LICENSE
  */
 
-include_once("lib/PHPMailer.class.php");
+
 
 function printsendmail()
 {
@@ -73,7 +73,7 @@ function verifyAndSendMail()
     if ($subject != '' && $body != '') {
         $adminEmail = $conf['app']['adminEmail'];
         $sub = "[ Email Administrator ] Notification from '" . $_SESSION['sessionID'] . "'";
-        $mailer = new PHPMailer();
+        $mailer = new mailzuMailer();
         if (is_array($adminEmail)) {
             foreach ($adminEmail as $email) {
                 $mailer->AddAddress($email, '');

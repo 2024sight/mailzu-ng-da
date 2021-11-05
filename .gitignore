@@ -1,3 +1,6 @@
+# composer stuff
+/vendor/
+composer.lock
 # below ignores the config in the right place
 /config/config.php
 # this should work for everywhere placed config.php
@@ -9,4 +12,3 @@ config.php
 # these are private files for a private implementation
 /msgview.php
 msgview.php
-

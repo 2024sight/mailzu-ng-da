@@ -13,11 +13,6 @@
  * License: GPL, see LICENSE
  */
 
-/**
- * MailMime class
- */
-include_once('lib/MailMime.class.php');
-
 function startMessage()
 {
     ?>

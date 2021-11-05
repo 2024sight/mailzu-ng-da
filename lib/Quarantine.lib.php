@@ -14,6 +14,8 @@
  */
 @define('BASE_DIR', __DIR__ . '/..');
 
+
+
 /**
  * Provide quarantine related functions
  */
@@ -325,7 +327,7 @@ function sendMailToAdmin($myaction, $messages_array)
     }
 
     // Send email
-    $mailer = new PHPMailer();
+    $mailer = new mailzuMailer();
     if (is_array($adminEmail)) {
         foreach ($adminEmail as $email) {
             $mailer->AddAddress($email, '');

@@ -1,0 +1,24 @@
+{
+    "name": "gnanet/mailzu-ng",
+    "description": "mailzu-ng - rewrite of MailZu to be compatible with PHP 7.2+ use PDO for database",
+    "homepage": "https://github.com/gnanet/mailzu",
+    "readme": "README.md",
+    "type": "project",
+    "authors": [
+        {
+            "name": "GNa",
+            "email": "gna@r-us.hu"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "php": ">=7.2",
+        "ext-pdo": "*",
+        "phpmailer/phpmailer": "^6.5"
+    },
+    "autoload": {
+        "classmap": [ "lib/classes/" ],
+        "files": [ "lib/htmlfilter.lib.php", "lib/Quarantine.lib.php" ]
+    }
+
+}

@@ -113,7 +113,7 @@ CREATE TABLE IF NOT EXISTS `maddr` (
   `domain` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `part_email` (`partition_tag`,`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=1224 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `msgrcpt`;
 CREATE TABLE IF NOT EXISTS `msgrcpt` (
