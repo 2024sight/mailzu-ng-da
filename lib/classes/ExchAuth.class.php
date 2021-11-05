@@ -11,7 +11,7 @@
 /**
  * Base directory of application
  */
-@define('BASE_DIR', __DIR__ . '/..');
+@define('BASE_DIR', __DIR__ . '/../..');
 
 /**
  * Provide all database access/manipulation functionality for Exchange Auth

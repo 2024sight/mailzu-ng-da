@@ -11,7 +11,7 @@
 /**
  * Base directory of application
  */
-@define('BASE_DIR', __DIR__ . '/..');
+@define('BASE_DIR', __DIR__ . '/../..');
 
 /**
  * Provide all MIME functionality
@@ -67,6 +67,7 @@ class MailMime
     {
         global $filelist, $fileContent;
         global $errors;
+
         $ctype_p = strtolower(trim($struct->ctype_primary));
         $ctype_s = strtolower(trim($struct->ctype_secondary));
 
@@ -128,10 +129,16 @@ class MailMime
             default:
                 // Save the listed filename or notify the
                 // reader that this mail is not displayed completely
-                $attachment = $struct->d_parameters['filename'];
-                if ($getAttachmentContent)
-                    $fileContent[] = $struct->body;
-                $attachment ? array_push($filelist, $attachment) : $errors['Unsupported MIME objects present'] = true;
+                if (property_exists($struct, "d_parameters")) {
+                    if ($attachment = $struct->d_parameters['filename'] or $attachment = $struct->d_parameters['name']) {
+                        if ( ! @is_array($filelist) ) { $filelist = array(); }
+                        array_push($filelist, $attachment);
+                        if ($getAttachmentContent)
+                            $fileContent[] = $struct->body;
+                    } else {
+                        $errors['Unsupported MIME objects present'] = true;
+                    }
+                }
         }
     }
 
@@ -177,7 +184,10 @@ class MailMime
     public static function FindMultiRel($struct)
     {
         $entities = array();
-        $type = $struct->d_parameters['type'];
+        $type = true;
+        if (property_exists($struct, "d_parameters")) {
+            $type = $struct->d_parameters['type'];
+        }
         // Mozilla bug. Mozilla does not provide the parameter type.
         if (!$type) $type = 'text/html';
         // Bad Headers sometimes have invalid MIME....

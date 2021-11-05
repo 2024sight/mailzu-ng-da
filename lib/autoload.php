@@ -42,7 +42,11 @@ if ($GLOBALS['conf']['app']['safeMode']) {
 /*
  * Require composer autoloader
  */
-require '../vendor/autoload.php';
+if ( @file_exists('../vendor/autoload.php') ) {
+    require '../vendor/autoload.php';
+} else if ( @file_exists(BASE_DIR . '/vendor/autoload.php') ) {
+    require BASE_DIR . '/vendor/autoload.php';
+}
 
 
 if (!function_exists('is_countable')) {

@@ -21,7 +21,7 @@
 /**
  * Base directory of application
  */
-@define('BASE_DIR', __DIR__ . '/..');
+@define('BASE_DIR', __DIR__ . '/../..');
 
 // Define constants for method getGlobalVar()
 @define('INORDER', 0);

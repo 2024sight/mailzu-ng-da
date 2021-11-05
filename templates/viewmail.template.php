@@ -13,6 +13,7 @@
  * License: GPL, see LICENSE
  */
 
+
 function startMessage()
 {
     ?>
@@ -208,6 +209,7 @@ function MsgDisplayBody($struct)
  */
 function MsgDisplayFooter()
 {
+    $query_string = CmnFns::querystring_exclude_vars(array('mail_id', 'recip_email'));
     // Globals read from MailMime.class.php
     global $filelist, $link, $mail_id, $recip_email;
     global $errors;

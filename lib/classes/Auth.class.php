@@ -12,7 +12,7 @@
 /**
  * Base directory of application
  */
-@define('BASE_DIR', __DIR__ . '/..');
+@define('BASE_DIR', __DIR__ . '/../..');
 /**
  * Include Auth template functions
  */
