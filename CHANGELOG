@@ -1,6 +1,25 @@
+MailZu-ng 0.11.mailzu-ng-php72-f4e4e93+1 (08.11.2021)
+----------
+ - changes are in commit message
+
+MailZu-ng 0.11.mailzu-ng-php72-8c13f3a dynamic hash version (08.11.2021):
+----------
+ - PHP Header clean-ups
+ - should have auto-generated version in config/init.php
+
+MailZu-ng 0.11.mailzu-ng-php72-8c13f3a-1 pre-dynamic hash version (05.11.2021):
+----------
+ - Fix loading composer's autoloader
+ - Fix mailmime attachment parsing, Small bugfixes
+ - Resolving issue #13 with old PHPMailer, which lead to re-structure classes and libs by switching to composer, and fixing #14
+ - Add more useful cleanup queries, to remove already deleted spams from tables
+ - Added mailzu-ng database cleanup script written in PHP also using PDO as database access
+ - Better solution for handle partition_tag, if the amavisd config defines one
+ - Possible workaround of maddr email not unique, hardcode SQL condition 'partition_tag = 0'
+
 MailZu-ng 0.11.mailzu-ng-php72 (02.11.2021):
 ----------
--   mailzu-ng-php72 the PHP 7.2 (and hopefully PHP 7.3) compatible rewrite branch
+ -  mailzu-ng-php72 the PHP 7.2 (and hopefully PHP 7.3) compatible rewrite branch
  -  Removed the included PEAR/DB package
  -  First try to rewrite class-loading, adding autoload.php
  -  Loading of class and lib files require ordering (until real autoloader for on demand classloading is implemented)
@@ -9,7 +28,6 @@ MailZu-ng 0.11.mailzu-ng-php72 (02.11.2021):
  -  Fix filename Smtp.class.php to reflect uppercase class name SMTP
  -  Update loader with upper-case filename SMTP.class.php
  -  Apply small trick to DBEngine class to silence the notice if the index key doesn't exist on message listings
-
 
 MailZu-ng 0.10.php74_pdo-mailzu-ng (28.10.2021):
 ----------

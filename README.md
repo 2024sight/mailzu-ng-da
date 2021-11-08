@@ -3,6 +3,9 @@ mailzu-ng
 
 Rewritten MailZu-ng
 Compatible PHP 7.2+, PHP-PDO
+
+Please use `composer install` to load phpmailer package, and generate class autoloader
+
 based on gnanet's fork from https://github.com/zedzedtop/mailzu
 based on zedzedtop's fork from http://sourceforge.net/projects/mailzu/
 
