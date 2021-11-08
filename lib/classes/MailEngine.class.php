@@ -2,10 +2,10 @@
 /**
  * MailEngine class
  * @author Brian Wong <bwsource@users.sourceforge.net>
- * @version 04-02-07
+ * @version 2021-11-08
  * @package MailEngine
  *
- * Copyright (C) 2003 - 2017 MailZu
+ * Copyright (C) 2021 mailzu-ng
  * License: GPL, see LICENSE
  */
 /**

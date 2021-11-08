@@ -6,10 +6,10 @@
  *  all other translations.
  *
  * @author Paolo Cravero <pcravero@as2594.net>
- * @version 08-25-05
+ * @version 2021-11-08
  * @package Languages
  *
- * Copyright (C) 2005 - MailZu
+ * Copyright (C) 2021 mailzu-ng
  * License: GPL, see LICENSE
  */
 ///////////////////////////////////////////////////////////

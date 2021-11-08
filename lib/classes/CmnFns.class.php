@@ -1,21 +1,14 @@
 <?php
 /**
+ * CmnFns class
+ *
  * These functions common to most pages
  *
- * @author Samuel Tran <stran2005@users.sourceforge.net>
- * @author Brian Wong <bwsource@users.sourceforge.net>
- * @author Jeremy Fowler <jfowler06@users.sourceforge.net>
- * @package MailZu
+ * @author Gergely Nagy <gna@r-us.hu>
+ * @version 2021-11-08
+ * @package CmnFns
  *
- * Following functions taken from PhpScheduleIt,
- * @author Nick Korbel <lqqkout13@users.sourceforge.net>
- * @version 04-03-07:
- *    formatTime(), formatDate(), formatDateTime(), minutes_to_hours(), getScriptURL(),
- *    do_error_box(), do_message_box(), getNewLink(), getNewPager(), cleanPostVals(),
- *    get_vert_order(), get_value_order(), write_log(), get_day_name(), redirect(),
- *    print_language_pulldown(), html_activate_links()
- *
- * Copyright (C) 2005 - 2017 MailZu
+ * Copyright (C) 2021 mailzu-ng
  * License: GPL, see LICENSE
  */
 /**

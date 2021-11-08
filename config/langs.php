@@ -4,10 +4,10 @@
  *  translating the text
  * A few ideas and techniques were taken from the phpMyAdmin project
  * @author Nick Korbel <lqqkout13@users.sourceforge.net>
- * @version 28-10-2021
+ * @version 2021-11-08
  * @package Languages
  *
- * Copyright (C) 2003 - 2021 MailZu
+ * Copyright (C) 2021 mailzu-ng
  * License: GPL, see LICENSE
  */
 

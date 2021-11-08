@@ -7,10 +7,10 @@
  *
  * @author Vladimir Volcko <vtg@prolinux.cz>
  * @author Petr Stehlik <pstehlik@sophics.cz>
- * @version 06-05-07
+ * @version 2021-11-08
  * @package Languages
  *
- * Copyright (C) 2005 -2007 MailZu
+ * Copyright (C) 2021 mailzu-ng
  * License: GPL, see LICENSE
  */
 ///////////////////////////////////////////////////////////

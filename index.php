@@ -2,14 +2,16 @@
 /**
  * This file is the login page for the system
  * It provides a login form and will automatically
- * forward any users who have cookies set to ctrlpnl.php
- * @author Nick Korbel <lqqkout13@users.sourceforge.net>
- * @version 06-25-04
- * @package phpScheduleIt
+ * forward any users who are logged in.
  *
- * Copyright (C) 2003 - 2005 phpScheduleIt
+ * @author Gergely Nagy <gna@r-us.hu>
+ * @version 2021-11-08
+ * @package mailzu-ng
+ *
+ * Copyright (C) 2021 mailzu-ng
  * License: GPL, see LICENSE
  */
+
 /**
  * Include autoloader
  */

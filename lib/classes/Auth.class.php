@@ -1,12 +1,14 @@
 <?php
 /**
- * Authorization and login functionality
- * @author Nick Korbel <lqqkout13@users.sourceforge.net>
- * @author David Poole <David.Poole@fccc.edu>
- * @version 02-19-05
- * @package phpScheduleIt
+ * Auth class
  *
- * Copyright (C) 2003 - 2005 phpScheduleIt
+ * Authorization and login functionality
+ *
+ * @author Gergely Nagy <gna@r-us.hu>
+ * @version 2021-11-08
+ * @package Auth
+ *
+ * Copyright (C) 2021 mailzu-ng
  * License: GPL, see LICENSE
  */
 /**

@@ -1,22 +1,24 @@
 <?php
 /**
-* This file sets all the configuration options
-* All configuration options, such as colors,
-*  text sizes, email addresses, etc.
-*  are set in this file.
-* @author Samuel Tran <stran2005@users.sourceforge.net>
-* @author Brian Wong <bwsource@users.sourceforge.net>
-* @author Jeremy Fowler <jfowler06@users.sourceforge.net>
-* @author Gerely Nagy <gna@r-us.hu>
-* @version 28-10-2021
-* @package MailZu
-*/
-/***************************************
-* MailZu                               *
-* Version 0.10                         *
-* https://github.com/gnanet/mailzu-ng  *
-*                                      *
+ * This file sets all the configuration options
+ * All configuration options, such as colors,
+ *  text sizes, email addresses, etc.
+ *  are set in this file.
+ *
+ * @author Gerely Nagy <gna@r-us.hu>
+ *
+ * @package mailzu-ng/config
+ */
+
 /***************************************/
+/*
+ * mailzu-ng
+ *
+ * https://github.com/gnanet/mailzu
+ *
+ */
+/***************************************/
+
 /**
 * Please refer to readme.html and LICENSE for any additional information
 *

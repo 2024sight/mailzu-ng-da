@@ -1,18 +1,18 @@
 <?php
 /**
- * This file is the messages index in quarantine for logged in users.
+ * This file is the messages index in quarantine for logged in admin.
  * It provides a listing of all messages corresponding to:
  * - attachment ('B')
  * - spam ('S')
- * @author Samuel Tran
- * @author Brian Wong
- * @author Jeremy Fowler <jfowler06@users.sourceforge.net>
- * @version 04-03-07
- * @package MailZu
  *
- * Copyright (C) 2005 - 2017 MailZu
+ * @author Gergely Nagy <gna@r-us.hu>
+ * @version 2021-11-08
+ * @package mailzu-ng
+ *
+ * Copyright (C) 2021 mailzu-ng
  * License: GPL, see LICENSE
  */
+
 /**
  * Include autoloader
  */

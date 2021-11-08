@@ -1,9 +1,9 @@
 <?php
 /**
- * @version 04-03-2007
+ * @version 2021-11-08
  * @package Templates
  *
- * Copyright (C) 2005 - 2017 MailZu
+ * Copyright (C) 2021 mailzu-ng
  * License: GPL, see LICENSE
  */
 

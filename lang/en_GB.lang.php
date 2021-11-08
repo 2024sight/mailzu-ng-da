@@ -8,10 +8,10 @@
  * @author Samuel Tran <stran2005@users.sourceforge.net>
  * @author Brian Wong <bwsource@users.sourceforge.net>
  * @author Nicolas Peyrussie <peyrouz@users.sourceforge.net>
- * @version 04-03-07
+ * @version 2021-11-08
  * @package Languages
  *
- * Copyright (C) 2005 - 2017 MailZu
+ * Copyright (C) 2021 mailzu-ng
  * License: GPL, see LICENSE
  */
 ///////////////////////////////////////////////////////////

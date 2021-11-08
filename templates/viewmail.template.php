@@ -1,15 +1,13 @@
 <?php
 /**
- * This file provides output functions for ctrlpnl.php
+ * This file provides output functions for viewmail pages
  * No data manipulation is done in this file
- * @author Nick Korbel <lqqkout13@users.sourceforge.net>
- * @author Adam Moore
- * @author David Poole <David.Poole@fccc.edu>
- * @version 07-09-2018
+ *
+ * @author Gergely Nagy <gna@r-us.hu>
+ * @version 2021-11-08
  * @package Templates
  *
- * Copyright (C) 2003 - 2005 phpScheduleIt
- * Copyright (C) 2005 - 2018 MailZu
+ * Copyright (C) 2021 mailzu-ng
  * License: GPL, see LICENSE
  */
 

@@ -2,14 +2,15 @@
 /**
  * Transition page that handles the form that sends
  * out error report to Admin
- * @author Samuel Tran
- * @author Jeremy Fowler
- * @version 03-30-07
- * @package MailZu
  *
- * Copyright (C) 2005 - 2017 MailZu
+ * @author Gergely Nagy <gna@r-us.hu>
+ * @version 2021-11-08
+ * @package mailzu-ng
+ *
+ * Copyright (C) 2021 mailzu-ng
  * License: GPL, see LICENSE
  */
+
 /**
  * Include autoloader
  */

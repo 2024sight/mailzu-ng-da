@@ -2,10 +2,10 @@
 /**
  * LDAPEngine class
  * @author Samuel Tran
- * @version 04-24-2005
+ * @version 2021-11-08
  * @package LDAPEngine
  *
- * Copyright (C) 2005 - 2017 MailZu
+ * Copyright (C) 2021 mailzu-ng
  * License: GPL, see LICENSE
  */
 /**

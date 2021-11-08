@@ -3,10 +3,10 @@
  * French (fr) help translation file.
  *
  * @author Samuel Tran <stran2005@users.sourceforge.net>
- * @version 12/15/2005
+ * @version 2021-11-08
  * @package Languages
  *
- * Copyright (C) 2003 - 2017 MailZu
+ * Copyright (C) 2021 mailzu-ng
  * License: GPL, see LICENSE
  */
 ///////////////////////////////////////////////////////////

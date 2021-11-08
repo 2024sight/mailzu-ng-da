@@ -1,11 +1,11 @@
 <?php
 /**
  * ExchAuth class
- * @version 07-23-2005
+ * @version 2021-11-08
  * @Author Bogdan Baliuc <b.baliuc@rogers.com>
  * @package ExchAuth
  *
- * Copyright (C) 2005 - 2017 MailZu
+ * Copyright (C) 2021 mailzu-ng
  * License: GPL, see LICENSE
  */
 /**

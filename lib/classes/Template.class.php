@@ -2,13 +2,12 @@
 
 /**
  * This file provides output functions
- * @author Nick Korbel <lqqkout13@users.sourceforge.net>
- * @author Gergely Nagy <nagy.gergely@gnanet.net>
- * @version 09-09-2018
- * @package MailZu
- * @package phpScheduleIt
  *
- * Copyright (C) 2003 - 2018 MailZu
+ * @author Gergely Nagy <gna@r-us.hu>
+ * @version 2021-11-08
+ * @package Template
+ *
+ * Copyright (C) 2021 mailzu-ng
  * License: GPL, see LICENSE
  */
 /**

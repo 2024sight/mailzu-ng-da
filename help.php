@@ -3,11 +3,12 @@
  * This is the pop-up help file for the system
  * This function simply prints out an HTML help file for
  * users to reference
- * @author Nick Korbel <lqqkout13@users.sourceforge.net>
- * @version 07-10-04
- * @package phpScheduleIt
  *
- * Copyright (C) 2003 - 2005 phpScheduleIt
+ * @author Gergely Nagy <gna@r-us.hu>
+ * @version 2021-11-08
+ * @package mailzu-ng
+ *
+ * Copyright (C) 2021 mailzu-ng
  * License: GPL, see LICENSE
  */
 

@@ -3,27 +3,11 @@
  * This file provides common output functions thar are used by other templates
  * No data manipulation is done in this file
  *
- * Following functions were borrowed from phpScheduleIt Project:
- *    - showQuickLinks()
- *    - printCpanelBr()
- *    - getShowHide()
- *    - getShowHideHeaders()
- *    - startQuickLinksCol()
- *    - startDataDisplayCol()
- *    - endDataDisplayCol()
- * @author Nick Korbel <lqqkout13@users.sourceforge.net>
- * @author Adam Moore
- * @author David Poole <David.Poole@fccc.edu>
- * @version 04-03-07
+ * @author Gergely Nagy <gna@r-us.hu>
+ * @version 2021-11-08
  * @package Templates
- * Copyright (C) 2003 - 2005 phpScheduleIt
  *
- * New functions added for MailZu
- * @author Samuel Tran <stran2005@users.sourceforge.net>
- * @author Brian Wong <bwsource@users.sourceforge.net>
- * @author Nicolas Peyrussie <peyrouz@users.sourceforge.net>
- * @author Jeremy Fowler <jfowler06@users.sourceforge.net>
- * Copyright (C) 2005 - 2017 MailZu
+ * Copyright (C) 2021 mailzu-ng
  * License: GPL, see LICENSE
  */
 

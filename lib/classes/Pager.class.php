@@ -1,11 +1,12 @@
 <?php
 /**
  * Paging class to iterate through limited recordsets
+ *
  * @author Nick Korbel <lqqkout13@users.sourceforge.net>
- * @version 02-02-05
+ * @version 2021-11-08
  * @package Pager
  *
- * Copyright (C) 2003 - 2005 phpScheduleIt
+ * Copyright (C) 2021 mailzu-ng
  * License: GPL, see LICENSE
  * /
  * /**

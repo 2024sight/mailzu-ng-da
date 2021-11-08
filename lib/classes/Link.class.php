@@ -1,12 +1,13 @@
 <?php
 /**
  * XHTML link class
+ *
  * Creates or prints an XHTML valid link
  * @author Nick Korbel <lqqkout13@users.sourceforge.net>
- * @version 01-20-05
+ * @version 2021-11-08
  * @package Link
  *
- * Copyright (C) 2003 - 2005 phpScheduleIt
+ * Copyright (C) 2021 mailzu-ng
  * License: GPL, see LICENSE
  */
 

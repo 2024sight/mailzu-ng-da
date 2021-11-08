@@ -6,10 +6,10 @@
  *
  * @author Brian Wong <bwsource@users.sourceforge.net>
  * @translator Ricardo Muñoz <rmunoz@warp.es>
- * @version 03-07-06
+ * @version 2021-11-08
  * @package Languages
  *
- * Copyright (C) 2003 - 2017 MailZu
+ * Copyright (C) 2021 mailzu-ng
  * License: GPL, see LICENSE
  */
 ///////////////////////////////////////////////////////////

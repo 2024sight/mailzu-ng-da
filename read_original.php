@@ -1,17 +1,15 @@
 <?php
 /**
- * This file is the control panel, or "home page" for logged in users.
- * It provides a listing of all upcoming reservations
- *  and functionality to modify or delete them. It also
- *  provides links to all other parts of the system.
- * @author Brian Wong <bwsource@users.sourceforge.net>
- * @author Jeremy Fowler
- * @version 04-03-07
- * @package MailZu
+ * This file displays the quarantined message in raw
  *
- * Copyright (C) 2003 - 2017 MailZu
+ * @author Gergely Nagy <gna@r-us.hu>
+ * @version 2021-11-08
+ * @package mailzu-ng
+ *
+ * Copyright (C) 2021 mailzu-ng
  * License: GPL, see LICENSE
  */
+
 /**
  * Include autoloader
  */

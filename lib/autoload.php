@@ -1,15 +1,16 @@
 <?php
 /**
- * This loads configuration, and calls autoladers
+ * This loads configuration, and calls other autoladers
  *
  * @author Gergely Nagy <gna@r-us.hu>
  * @package mailzu-ng
  *
- * @version 05-11-2021
+ * @version 2021-11-08
  *
  * Copyright (C) 2021 mailzu-ng
  * License: GPL, see LICENSE
  */
+
 /**
  * Base directory of application
  */

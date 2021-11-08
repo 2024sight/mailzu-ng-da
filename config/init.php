@@ -1,11 +1,15 @@
 <?php
 /**
- * Initialization file.  Please do not edit.
- * @author Nick Korbel <lqqkout13@users.sourceforge.net>
- * @author Gerely Nagy <gna@r-us.hu>
- * @version 02-11-2021
- * @package MailZu
+ * Initialization file.
+ *
+ * @author Gergely Nagy <gna@r-us.hu>
+ * @version 2021-11-08
+ * @package mailzu-ng
+ *
+ * Copyright (C) 2021 mailzu-ng
+ * License: GPL, see LICENSE
  */
+
 /**
  * Please refer to readme.html and LICENSE for any additional information
  *
@@ -35,7 +39,7 @@
 // Start the session (do not edit!)
 session_start();
 
-$conf['app']['version'] = '0.11.mailzu-ng-php72';
+$conf['app']['version'] = '0.11.mailzu-ng-php72-8c13f3a';
 $conf['app']['footlink'] = 'https://github.com/gnanet/mailzu';
 
 include_once('constants.php');

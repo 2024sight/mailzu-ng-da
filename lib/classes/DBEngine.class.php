@@ -1,21 +1,16 @@
 <?php
 /**
  * DBEngine class
+ * This uses PDO for database access
  *
- * @author Samuel Tran <stran2005@users.sourceforge.net>
- * @author Brian Wong <bwsource@users.sourceforge.net>
- * @author Jeremy Fowler <jfowler06@users.sourceforge.net>
- * @version 29-08-2017
+ * @author Gergely Nagy <gna@r-us.hu>
+ * @version 2021-11-08
  * @package DBEngine
  *
- * Following functions taken from PhpScheduleIt,
- * @author Nick Korbel <lqqkout13@users.sourceforge.net>
- * @version 03-29-05:
- *   db_connect(), check_for_error(), cleanRow(), get_err()
- *
- * Copyright (C) 2005 - 2017 MailZu
+ * Copyright (C) 2021 mailzu-ng
  * License: GPL, see LICENSE
  */
+
 /**
  * Base directory of application
  */

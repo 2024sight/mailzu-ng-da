@@ -1,13 +1,15 @@
 <?php
 /**
  * MailMime class
- * @author Brian Wong <bwsource@users.sourceforge.net>
- * @version 04-12-05
- * @package MailEngine
  *
- * Copyright (C) 2003 - 2017 MailZu
+ * @author Gergely Nagy <gna@r-us.hu>
+ * @version 2021-11-08
+ * @package MailMime
+ *
+ * Copyright (C) 2021 mailzu-ng
  * License: GPL, see LICENSE
  */
+
 /**
  * Base directory of application
  */

@@ -1,11 +1,11 @@
 <?php
 /**
  * IMAPAuth class
- * @version 08-11-2005
+ * @version 2021-11-08
  * @Author Samuel Tran
  * @package IMAPAuth
  *
- * Copyright (C) 2005 - 2017 MailZu
+ * Copyright (C) 2021 mailzu-ng
  * License: GPL, see LICENSE
  */
 /**

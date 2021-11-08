@@ -2,14 +2,14 @@
 /**
  * DBAuth class
  * @author Samuel Tran
- * @version 04-26-2005
+ * @version 2021-11-08
  * @package DBAuth
  *
  * Following functions taken from PhpScheduleIt,
  *    Nick Korbel <lqqkout13@users.sourceforge.net>:
  * db_connect(), cleanRow(), get_err()
  *
- * Copyright (C) 2005 - 2017 MailZu
+ * Copyright (C) 2021 mailzu-ng
  * License: GPL, see LICENSE
  */
 /**
