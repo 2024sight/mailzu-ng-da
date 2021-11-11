@@ -45,7 +45,8 @@ startDataDisplayCol();
 $mail_id = CmnFns::get_mail_id();
 $content_type = CmnFns::getGlobalVar('ctype', GET);
 $recip_email = CmnFns::getGlobalVar('recip_email', GET);
-$query_string = CmnFns::querystring_exclude_vars(array('mail_id', 'recip_email'));
+$load_images_var = CmnFns::getGlobalVar('load_images', GET);
+$query_string = CmnFns::querystring_exclude_vars(array('mail_id', 'recip_email', 'load_images'));
 
 
 if (!Auth::isMailAdmin() && !in_array($recip_email, $_SESSION['sessionMail'])) {

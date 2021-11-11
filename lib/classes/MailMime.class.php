@@ -55,9 +55,19 @@ class MailMime
      * Print HTML of text/html MIME entity
      * $param The body of a mime structure object
      */
-    public static function MsgBodyHtmlText($text)
+    public static function MsgBodyHtmlText($text, $load_images = false)
     {
-        echo self::sanitizeHTML($text);
+        if ( $load_images) {
+            $block_external_images = false;
+        } else {
+            $block_external_images = true;
+        }
+        if (isset($_COOKIE['lang']) && file_exists("img/" . substr($_COOKIE['lang'], 0, 2) . ".blocked_img.png")) {
+            $secremoveimg = "img/" . substr($_COOKIE['lang'], 0, 2) . ".blocked_img.png";
+        } else {
+            $secremoveimg = "img/blocked_img.png";
+        }
+        echo self::bodyHTMLFilter($text, $secremoveimg, $block_external_images);
     }
 
     /**
@@ -65,7 +75,7 @@ class MailMime
      * $param The mime structure object
      */
 
-    public static function MsgParseBody($struct, $getAttachmentContent = false)
+    public static function MsgParseBody($struct, $getAttachmentContent = false, $load_images = false)
     {
         global $filelist, $fileContent;
         global $errors;
@@ -80,13 +90,13 @@ class MailMime
                         // Handle multipart/alternative parts
                         $alt_entity = self::FindMultiAlt($struct->parts);
                         // Ignore if we return false NEEDS WORK
-                        if ($alt_entity) self::MsgParseBody($alt_entity, $getAttachmentContent);
+                        if ($alt_entity) self::MsgParseBody($alt_entity, $getAttachmentContent, $load_images);
                         break;
                     case "related":
                         // Handle multipart/related parts
                         $rel_entities = self::FindMultiRel($struct);
                         foreach ($rel_entities as $ent) {
-                            self::MsgParseBody($ent, $getAttachmentContent);
+                            self::MsgParseBody($ent, $getAttachmentContent, $load_images);
                         }
                         break;
                     default:
@@ -94,7 +104,7 @@ class MailMime
                         // Recursively process nested mime entities
                         if (is_array($struct->parts) || is_object($struct->parts)) {
                             foreach ($struct->parts as $cur_part) {
-                                self::MsgParseBody($cur_part, $getAttachmentContent);
+                                self::MsgParseBody($cur_part, $getAttachmentContent, $load_images);
                             }
                         } else {
                             $errors['Invalid or Corrupt MIME Detected.'] = true;
@@ -121,7 +131,7 @@ class MailMime
                     // HTML text
                     case "html":
                         if (! $getAttachmentContent)
-                            self::MsgBodyHtmlText($struct->body);
+                            self::MsgBodyHtmlText($struct->body, $load_images);
                         break;
                     // Text type we do not support
                     default:
@@ -132,13 +142,31 @@ class MailMime
                 // Save the listed filename or notify the
                 // reader that this mail is not displayed completely
                 if (property_exists($struct, "d_parameters")) {
-                    if ($attachment = $struct->d_parameters['filename'] or $attachment = $struct->d_parameters['name']) {
+                    if (property_exists($struct, "disposition") && $struct->disposition == "attachment" ) {
+                        if ($attachment = $struct->d_parameters['filename'] or $attachment = $struct->d_parameters['name']) {
+                            if ( ! @is_array($filelist) ) { $filelist = array(); }
+                            array_push($filelist, $attachment);
+                            if ($getAttachmentContent)
+                                $fileContent[] = $struct->body;
+                        } else {
+                            $errors['Unsupported MIME objects present'] = true;
+                        }
+                    } else if (property_exists($struct, "disposition") && $struct->disposition == "inline" && isset($struct->headers['content-id']) && ($struct->ctype_primary == 'image') ) {
+                        if ($attachment = trim($struct->headers['content-id'],'<>')) {
+                            if ( ! @is_array($filelist) ) { $filelist = array(); }
+                            $filelist[$attachment]['name'] = $struct->ctype_parameters['name'];
+                            $filelist[$attachment]['cid'] = trim($struct->headers['content-id'],'<>');
+                            $fileContent[$attachment]['body'] = $struct->body;
+                            $fileContent[$attachment]['ctype'] = $struct->ctype_primary."/".$struct->ctype_secondary;
+                        }
+                    }
+                } else if ( isset($struct->headers['content-id']) && ($struct->ctype_primary == 'image') ) {
+                    if ($attachment = trim($struct->headers['content-id'],'<>')) {
                         if ( ! @is_array($filelist) ) { $filelist = array(); }
-                        array_push($filelist, $attachment);
-                        if ($getAttachmentContent)
-                            $fileContent[] = $struct->body;
-                    } else {
-                        $errors['Unsupported MIME objects present'] = true;
+                        $filelist[$attachment]['name'] = $struct->ctype_parameters['name'];
+                        $filelist[$attachment]['cid'] = trim($struct->headers['content-id'],'<>');
+                        $fileContent[$attachment]['body'] = $struct->body;
+                        $fileContent[$attachment]['ctype'] = $struct->ctype_primary."/".$struct->ctype_secondary;
                     }
                 }
         }
@@ -159,7 +187,7 @@ class MailMime
             foreach ($parts as $cur_part) {
                 $type = self::GetCtype($cur_part);
                 if ($type == 'multipart/related') {
-                    $type = $cur_part->d_parameters['type'];
+                        @$type = $cur_part->d_parameters['type'];
                     // Mozilla bug. Mozilla does not provide the parameter type.
                     if (!$type) $type = 'text/html';
                 }
@@ -205,16 +233,16 @@ class MailMime
         return $entities;
     }
 
-    // Wrapper script for htmlfilter. Settings taken
-    // from SquirrelMail
-    public static function sanitizeHTML($body)
+    // Wrapper function for htmlfilter, taken from src
+
+    public static function bodyHTMLFilter($body, $trans_image_path, $block_external_images = false)
     {
-        if (isset($_COOKIE['lang']) && file_exists("img/" . substr($_COOKIE['lang'], 0, 2) . ".blocked_img.png")) {
-            $secremoveimg = "img/" . substr($_COOKIE['lang'], 0, 2) . ".blocked_img.png";
-        } else {
-            $secremoveimg = "img/blocked_img.png";
-        }
-        $tag_list = Array(
+    $mail_id = CmnFns::get_mail_id();
+    $recip_email = CmnFns::getGlobalVar('recip_email', GET);
+    $query_string = CmnFns::querystring_exclude_vars(array('mail_id', 'recip_email'));
+
+
+        $tag_list = array(
             false,
             "object",
             "meta",
@@ -228,29 +256,30 @@ class MailMime
             "marquee"
         );
 
-        $rm_tags_with_content = Array(
+        $rm_tags_with_content = array(
             "script",
             "applet",
             "embed",
             "title",
             "frameset",
-            "xml",
-            "style"
+            "xmp",
+            "xml"
         );
 
-        $self_closing_tags = Array(
+        $self_closing_tags =  array(
             "img",
             "br",
             "hr",
-            "input"
+            "input",
+            "outbind"
         );
 
         $force_tag_closing = true;
 
-        $rm_attnames = Array(
+        $rm_attnames = array(
             "/.*/" =>
-                Array(
-                    "/target/i",
+                array(
+                    // "/target/i",
                     "/^on.*/i",
                     "/^dynsrc/i",
                     "/^data.*/i",
@@ -258,84 +287,121 @@ class MailMime
                 )
         );
 
-        $bad_attvals = Array(
+        $bad_attvals = array(
             "/.*/" =>
-                Array(
-                    "/^src|background/i" =>
-                        Array(
-                            Array(
-                                "/^([\'\"])\s*\S+script\s*:.*([\'\"])/si",
-                                "/^([\'\"])\s*mocha\s*:*.*([\'\"])/si",
-                                "/^([\'\"])\s*about\s*:.*([\'\"])/si",
-                                "/^([\'\"])\s*https*:.*([\'\"])/si",
-                                "/^([\'\"])\s*cid*:.*([\'\"])/si"
-                            ),
-                            Array(
-                                "\\1$secremoveimg\\2",
-                                "\\1$secremoveimg\\2",
-                                "\\1$secremoveimg\\2",
-                                "\\1$secremoveimg\\2",
-                                "\\1$secremoveimg\\2"
-                            )
-                        ),
-                    "/^href|action/i" =>
-                        Array(
-                            Array(
-                                "/^([\'\"])\s*\S+script\s*:.*([\'\"])/si",
-                                "/^([\'\"])\s*mocha\s*:*.*([\'\"])/si",
-                                "/^([\'\"])\s*about\s*:.*([\'\"])/si"
-                            ),
-                            Array(
-                                "\\1#\\1",
-                                "\\1#\\1",
-                                "\\1#\\1",
-                                "\\1#\\1"
-                            )
-                        ),
-                    "/^style/i" =>
-                        Array(
-                            Array(
-                                "/expression/i",
-                                "/binding/i",
-                                "/behaviou*r/i",
-                                "/include-source/i",
-                                "/url\s*\(\s*([\'\"])\s*\S+script\s*:.*([\'\"])\s*\)/si",
-                                "/url\s*\(\s*([\'\"])\s*mocha\s*:.*([\'\"])\s*\)/si",
-                                "/url\s*\(\s*([\'\"])\s*about\s*:.*([\'\"])\s*\)/si",
-                                "/(.*)\s*:\s*url\s*\(\s*([\'\"]*)\s*\S+script\s*:.*([\'\"]*)\s*\)/si",
-                                "/url\(([\'\"])\s*https*:.*([\'\"])\)/si"
-                            ),
-                            Array(
-                                "idiocy",
-                                "idiocy",
-                                "idiocy",
-                                "idiocy",
-                                "url(\\1#\\1)",
-                                "url(\\1#\\1)",
-                                "url(\\1#\\1)",
-                                "url(\\1#\\1)",
-                                "url(\\1#\\1)",
-                                "\\1:url(\\2#\\3)",
-                                "url(\\1$secremoveimg\\1)"
-                            )
-                        )
+            array(
+                "/^src|background/i" =>
+                array(
+                    array(
+                        '/^([\'"])\s*\S+script\s*:.*([\'"])/si',
+                        '/^([\'"])\s*mocha\s*:*.*([\'"])/si',
+                        '/^([\'"])\s*about\s*:.*([\'"])/si'
+                    ),
+                    array(
+                        "\\1$trans_image_path\\2",
+                        "\\1$trans_image_path\\2",
+                        "\\1$trans_image_path\\2"
+                    )
+                ),
+                "/^href|action/i" =>
+                array(
+                    array(
+                        '/^([\'"])\s*\S+script\s*:.*([\'"])/si',
+                        '/^([\'"])\s*mocha\s*:*.*([\'"])/si',
+                        '/^([\'"])\s*about\s*:.*([\'"])/si'
+                    ),
+                    array(
+                        "\\1#\\1",
+                        "\\1#\\1",
+                        "\\1#\\1"
+                    )
+                ),
+                "/^style/i" =>
+                array(
+                    array(
+                        "/\/\*.*\*\//",
+                        "/expression/i",
+                        "/binding/i",
+                        "/behaviou*r/i",
+                        "/include-source/i",
+                        '/position\s*:/i',
+                        '/(\\\\)?u(\\\\)?r(\\\\)?l(\\\\)?/i',
+                        '/url\s*\(\s*([\'"])\s*\S+script\s*:.*([\'"])\s*\)/si',
+                        '/url\s*\(\s*([\'"])\s*mocha\s*:.*([\'"])\s*\)/si',
+                        '/url\s*\(\s*([\'"])\s*about\s*:.*([\'"])\s*\)/si',
+                        '/(.*)\s*:\s*url\s*\(\s*([\'"]*)\s*\S+script\s*:.*([\'"]*)\s*\)/si'
+                    ),
+                    array(
+                        "",
+                        "idiocy",
+                        "idiocy",
+                        "idiocy",
+                        "idiocy",
+                        "idiocy",
+                        "url",
+                        "url(\\1#\\1)",
+                        "url(\\1#\\1)",
+                        "url(\\1#\\1)",
+                        "\\1:url(\\2#\\3)"
+                    )
                 )
+            )
         );
 
-        $add_attr_to_tag = Array("/^a$/i" => Array('target' => '"_new"'));
+        if ($block_external_images) {
+            array_push(
+                $bad_attvals['/.*/']['/^src|background/i'][0],
+                '/^([\'\"])\s*https*:.*([\'\"])/si'
+            );
+            array_push(
+                $bad_attvals['/.*/']['/^src|background/i'][1],
+                "\\1$trans_image_path\\1"
+            );
+            array_push(
+                $bad_attvals['/.*/']['/^src|background/i'][0],
+                '/^([\'\"])\s*cid*:.*([\'\"])/si'
+            );
+            array_push(
+                $bad_attvals['/.*/']['/^src|background/i'][1],
+                "\\1$trans_image_path\\1"
+            );
+            array_push(
+                $bad_attvals['/.*/']['/^style/i'][0],
+                '/url\(([\'\"])\s*https*:.*([\'\"])\)/si'
+            );
+            array_push(
+                $bad_attvals['/.*/']['/^style/i'][1],
+                "url(\\1$trans_image_path\\1)"
+            );
+        } else {
+            array_push(
+                $bad_attvals['/.*/']['/^src|background/i'][0],
+                '/^([\'\"])\s*cid*:(.*)([\'\"])/si'
+            );
+            array_push(
+                $bad_attvals['/.*/']['/^src|background/i'][1],
+                "\\1get_attachment.php?mail_id=" . urlencode($mail_id) . "&amp;recip_email=" . urlencode($recip_email) . "&amp;fileid=\\2&amp;d_inline=1" . "&amp;".$query_string."\\3"
+            );
+        }
 
-        $trusted_html = sanitize($body,
+        $add_attr_to_tag = array(
+            "/^a$/i" =>
+                array('target' => '"_blank"')
+        );
+
+        $trusted = sanitize(
+            $body,
             $tag_list,
             $rm_tags_with_content,
             $self_closing_tags,
             $force_tag_closing,
             $rm_attnames,
             $bad_attvals,
-            $add_attr_to_tag
+            $add_attr_to_tag,
+            $trans_image_path,
+            $block_external_images
         );
-
-        return $trusted_html;
+        return $trusted;
     }
-
 }
 

@@ -11,6 +11,8 @@
  * License: GPL, see LICENSE
  */
 
+// Get Link object
+$link = CmnFns::getNewLink();
 
 function startMessage()
 {
@@ -117,6 +119,8 @@ function MsgPrintHeaderFull($struct, $hdr_list)
  */
 function MsgDisplayOptions($mail_id, $recip_email)
 {
+    global $conf;
+    global $link;
     // Double encode needed for javascript pass-through
     $enc_mail_id = urlencode(urlencode($mail_id));
     $enc_recip_email = urlencode(urlencode($recip_email));
@@ -124,13 +128,38 @@ function MsgDisplayOptions($mail_id, $recip_email)
     <table class="stdFont" width="100%">
         <tr>
             <td class="alignleft">
+<?php if ( "My Quarantine" == $_SESSION['sessionNav'] ) {
+$link->doLink('messagesIndex.php?ctype=A', "&#8249;&#8249; ".translate('BackMessageIndex'));
+} else if ( "Site Quarantine" == $_SESSION['sessionNav'] ) {
+$link->doLink('messagesAdmin.php?ctype=A&searchOnly=' . $conf['app']['searchOnly'], "&#8249;&#8249; ".translate('BackMessageIndex'));
+} else { ?>
                 <a href="javascript: history.back();">&#8249;&#8249; <?php echo translate('BackMessageIndex'); ?> </a>
+<?php } ?>
             </td>
             <td class="alignright">
                 <a href="javascript: ViewOriginal('<?php echo $enc_mail_id ?>','<?php echo $enc_recip_email ?>');"> <?php echo translate('ViewOriginal'); ?></a>
                 |
                 <a href="javascript: void(1);" onclick="showHideFullHeaders('headers');">
                     <?php echo translate('ToggleHeaders'); ?></a>
+<?php
+if ( Auth::isMailAdmin() ) {
+                $load_images_var = CmnFns::getGlobalVar('load_images', GET);
+                if ( @$load_images_var == 'yes' ) {
+                    $query_string = CmnFns::querystring_exclude_vars(array('load_images'));
+?>
+                |
+                <a href="<?php echo $_SERVER['PHP_SELF']."?".$query_string; ?>" target="_self">
+                    <?php echo 'Block images'; ?></a>
+<?php
+                } else {
+?>
+                |
+                <a href="<?php echo $_SERVER['PHP_SELF']."?".$_SERVER['QUERY_STRING']."&load_images=yes"; ?>" target="_self">
+                    <?php echo 'Load images'; ?></a>
+<?php
+                }
+}
+?>
             </td>
         </tr>
     </table>
@@ -190,10 +219,13 @@ function MsgDisplayHeaders($struct)
  */
 function MsgDisplayBody($struct)
 {
+    $load_images = false;
+    $load_images_var = CmnFns::getGlobalVar('load_images', GET);
+    if ( $load_images_var == 'yes' ) { $load_images = true; };
     echo '<table width="100%" border="0" cellspacing="0" cellpadding="1" align="center">';
     echo '  <tr>';
     echo '    <td class="stdFont">';
-    MailMime::MsgParseBody($struct);
+    MailMime::MsgParseBody($struct, false, $load_images);
     echo '      <br>';
     echo '    </td>';
     echo '  </tr>';
@@ -207,7 +239,7 @@ function MsgDisplayBody($struct)
  */
 function MsgDisplayFooter()
 {
-    $query_string = CmnFns::querystring_exclude_vars(array('mail_id', 'recip_email'));
+    $query_string = CmnFns::querystring_exclude_vars(array('mail_id', 'recip_email', 'load_images'));
     // Globals read from MailMime.class.php
     global $filelist, $link, $mail_id, $recip_email;
     global $errors;
@@ -222,15 +254,27 @@ function MsgDisplayFooter()
         if ($filelist) {
             echo '--Attachments--<br>';
             foreach ($filelist as $fileid => $file) {
-                echo $link->getLink('get_attachment.php' . '?mail_id=' . urlencode($mail_id) .
-                        "&amp;recip_email=" . urlencode($recip_email) .
-                        "&amp;fileid=" . $fileid .
-                        "&amp;$query_string", $file, '', '', '', false) . " ";
-                echo $link->getLink('get_attachment.php' . '?mail_id=' . urlencode($mail_id) .
-                        "&amp;recip_email=" . urlencode($recip_email) .
-                        "&amp;fileid=" . $fileid .
-                        "&amp;virustotal=1" .
-                        "&amp;$query_string", " [ VirusTotal ] ", '', '', '', false, "_blank") . "<br>";
+                if (! is_array($file) ) {
+                    echo $link->getLink('get_attachment.php' . '?mail_id=' . urlencode($mail_id) .
+                            "&amp;recip_email=" . urlencode($recip_email) .
+                            "&amp;fileid=" . $fileid .
+                            "&amp;$query_string", $file, '', '', '', false) . " ";
+                    echo $link->getLink('get_attachment.php' . '?mail_id=' . urlencode($mail_id) .
+                            "&amp;recip_email=" . urlencode($recip_email) .
+                            "&amp;fileid=" . $fileid .
+                            "&amp;virustotal=1" .
+                            "&amp;$query_string", " [ VirusTotal ] ", '', '', '', false, "_blank") . "<br>";
+                } else {
+                    echo $link->getLink('get_attachment.php' . '?mail_id=' . urlencode($mail_id) .
+                            "&amp;recip_email=" . urlencode($recip_email) .
+                            "&amp;fileid=" . $fileid .
+                            "&amp;$query_string", $file['name'], '', '', '', false) . " ";
+                    echo $link->getLink('get_attachment.php' . '?mail_id=' . urlencode($mail_id) .
+                            "&amp;recip_email=" . urlencode($recip_email) .
+                            "&amp;fileid=" . $fileid .
+                            "&amp;d_inline=1" .
+                            "&amp;$query_string", " [ Display CID:".$fileid." ] ", '', '', '', false, "_blank") . "<br>";
+                }
             }
         }
         if ($errors) {

@@ -3,7 +3,6 @@
  * This file is the 'get attachment' functionality. Logged in users can:
  * - download an attachment
  *
- *
  * @author Gergely Nagy <gna@r-us.hu>
  * @version 2021-11-08
  * @package mailzu-ng
@@ -41,7 +40,12 @@ if (!Auth::isMailAdmin() && !in_array($recip_email, $_SESSION['sessionMail'])) {
 
         if (isset($fileContent[$_GET['fileid']])) {
 
-            if (isset($_GET['virustotal'])) {
+            if (isset($_GET['d_inline'])) {
+                header('Content-Type: '.$fileContent[$_GET['fileid']]['ctype']);
+                header("Content-Transfer-Encoding: Binary");
+                echo $fileContent[$_GET['fileid']]['body'];
+                exit;
+            } else if (isset($_GET['virustotal'])) {
                 header('Location: https://www.virustotal.com/#/file/' . hash('sha256', $fileContent[$_GET['fileid']]) . '/detection');
                 exit;
             } else {

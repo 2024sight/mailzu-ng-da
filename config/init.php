@@ -39,7 +39,7 @@
 // Start the session (do not edit!)
 session_start();
 
-$conf['app']['version'] = '0.11.mailzu-ng-php72-4d31f83+1';
+$conf['app']['version'] = '0.11.mailzu-ng-php72-194398f+1';
 $conf['app']['footlink'] = 'https://github.com/gnanet/mailzu';
 
 include_once('constants.php');
