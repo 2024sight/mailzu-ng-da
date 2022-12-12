@@ -102,7 +102,7 @@ class Template
                         <?php
                         echo translate('Welcome Back', array($_SESSION['sessionName'], 1));
                         // Notify if the person logged in is admin
-                        echo(Auth::isMailAdmin() ? ' (' . translate('Administrator') . ')' : '');
+                        echo(Auth::isAdmin() ? ' (' . translate('Administrator') . ')' : '');
                         ?>
                     </h4>
                 </td>

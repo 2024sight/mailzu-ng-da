@@ -25,7 +25,7 @@ $content_type = CmnFns::getGlobalVar('ctype', GET);
 $recip_email = CmnFns::getGlobalVar('recip_email', GET);
 $query_string = CmnFns::querystring_exclude_vars(array('mail_id', 'recip_email'));
 
-if (!Auth::isMailAdmin() && !in_array($recip_email, $_SESSION['sessionMail'])) {
+if (!Auth::isAdmin() && !in_array($recip_email, $_SESSION['sessionMail'])) {
     CmnFns::do_error_box(translate('Access Denied'));
 } else {
 

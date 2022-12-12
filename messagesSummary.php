@@ -46,7 +46,7 @@ startQuickLinksCol();
 showQuickLinks();        // Print out My Quick Links
 startDataDisplayCol();
 
-if (!Auth::isMailAdmin() || !$conf['app']['siteSummary']) {
+if (!Auth::isAdmin() || !$conf['app']['siteSummary']) {
     CmnFns::do_error_box(translate('Access Denied'));
 
 } else {

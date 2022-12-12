@@ -49,7 +49,7 @@ startQuickLinksCol();
 showQuickLinks();        // Print out My Quick Links
 startDataDisplayCol();
 
-if (!Auth::isMailAdmin()) {
+if (!Auth::isAdmin()) {
     CmnFns::do_error_box(translate('Access Denied'));
 } else {
     // Arbitrary type for Admin

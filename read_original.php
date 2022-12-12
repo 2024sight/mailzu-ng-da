@@ -36,7 +36,7 @@ $t->startMain();
 $mail_id = CmnFns::getGlobalVar('mail_id', GET);
 $recip_email = CmnFns::getGlobalVar('recip_email', GET);
 
-if (!Auth::isMailAdmin() && !in_array($recip_email, $_SESSION['sessionMail'])) {
+if (!Auth::isAdmin() && !in_array($recip_email, $_SESSION['sessionMail'])) {
     CmnFns::do_error_box(translate('Access Denied'));
 } else {
     $m = new MailEngine($mail_id, $recip_email);

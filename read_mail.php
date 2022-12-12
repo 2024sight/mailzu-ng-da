@@ -49,7 +49,7 @@ $load_images_var = CmnFns::getGlobalVar('load_images', GET);
 $query_string = CmnFns::querystring_exclude_vars(array('mail_id', 'recip_email', 'load_images'));
 
 
-if (!Auth::isMailAdmin() && !in_array($recip_email, $_SESSION['sessionMail'])) {
+if (!Auth::isAdmin() && !in_array($recip_email, $_SESSION['sessionMail'])) {
     CmnFns::do_error_box(translate('Access Denied'));
 } else {
     $m = new MailEngine($mail_id, $recip_email);
