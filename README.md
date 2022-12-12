@@ -1,5 +1,5 @@
-mailzu-ng
-======
+mailzu-ng-da
+============
 
 Rewritten MailZu-ng
 Compatible PHP 7.2+, PHP-PDO
