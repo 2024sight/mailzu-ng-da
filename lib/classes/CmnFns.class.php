@@ -30,35 +30,6 @@
 class CmnFns
 {
     /**
-     * Convert minutes to hours
-     * @param double $time time to convert in minutes
-     * @return string time in 12 hour time
-     */
-    public static function formatTime($time)
-    {
-        global $conf;
-
-        // Set up time array with $timeArray[0]=hour, $timeArray[1]=minute
-        // If time does not contain decimal point
-        // then set time array manually
-        // else explode on the decimal point
-        $hour = intval($time / 60);
-        $min = $time % 60;
-        if ($conf['app']['timeFormat'] == 24) {
-            $a = '';                // AM/PM does not exist
-            if ($hour < 10) $hour = '0' . $hour;
-        } else {
-            $a = ($hour < 12 || $hour == 24) ? translate('am') : translate('pm');    // Set am/pm
-            if ($hour > 12) $hour = $hour - 12;    // Take out of 24hr clock
-            if ($hour == 0) $hour = 12;        // Don't show 0hr, show 12 am
-        }
-        // Set proper minutes (the same for 12/24 format)
-        if ($min < 10) $min = 0 . $min;
-        // Put into a string and return
-        return $hour . ':' . $min . $a;
-    }
-
-    /**
      * Convert ISO8601 date to date format
      * @param string $date string (yyyy-mm-dd)
      * @return int timestamp
@@ -97,21 +68,6 @@ class CmnFns
         if (empty($format))
             $format = $dates['general_datetime'] . ' ' . (($conf['app']['timeFormat'] == 24) ? '%H' : '%I') . ':%M:%S' . (($conf['app']['timeFormat'] == 24) ? '' : ' %p');
         return strftime($format, $ts);
-    }
-
-    /**
-     * Convert minutes to hours/minutes
-     * @param int $minutes minutes to convert
-     * @return string version of hours and minutes
-     */
-    public static function minutes_to_hours($minutes)
-    {
-        if ($minutes == 0)
-            return '0 ' . translate('hours');
-
-        $hours = (intval($minutes / 60) != 0) ? intval($minutes / 60) . ' ' . translate('hours') : '';
-        $min = (intval($minutes % 60) != 0) ? intval($minutes % 60) . ' ' . translate('minutes') : '';
-        return ($hours . ' ' . $min);
     }
 
     /**
@@ -172,7 +128,7 @@ class CmnFns
 
     /**
      * Returns a reference to a new Pager object
-     * Used to iterate over limited recordesets
+     * Used to iterate over limited record sets
      * @param none
      * @return Pager object
      */
@@ -505,7 +461,8 @@ class CmnFns
         $fields_array = array("f" => translate('From'),
             "s" => translate('Subject')
         );
-        if (Auth::isMailAdmin() || $conf['app']['allowMailid']) {
+        if ( ((Auth::isAdmin()) && ("Site Quarantine" == $_SESSION['sessionNav'] || "Site Pending Requests" == $_SESSION['sessionNav'])) ||
+	      ($conf['app']['allowMailid']) ) {
             $fields_array = array_merge(array("m" => "Mail ID"), $fields_array);
         }
         if ($full_search) $fields_array = array_merge(array("t" => translate('To')), $fields_array);
@@ -531,6 +488,18 @@ class CmnFns
                             echo "\t\t\t<option value='not_contain'";
                             echo "not_contain" == CmnFns::getGlobalVar($k . '_criterion', GET) ? " selected='true'>" : ">";
                             echo translate('doesn\'t contain') . "</option>\n";
+                            echo "\t\t\t<option value='begins_with'";
+                            echo "begins_with" == CmnFns::getGlobalVar($k . '_criterion', GET) ? " selected='true'>" : ">";
+                            echo translate('begins with') . "</option>\n";
+                            echo "\t\t\t<option value='not_begin_with'";
+                            echo "not_begin_with" == CmnFns::getGlobalVar($k . '_criterion', GET) ? " selected='true'>" : ">";
+                            echo translate('doesn\'t begin with') . "</option>\n";
+                            echo "\t\t\t<option value='ends_with'";
+                            echo "ends_with" == CmnFns::getGlobalVar($k . '_criterion', GET) ? " selected='true'>" : ">";
+                            echo translate('ends with') . "</option>\n";
+                            echo "\t\t\t<option value='not_end_with'";
+                            echo "not_end_with" == CmnFns::getGlobalVar($k . '_criterion', GET) ? " selected='true'>" : ">";
+                            echo translate('doesn\'t end with') . "</option>\n";
                             echo "\t\t\t<option value='equals'";
                             echo "equals" == CmnFns::getGlobalVar($k . '_criterion', GET) ? " selected='true'>" : ">";
                             echo translate('equals') . "</option>\n";
@@ -552,11 +521,11 @@ class CmnFns
                                 <?php echo translate('Spam'); ?></option>
                             <option value="B" <?php echo($content_type == 'B' ? ' selected="true"' : ''); ?>>
                                 <?php echo translate('Banned'); ?></option>
-                            <?php if (Auth::isMailAdmin() || $conf['app']['allowViruses']) { ?>
+                            <?php if (Auth::isAdmin() || $conf['app']['allowViruses']) { ?>
                                 <option value="V" <?php echo($content_type == 'V' ? ' selected="true"' : ''); ?>>
                                     <?php echo translate('Virus'); ?></option>
                             <?php }
-                            if (Auth::isMailAdmin() || $conf['app']['allowBadHeaders']) { ?>
+                            if (Auth::isAdmin() || $conf['app']['allowBadHeaders']) { ?>
                                 <option value="H" <?php echo($content_type == 'H' ? ' selected="true"' : ''); ?>>
                                     <?php echo translate('Bad Header'); ?></option>
                             <?php }

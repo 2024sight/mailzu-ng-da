@@ -1,3 +1,11 @@
+MailZu-ng 0.12.mailzu-ng-php72-8b9c7c5+1 (12.12.2022)
+---------
+  - Merged administrators.
+  - Removed functions formatTime() and minutes_to_hours(). These functions appear like leftovers
+    from the scheduling days.
+  - Added search capabilities to quarantine search panel. It now also supports "begins with", "doesn't
+    begin with", "ends with" and ""doesn't end with" search options.
+
 MailZu-ng 0.12.mailzu-ng-php72-37e0277+1 (12.12.2022)
 ---------
   - Merged administrators.
