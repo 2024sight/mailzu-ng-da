@@ -1,3 +1,11 @@
+MailZu-ng 0.12.mailzu-ng-php72-6b7c25f+1 (12.12.2022)
+---------
+  - Merged administrators.
+  - Fixed the send EMail to the administrator so that it now retrieves the From Address from
+    the users table in the amavis database (getFromMAilAddr). For this update to work properly
+    the users table needs to track the external authentication system(s).
+  - Fixed invocation of the mailer class so that it does not throw external exceptions.
+
 MailZu-ng 0.12.mailzu-ng-php72-8b9c7c5+1 (12.12.2022)
 ---------
   - Merged administrators.

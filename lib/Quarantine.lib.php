@@ -61,7 +61,7 @@ function releaseMessages($emailaddresses, $mail_id_array)
         $recip_email = $temp[(sizeof($temp) - 1)];
 
         // Check if logged in user is admin or logged in user is trying to release his own messages
-        if (Auth::isMailAdmin() || in_array($recip_email, $emailaddresses))
+        if (Auth::isAdmin() || in_array($recip_email, $emailaddresses))
             $result = $db->get_message($recip_email, $mail_id);
         else
             continue;
@@ -70,7 +70,7 @@ function releaseMessages($emailaddresses, $mail_id_array)
 
         // if content type is 'B' or 'V' and the logged in user is not admin
         // add message to array of release request
-        if (in_array($rs['content'], array('B', 'V')) && !Auth::isMailAdmin()) {
+        if (in_array($rs['content'], array('B', 'V')) && !Auth::isAdmin()) {
             $release_req_messages[$j] = array(
                 "mail_id" => $mail_id,
                 "from_addr" => $rs['from_addr'],
@@ -223,7 +223,7 @@ function updateMessages($flag, $content_type, $emailaddresses, $mail_id_array, $
         for ($i = 0; is_array($res) && $i < count($res); $i++) {
             $rs = $res[$i];
 
-            if (Auth::isMailAdmin() || in_array($rs['email'], $emailaddresses)) {
+            if (Auth::isAdmin() || in_array($rs['email'], $emailaddresses)) {
                 if (!$db->update_msgrcpt_rs($rs['mail_id'], $rs['email'], $flag)) {
                     $rs = $result[0];
                     $result_array[$i] = array(
@@ -249,7 +249,7 @@ function updateMessages($flag, $content_type, $emailaddresses, $mail_id_array, $
             $recip_email = $temp[(sizeof($temp) - 1)];
 
             // Check if logged in user is admin or logged in user is trying to delete his own messages
-            if (Auth::isMailAdmin() || in_array($recip_email, $emailaddresses)) {
+            if (Auth::isAdmin() || in_array($recip_email, $emailaddresses)) {
                 $result = $db->get_message($recip_email, $mail_id);
             } else {
                 continue;
@@ -295,7 +295,7 @@ function sendMailToAdmin($myaction, $messages_array)
     $adminEmail = $conf['app']['adminEmail'];
 
     $sub = "[" . $title . "] Notification from '" . $_SESSION['sessionID'] . "'";
-    $msg = "Mail notification sent by '" . $_SESSION['sessionID'] . "' <" . $_SESSION['sessionMail'][0] . ">.\r\n\r\n";
+    $msg = "Mail notification sent by '" . $_SESSION['sessionID'] . "' <" . getFromMailAddr() . ">.\r\n\r\n";
 
     switch ($myaction) {
         case translate('Release'):
@@ -327,7 +327,7 @@ function sendMailToAdmin($myaction, $messages_array)
     }
 
     // Send email
-    $mailer = new mailzuMailer();
+    $mailer = new mailzuMailer( false );
     if (is_array($adminEmail)) {
         foreach ($adminEmail as $email) {
             $mailer->AddAddress($email, '');
@@ -336,7 +336,7 @@ function sendMailToAdmin($myaction, $messages_array)
         $mailer->AddAddress($adminEmail, '');
     }
     $mailer->FromName = $_SESSION['sessionID'];
-    $mailer->From = $_SESSION['sessionMail'][0];
+    $mailer->From = getFromMailAddr();
     $mailer->Subject = $sub;
     $mailer->Body = $msg;
     $mailer->Send();
