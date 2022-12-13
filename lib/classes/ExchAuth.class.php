@@ -57,7 +57,7 @@ class ExchAuth
         $fulluser = $domain . '/' . $username;
         $mbox = imap_open('{' . $this->exchHost . '/imap}Inbox', $fulluser, $password);
         if ($mbox === false) {
-            $this->err_msg = translate('Invalid Username/Password');
+            $this->err_msg = translate('Invalid User Name/Password');
             return false;
         } else {
             $ignore = imap_errors();
@@ -65,14 +65,14 @@ class ExchAuth
         }
         $ldapconn = ldap_connect($this->exchLDAP);
         if ($ldapconn === false) {
-            $this->err_msg = translate('Can not connect to LDAP server');
+            $this->err_msg = translate('Cannot connect to LDAP server');
             return false;
         }
         ldap_set_option($ldapconn, LDAP_OPT_PROTOCOL_VERSION, 3);
         ldap_set_option($ldapconn, LDAP_OPT_REFERRALS, 0);
         $ldapbind = ldap_bind($ldapconn);
         if ($ldapbind === false) {
-            $this->err_msg = translate('Can not bind to LDAP server');
+            $this->err_msg = translate('Cannot bind to LDAP server');
             return false;
         }
         $ldapattr = array('cn', 'rfc822Mailbox', 'otherMailbox');

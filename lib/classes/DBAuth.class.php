@@ -168,7 +168,7 @@ class DBAuth
 
             return true;
         } else {
-            $this->err_msg = translate('There are no records in the table.');
+            $this->err_msg = translate('There are no records in the table');
             return false;
         }
     }
