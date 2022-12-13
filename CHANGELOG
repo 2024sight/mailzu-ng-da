@@ -1,10 +1,25 @@
-MailZu-ng 0.12.mailzu-ng-php72-9e76c14+1 (15.11.2022)
+MailZu-ng 0.12.mailzu-ng-da-php72-64c2096+1 (13.12.2022)
+---------
+  - Merged administrators.
+  - Added cookie expiry option ($conf['auth']['cookieExpiry']).
+  - Added a fallback From Email address ($conf['app']['fallbackEmailAddress']). Used by
+    getFromEmailAddress.
+  - Added configuration options for the daily quarantine reporting email
+    ($conf['script']['reportDays'], $conf['script']['sendZero'],$conf['script']['textEmail']).
+  - Added a configuration for the mailzu clean-up script ($conf['script']['quarantineDays']).
+  - Added an option to enable synchronisation of email addresses with the upstream authentication
+    system which are not full addresses ($conf['auth']['acceptAllAddresses']).
+  - Added the configuration variables for DA list processing ($conf['da']['enable'],
+    $conf['da']['no_at_means_domain'], $conf['da']['adminCreatesUsers'],
+    $conf['da']['defaultUserPolicy'], $conf['da']['defaultUserIsLocal'], $conf['da']['exportFile']).
+
+MailZu-ng 0.12.mailzu-ng-da-php72-9e76c14+1 (13.12.2022)
 ---------
   - The amavis database sql necessary to allow the users table tracking and future DA list update
     to function.
   - Added sample data files which should be edited to configure the local configuration and which
     provide policies and default DA list entries.
-  - Added a sql contribution which enables two users to manage the same external email address.
+  - Added a sql contribution which enables two or more users to manage the same external email address.
 
 MailZu-ng-da 0.12.mailzu-ng-da-php72-b966668+1 (13.12.2022)
 ------------

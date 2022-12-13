@@ -273,36 +273,58 @@ $conf['auth']['imap_type'] = 'imap';
 // Domain name part of the email address, (e.g.: example.com)
 $conf['auth']['imap_domain_name'] = 'example.com';
 
+/*** Authentication Synchronisation Settings ***/
+// This version of mailzu synchronises email settings with upstream authentication systems.
+// By default it accepts only full email adresses. If the upstream system allows, that upstream
+// system could provide domain addresses or local part addresses but they have to be provided
+// in amavis internal representation form. If the below setting is enabled, mailzu will accept
+// these. It is strongly recommended to NOT enable the below option as it exposes the administrators
+// to internals of the amavis/mailzu system. The likelyhood of mistakes is significant. As long as
+// there is a mistake in the upstream system data, mailzu will not allow the affected user to log in.
+//
+// $conf['auth']['acceptAllAddresses']	not set by default.
 
 /**
 * End of Authentication Settings
 */
 
 /*** Permission listings ****/
-/* The items you put in the admin lists
-*  must be the same as the login ID.
+/* The items you put in the admin lists must be the same as the login ID.
+*
 *  Example:
-*  If you login as 'userid' then..
-*  conf['auth']['s_admins'] = array ('userid','userid2');
+*  If you login as 'userid1' then..
+*  conf['auth']['admins'] = array ('userid1','userid2');
 *
 *  OR
 *
-*  If you login as 'userid@example.com' then...
-*  conf['auth']['s_admins'] = array ('userid@example.com',
-*				     'userid2@example.com'
-*				    );
+*  If you login as 'userid1@example.com' then...
+*  conf['auth']['admins'] = array ('userid1@example.com',
+*				   'userid2@example.com'
+*				  );
 *
 */
 
-// List of Super Admins
-// Super Admins can do anything mail admins can plus
-// change settings
-$conf['auth']['s_admins'] = array ('user1', 'user2');
+/*
+* The concept of Super Administrators and Mail Administrators seems to stem from the bygone days of phpScheduleIT.
+* In mailzu-ng there was not a single reference to Super Admins and where there was, there was also a reference to
+* Mail Admins. I.e. the Super Administrator distinction did not exist in mailzu-ng. To prevent further confusion,
+* it seemed reasonable to do away with the distinction and to have just Administrators (admins). The code will try
+* and use the old values if $conf['auth']['admins'] has not been set.
+*/
 
-// List of Mail Admins
-// Mail Admins can see other users' spam and attachments
-// and can perform any action on them
-$conf['auth']['m_admins'] = array ();
+// List of Super Admins (DEPRECATED)
+// Super Admins can do anything mail admins can plus change settings. Note: In mailzu-ng there is effectively no
+// difference between Super Adminstrators and Mail Administrators.
+// $conf['auth']['s_admins'] = array ('user1', 'user2');
+
+// List of Mail Admins  (DEPRECATED)
+// Mail Admins can see other users' spam and attachments and can perform any action on them. They can also manage
+// system related da lists and change certain user da list entries, which a user can not.
+// $conf['auth']['m_admins'] = array ();
+
+// List of Admins
+// Admins have full access to the system, including details which are beyond a normal user's requirement.
+$conf['auth']['admins'] = array ('user1', 'user2');
 
 // User login restriction (Does not affect admins)
 // If set to true, users will not be able to login. This is if you do
@@ -315,6 +337,9 @@ $conf['auth']['login_restriction'] = false;
 // $conf['auth']['login_restriction'] = true
 //
 $conf['auth']['restricted_users'] = array('user1', 'user2');
+
+// Specify the cookie expiry time. By default 259200 seconds (30 days).
+// $conf['auth']['cookieExpiry'] = 259200
 
 /**********
 * Miscellaneous Settings
@@ -370,6 +395,10 @@ $conf['recipient_delimiter'] = '';
 // An email is sent to these addresses when a user reports an error
 // or clicks the "Email Administrator" link
 $conf['app']['adminEmail'] = array('support@example.com');
+
+// Fallback from email address in case the user needing to send an
+// email has no normal, external email address.
+// $conf['app']['fallbackEmailAddress'] = 'daemon@example.com';
 
 // Email admin upon Release Request
 // When users try to release a banned file a request is sent to an
@@ -455,4 +484,67 @@ $conf['app']['allowViruses'] = 0;
 $conf['app']['allowMailid'] = 0;
 
 include_once('init.php');
+
+// Enable the Deny/Allow list code. By default disabled.
+// $conf['da']['enable'] not set, false or 0. To enable
+// set to 1 or true.
+// $conf['da']['enable'] = false
+
+// Select the internal Amavis representation of local parts and domains.
+// Only change this setting when the list database is empty. Make sure the
+// setting agrees with the amavis setting for "sql_lookups_no_at_means_domain".
+// I.e. is the later is true, set this value to true. Otherwise leave unchanged.
+//
+// $conf['da']['no_at_means_domain']	not set; By default not set or false.
+
+// When an administrator is creating or importing user da list entries, a users
+// table record may need to be created because it does not yet exist. For example
+// the administrator may be importing a complete dump of the da list database before
+// users have logged into the system (after a crash for instance). Normal behaviour
+// of the system is to refuse the import for users that are not in the users table.
+// Enabling this option tells the system to create the users and allow the import
+// for users that were not in the users table. 
+//
+// $conf['da']['adminCreatesUsers']	not set; By default not set or false.
+
+// Set the default values for new users when adding Deny/Allow list entries
+// Policy must be greater than 0. See DA_README.
+//
+// $conf['da']['defaultUserPolicy' ]	not set; Should be an integer value > 0
+// $conf['da']['defaultUserIsLocal']	not set; Should be 'Y', 'y', 'N' or 'n';
+//
+
+// Set the export file name and extension. The name will be prefixed with
+// date and time followed by an underscore.
+// $conf['da']['exportFile'] not set; An example could be "mailzu.csv".
+
+// Configure the number of days the reporting script should include in its
+// e-mailed quarantine report. If set to 0, the script will not report.
+//
+// $conf['script']['reportDays']	= 3; Should be a non-negative integer.
+//
+// DO NOT COMMENT OUT THE LINE BELOW
+$conf['script']['reportDays']		= 3;
+
+// Configure whether the reporting script should send a zero line report as
+// notification. The default is to not send a zero line report.
+//
+// $conf['script']['sendZero']		= 0; Should be 0 or 1;
+//
+// DO NOT COMMENT OUT THE LINE BELOW
+$conf['script']['sendZero']		= 0;
+
+// Configure whether the reporting script should send a zero line report as
+// notification. The default is to not send a zero line report.
+//
+// $conf['script']['textEmail']		= 0; Should be 0 or 1;
+//
+// DO NOT COMMENT OUT THE LINE BELOW
+$conf['script']['textEmail']		= 0;
+
+// Configure the number of days a quarantined message should be kept in quarantine
+// before being removed. If not set the default of 14 days will be applied.
+//
+// $conf['script']['quarantineDays']	not set; Should be a positive integer.
+
 ?>
