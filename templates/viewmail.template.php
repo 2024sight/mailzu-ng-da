@@ -142,20 +142,20 @@ $link->doLink('messagesAdmin.php?ctype=A&searchOnly=' . $conf['app']['searchOnly
                 <a href="javascript: void(1);" onclick="showHideFullHeaders('headers');">
                     <?php echo translate('ToggleHeaders'); ?></a>
 <?php
-if ( Auth::isMailAdmin() ) {
+if ( Auth::isAdmin() ) {
                 $load_images_var = CmnFns::getGlobalVar('load_images', GET);
                 if ( @$load_images_var == 'yes' ) {
                     $query_string = CmnFns::querystring_exclude_vars(array('load_images'));
 ?>
                 |
                 <a href="<?php echo $_SERVER['PHP_SELF']."?".$query_string; ?>" target="_self">
-                    <?php echo 'Block images'; ?></a>
+                    <?php echo translate('Block images'); ?></a>
 <?php
                 } else {
 ?>
                 |
                 <a href="<?php echo $_SERVER['PHP_SELF']."?".$_SERVER['QUERY_STRING']."&load_images=yes"; ?>" target="_self">
-                    <?php echo 'Load images'; ?></a>
+                    <?php echo translate('Load images'); ?></a>
 <?php
                 }
 }
