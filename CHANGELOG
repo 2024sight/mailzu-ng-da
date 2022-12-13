@@ -1,3 +1,13 @@
+MailZu-ng 0.12.mailzu-ng-php72-2f24e0b+1 (13.12.2022)
+---------
+  - Merged administrators.
+  - Added braces to a foreach loop of the cleanRow function to avoid issues if code gets added to
+    that loop at a later date.
+  - Added the functions necessary for the future DA list functionality. Rewrote convertSearch2SQl
+    so that it can handle "begins_with", "not_begin_with", "ends_with" and "not_end_with" searches.
+  - Also generalised the function to accept array values as criterion value as well as just a single
+    value. This is required to deal with the idiosyncracies of the internal DA list representations.
+
 MailZu-ng 0.12.mailzu-ng-php72-f47fb6d+1 (13.12.2022)
 ---------
   - Merged administrators.
