@@ -1,0 +1,110 @@
+This document briefly describes the two external scripts included with this release of mailzu-ng.
+The scripts are mailzu-db-cleanup.php and mailzu-db-reporting.sh.
+
+
+mailzu-db-cleanup.php
+---------------------
+
+The mailzu-db-cleanup.php performs the necessary housekeeping on the quarantine.
+
+The script by default prunes everything over 14 days from the quarantine. However it accepts a
+configuration parameter from the config.php file namely:
+
+    $conf['script']['quarantineDays']
+
+This variable should be a positive integer It defines the number of days a message should be kept
+in quarantine before being pruned. If the variable is not set in the configuration file (default)
+then the default value of 14 days will be used.
+
+The script may be run from the command line, from your favourite cron or cron-like utility or from a
+systemd timer. A sample sysemd configuration has been included in the scripts directory. To use
+this confguration, do the following:
+
+    1) Change the systemd configuration for mailzu_db_cleanup.[service,timer] to reflect your wishes
+       and the installation of MailZu on your system.
+    2) Copy 'mailzu_db_cleanup.[service,timer]' to '/etc/systemd/system'.
+    3) Enable the timer using 'systemctl enable mailzu_db_cleanup.timer'.
+    4) Either reboot the system or start the timer manually 'systemct start mailzu_db_cleanup.timer'.
+
+The script has to reside in and run from the scripts directory adjacent to the config directory
+as it requires access to the config.php file to retrieve some configuration settings.  Apart from
+being installed and run from the right directory, the script has no other pre-requisites.
+
+
+mailzu-db-rporting.sh
+---------------------
+
+The mailzu-db-reporting.sh script sends an email, containing an overview of the retained messages
+in the last N days, whereby N is 3 by default. The script accepts three parameters which may be defined
+in the config.php file, namely:
+
+   $conf['script']['reportDays'] - Defines the number of days to be included in the report. The default is 3
+				   which means that the reports will go back 3 days in the past. It also means
+				   that a message will be reported 3 times, assuming a report is sent once a
+				   day every day. The variable should be a non-negative integer. Setting it to
+				   0 will cause the script to not report at all to any user.
+
+   $conf['script']['sendZero']   - Defines whether the script should send a courtesy report in case no email
+				   has be retained for a user in the last N days. Experience shows that users
+				   get used to finding a daily message. If no report is sent because no email
+				   has been retained in the last N days, users may think the system failed.
+				   Sending a courtesy report may avoid a unnecessary call to the helpdesk.
+
+   $conf['script']['textEmail']	 - Instructs the script to send emails formatted as text even if text2html
+				   is available.
+
+The script may be run from the command line, from your favourite cron or cron-like utility or by
+a systemd timer. It is expected that normally the script will be run once a day. A sample systemd
+configuration has been included in the scripts directory. To use this confguration, do the following:
+
+    1) Change the systemd configuration for mailzu_db_reporting.[service,timer] to reflect your wishes
+       and the installation of MailZu on your system.
+    2) Copy 'mailzu_db_cleanup.[service,timer]' to '/etc/systemd/system'.
+    3) Enable the timer using 'systemctl enable mailzu_db_reporting.timer'.
+    4) Either reboot the system or start the timer manually 'systemct start mailzu_db_reporting.timer'.
+
+The script requires to be installed in and run from the script directory adjacent to the config
+directory as it requires access to the config.php file to retrieve some configuration settings. In
+addition the script requires the users table of the database to be populated and the "loginname"
+field to exist. Finally it needs the users table priority field to be managed as it relies on the
+priority to select an appropriate report destination E-Mail Address. Implementing and managing the
+users table is most easily achieved by using the users table automatic tracking capability that is
+part of the DA list extension.
+
+The script ony supports the dbType mysql, which includes maria-db. The script currently reports in
+the English language only.
+
+Users need to log in at least once fo reporting to be activated. Users who have never logged in or
+whose data has been pre-loaded by means of an import by an administrator are not considerd to be
+active until they have logged in. Users can stop reporting emails by deleting all their data and
+then logging out.
+
+The script is not partition tag aware nor is there a requirement for that. Amavis allows for a
+partition tag to be added to its mail/quarantine storage. The partition tag may be used to efficiently
+maintain the database. In particular, partition tags allow removal of older data without breaking
+the integrity of the amavis database, by removing every record with the specified tag value from
+the tables that use tags. For the time-based query of this script partition tags are not of importance.
+
+Users may manage more than one external email address whereby it is assumed that at least one external
+email address is used to address the user directly. For example, Alice may manage info@example.com
+and alice@example.com. When generating the quarantine report for Alice, the script will report
+both emails quarantined and addressed to info@example.com as well as to alice@example.com. The
+script will use the users table to determine where to send the report. Because by default ordering
+is not defined in SQL, the SQL query may return either email address which is probably not useful
+especially when info@example.com is shared with Bob. To overcome this, the email address to which
+reports should be sent, should have the highest priority. In this example the administrator should
+therefore increase the priority of the aliceexample.com entry by a value between 1 and 99 so that
+it has the highest priority of all of alice' email addresses in the users table.
+
+Note that there is currently no capability to manage the users table directly. Therefore, changing
+priority in the users table is only possible through direct database intervention. Developing
+a users table management function would not be exceedingly difficult, except that it requires a
+policy editing capability as well, and may be added with sufficient interest.
+
+This script will send e-mails as normal text unless the txt2html utility is installed, in which it
+will send html encoded e-mails unless the configuration variable $conf['script']['textEmail'] is 1.
+
+On DEBIAN systems you can install txt2html as follows:
+
+	sudo apt-get -y install txt2html
+

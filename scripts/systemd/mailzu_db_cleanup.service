@@ -1,0 +1,9 @@
+[Unit]
+Description		= Amavis/MailZu email quarantine cleanup service
+Documentation		= /usr/share/mailzu/docs/SCRIPTS_README
+After			= mariadb.service
+
+[Service]
+Type			= oneshot
+ExecStart		= /usr/share/mailzu/scripts/mailzu-db-cleanup.php
+SyslogIdentifier	= mailzu-db-cleanup

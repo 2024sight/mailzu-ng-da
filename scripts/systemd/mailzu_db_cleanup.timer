@@ -1,0 +1,10 @@
+[Unit]
+Description	= Daily timer to run Amavis/MailZu quarantine cleanup
+
+[Timer]
+OnCalendar	= 01:05
+AccuracySec	= 30m
+Persistence	= false
+
+[Install]
+WantedBy	= timers.target

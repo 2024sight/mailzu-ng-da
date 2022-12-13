@@ -34,6 +34,12 @@ $dbHost = $conf['db']['hostSpec'];
 // Declare max days to keep quarantine items
 $keep_days = 14;
 
+if (( ! empty( $conf['script']['quarantineDays'] )) && ( is_int( $conf['script']['quarantineDays'] )) && ( $conf['script']['quarantineDays'] >= 0 )) {
+	$keep_days = $conf['script']['quarantineDays'];
+} else {
+	print "\$conf['script']['quarantineDays'] is not a positive integer. Using default of $keep_days day(s)\n";
+}
+
 // Calculate the timestamp
 $prune_older_then = time() - ($keep_days * 24 * 60 * 60);
 

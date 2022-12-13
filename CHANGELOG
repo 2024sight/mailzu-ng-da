@@ -1,3 +1,12 @@
+MailZu-ng 0.12.mailzu-ng-php72-25182fa+1 (13.12.2022)
+---------
+  - In mailzu-db-cleanup.php added a configuration option to set the number of days to keep
+    ($conf['script']['quarantineDays']).
+  - Added the script mailzu-db-reporting.sh. It creates per user a daily report of quarantined
+    email messages and mails it to the user.
+  - Added two example systemd timers to run the scripts.
+  - Added docs/SCRIPTS_README.
+
 MailZu-ng 0.12.mailzu-ng-php72-f34abbd+1 (13.12.2022)
 ---------
   - In langs.php changed the translate function to return a marked string if a translation does
