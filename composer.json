@@ -18,6 +18,6 @@
     },
     "autoload": {
         "classmap": [ "lib/classes/" ],
-        "files": [ "lib/htmlfilter.lib.php", "lib/Priority.lib.php", "lib/Quarantine.lib.php" ]
+        "files": [ "lib/htmlfilter.lib.php", "lib/Priority.lib.php", "lib/Quarantine.lib.php", "lib/DAList.lib.php", "lib/RFC822.lib.php" ]
     }
 }
