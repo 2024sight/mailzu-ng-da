@@ -51,7 +51,7 @@ function printsendmail()
                                 &nbsp;&nbsp;<?php echo translate('Subject') . ": "; ?><br/>
                                 &nbsp;&nbsp;<input name="subject" type="text" size="60"><br/><br/>
                                 &nbsp;&nbsp;<?php echo translate('Message') . ": "; ?><br/>
-                                &nbsp;&nbsp;<textarea name="body" cols="60" rows="15"></textarea><br/>
+                                &nbsp;&nbsp;<textarea name="body" cols="60" rows="15"></textarea><br/><br/>
                                 &nbsp;&nbsp;<input type="submit" class="button" name="action" value="send"><br/><br/>
                         </form>
                         </td>
@@ -73,7 +73,7 @@ function verifyAndSendMail()
     if ($subject != '' && $body != '') {
         $adminEmail = $conf['app']['adminEmail'];
         $sub = "[ Email Administrator ] Notification from '" . $_SESSION['sessionID'] . "'";
-        $mailer = new mailzuMailer();
+        $mailer = new mailzuMailer( false );
         if (is_array($adminEmail)) {
             foreach ($adminEmail as $email) {
                 $mailer->AddAddress($email, '');
@@ -82,7 +82,7 @@ function verifyAndSendMail()
             $mailer->AddAddress($adminEmail, '');
         }
         $mailer->FromName = $_SESSION['sessionID'];
-        $mailer->From = $_SESSION['sessionMail'][0];
+        $mailer->From = getFromMailAddr();
         $mailer->Subject = $subject;
         $mailer->Body = $body;
         $mailer->Send();

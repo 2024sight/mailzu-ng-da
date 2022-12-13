@@ -1,3 +1,11 @@
+MailZu-ng 0.12.mailzu-ng-php72-c0d7a80+1 (13.12.2022)
+---------
+  - Added an extra break to make the window created by printsendmail more legible.
+  - Fixed the invocation of mailer class so that it does not throw external exceptions.
+  - Replaced the mail->From, which used to be set by $_SESSION['sessionMail'][0], with a call to
+    getFromMailAddr. When using the DA list extension the value of the SESSION variable used
+    cannot be guaranteed to be a full email address. Hence the function.
+
 MailZu-ng 0.12.mailzu-ng-php72-2767ae9+1 (13.12.2022)
 ---------
   - Merged administrators.
