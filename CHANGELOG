@@ -1,5 +1,9 @@
-MailZu-ng 0.12.mailzu-ng-php72-25182fa+1 (13.12.2022)
----------
+MailZu-ng-da 0.12.mailzu-ng-da-php72-b966668+1 (13.12.2022)
+------------
+  - Updated lang/{en_US.lang.php,en.help.php} to match earlier changes.
+
+MailZu-ng-da 0.12.mailzu-ng-da-php72-25182fa+1 (13.12.2022)
+------------
   - In mailzu-db-cleanup.php added a configuration option to set the number of days to keep
     ($conf['script']['quarantineDays']).
   - Added the script mailzu-db-reporting.sh. It creates per user a daily report of quarantined
@@ -7,8 +11,8 @@ MailZu-ng 0.12.mailzu-ng-php72-25182fa+1 (13.12.2022)
   - Added two example systemd timers to run the scripts.
   - Added docs/SCRIPTS_README.
 
-MailZu-ng 0.12.mailzu-ng-php72-f34abbd+1 (13.12.2022)
----------
+MailZu-ng-da 0.12.mailzu-ng-da-php72-f34abbd+1 (13.12.2022)
+------------
   - In langs.php changed the translate function to return a marked string if a translation does
     not exist instead of a question mark.
   - Removed the function to translate emails.
@@ -16,8 +20,8 @@ MailZu-ng 0.12.mailzu-ng-php72-f34abbd+1 (13.12.2022)
     of my ability. Tabulated things for readbility. Added the necessary translation for the new DA
     list functionality.
 
-MailZu-ng 0.12.mailzu-ng-php72-2f24e0b+1 (13.12.2022)
----------
+MailZu-ng-da 0.12.mailzu-ng-da-php72-2f24e0b+1 (13.12.2022)
+------------
   - Merged administrators.
   - Added braces to a foreach loop of the cleanRow function to avoid issues if code gets added to
     that loop at a later date.
@@ -26,8 +30,8 @@ MailZu-ng 0.12.mailzu-ng-php72-2f24e0b+1 (13.12.2022)
   - Also generalised the function to accept array values as criterion value as well as just a single
     value. This is required to deal with the idiosyncracies of the internal DA list representations.
 
-MailZu-ng 0.12.mailzu-ng-php72-f47fb6d+1 (13.12.2022)
----------
+MailZu-ng-da 0.12.mailzu-ng-da-php72-f47fb6d+1 (13.12.2022)
+------------
   - Merged administrators.
   - Renamed the function s_admin to isAdmin and updated the code to check the merged administrators.
   - Removed the function isMailAdmin. Fixed the COOKIE login process to recover missing data from
@@ -37,33 +41,33 @@ MailZu-ng 0.12.mailzu-ng-php72-f47fb6d+1 (13.12.2022)
   - Added synchronisaton code for the users database. When a user logs in the users table entries
     are brought in line with the data that came from the authentication system.
 
-MailZu-ng 0.12.mailzu-ng-php72-2d9503b+1 (13.12.2022)
----------
+MailZu-ng-da 0.12.mailzu-ng-da-php72-2d9503b+1 (13.12.2022)
+------------
   - Added 'lib/Priority.php' to the file list in composer.json.
 
-MailZu-ng 0.12.mailzu-ng-php72-cdd1e6e+1 (13.12.2022)
----------
+MailZu-ng-da 0.12.mailzu-ng-da-php72-cdd1e6e+1 (13.12.2022)
+------------
   - Added a library which implements the priority calculations along a model that is in line with
     the expectations of the amavis system.
   - In addition, it implements a function which, using priority, returns an appropriate from email
     address in case a user tries to send an email to the administrator.
   - Updated minimum version of PHPMailer to 6.6 in composer.json.
 
-MailZu-ng 0.12.mailzu-ng-php72-39f37ec+1 (13.12.2022)
----------
+MailZu-ng-da 0.12.mailzu-ng-da-php72-39f37ec+1 (13.12.2022)
+------------
   - Fixed mailzuMailer class definition so that composer/autoload can now find the
     PHPMailer class which it needs to extend (Did not seem to work at least on Debian 11).
 
-MailZu-ng 0.12.mailzu-ng-php72-c0d7a80+1 (13.12.2022)
----------
+MailZu-ng-da 0.12.mailzu-ng-da-php72-c0d7a80+1 (13.12.2022)
+------------
   - Added an extra break to make the window created by printsendmail more legible.
   - Fixed the invocation of mailer class so that it does not throw external exceptions.
   - Replaced the mail->From, which used to be set by $_SESSION['sessionMail'][0], with a call to
     getFromMailAddr. When using the DA list extension the value of the SESSION variable used
     cannot be guaranteed to be a full email address. Hence the function.
 
-MailZu-ng 0.12.mailzu-ng-php72-2767ae9+1 (13.12.2022)
----------
+MailZu-ng-da 0.12.mailzu-ng-da-php72-2767ae9+1 (13.12.2022)
+------------
   - Merged administrators.
   - Fixed an error message.
   - In the printSearchEngine function replaced the 'My Reservations' with 'Search' so that help
@@ -80,38 +84,38 @@ MailZu-ng 0.12.mailzu-ng-php72-2767ae9+1 (13.12.2022)
     the database.
   - Updated README.md.
 
-MailZu-ng 0.12.mailzu-ng-php72-02200be+1 (13.12.2022)
----------
+MailZu-ng-da 0.12.mailzu-ng-da-php72-02200be+1 (13.12.2022)
+------------
   - Merged administrators.
   - Added translations for "Block images" and "Load images".
 
-MailZu-ng 0.12.mailzu-ng-php72-5275fc3+1 (13.12.2022)
----------
+MailZu-ng-da 0.12.mailzu-ng-da-php72-5275fc3+1 (13.12.2022)
+------------
   - Merged administrators.
   - Built in the hooks to reach the DA code but disabled by default.
 
-MailZu-ng 0.12.mailzu-ng-php72-ec22fcc+1 (13.12.2022)
----------
+MailZu-ng-da 0.12.mailzu-ng-da-php72-ec22fcc+1 (13.12.2022)
+------------
   - Corrected error messages.
 
-MailZu-ng 0.12.mailzu-ng-php72-6b7c25f+1 (12.12.2022)
----------
+MailZu-ng-da 0.12.mailzu-ng-da-php72-6b7c25f+1 (12.12.2022)
+------------
   - Merged administrators.
   - Fixed the send EMail to the administrator so that it now retrieves the From Address from
     the users table in the amavis database (getFromMAilAddr). For this update to work properly
     the users table needs to track the external authentication system(s).
   - Fixed invocation of the mailer class so that it does not throw external exceptions.
 
-MailZu-ng 0.12.mailzu-ng-php72-8b9c7c5+1 (12.12.2022)
----------
+MailZu-ng-da 0.12.mailzu-ng-da-php72-8b9c7c5+1 (12.12.2022)
+------------
   - Merged administrators.
   - Removed functions formatTime() and minutes_to_hours(). These functions appear like leftovers
     from the scheduling days.
   - Added search capabilities to quarantine search panel. It now also supports "begins with", "doesn't
     begin with", "ends with" and ""doesn't end with" search options.
 
-MailZu-ng 0.12.mailzu-ng-php72-37e0277+1 (12.12.2022)
----------
+MailZu-ng-da 0.12.mailzu-ng-da-php72-37e0277+1 (12.12.2022)
+------------
   - Merged administrators.
 
 MailZu-ng 0.11.mailzu-ng-php72-194398f+1 (11.11.2021)

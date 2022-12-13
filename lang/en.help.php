@@ -11,6 +11,8 @@
  *
  * Copyright (C) 2021 mailzu-ng
  * License: GPL, see LICENSE
+ *
+ * Extra entries added for DA list management, May 2022, for 2024sight.com by Anton Hofland.
  */
 ///////////////////////////////////////////////////////////
 // INSTRUCTIONS
@@ -25,7 +27,7 @@
 // This will be included in the body of the help file.
 //
 // Please keep the HTML formatting unless you need to change it.  Also, please try
-//  to keep the HTML XHTML 1.0 Transitional complaint.
+//  to keep the HTML XHTML 1.0 Transitional compliant.
 ///////////////////////////////////////////////////////////
 ?>
 <div align="center">
@@ -48,6 +50,10 @@
                         <li><a href="#msg_index">Message Indexes</a></li>
                         <li><a href="#search">Message Search</a></li>
                         <li><a href="#msg_view">Message View</a></li>
+                        <li><a href="#da_site_list">Site List</a></li>
+                        <li><a href="#da_my_list">My List</a></li>
+                        <li><a href="#da_list_search">List Search</a></li>
+                        <li><a href="#da_add_list">Add List Entries</a></li>
                     </ul>
                 </ul>
                 <hr width="95%" size="1" noshade="noshade"/>
@@ -135,8 +141,73 @@
                     as to display the original plain text email and see additional message headers.
                 </p>
                 <p class="alignright"><a href="#top">Top</a></p>
+                <h5><a name="da_site_list" id="da_site_list"></a>Site List</h5>
+                <p>The "Site List" window allows an administrator to view and change individual Deny/Allow
+		    list entries. Unlike a normal user the administrator can set individual list entries
+		    for a user to individual values. In particular when an email recipient manages more than
+		    one external email address, the administrator can set the Deny/Allow list entry for each
+		    of these external email addresses to an individual value. The user cannot normally do this.</p>
+		<p>The system supports three different matching types, namely:</p>
+		<p>&nbsp;&nbsp;Default - This means that email address matching in Amavis takes place on basis of either a full email address or
+		    on just a (sub-) domain name.</p>
+		<p>&nbsp;&nbsp;Exact Domain - This means that email address matching only takes place on basis of the domain name thereby excluding sub-domains.</p>
+		<p>&nbsp;&nbsp;Local Part - This means that an email address matching takes place on basis of the sender name excluding any domain.</p>
+		<p>The system supports four different Deny/Allow values, namely:</p>
+		<p>&nbsp;&nbsp;Deny  - This means that an email from this address is denied without performing any further check.</p>
+		<p>&nbsp;&nbsp;Allow - This means that an email from this address is passed without performing any further check.</p>
+		<p>&nbsp;&nbsp;Neutral - This means that an email from this address is neither allowed nor denied but instead subjected to the
+		    normal checks. The outcome of the check determines whether the email is passed or not.</p>
+		<p>&nbsp;&nbsp;Soft - This is similar to Neutral except that the soft list value specified in the next column is added to
+		    the final score before a decision is made to pass on a message or not. Specifying "Soft" combined with a value of "0" is equivalent
+		    to specifying "Neutral". The Numeric "Soft List" values must be in the range -999.0 ... 999.0 and can be incremented or
+		    decremented `in steps of 0.1</p>
+		<p>Further, this window allows the administrator to export entries, delete entries, invoke the
+		    window to add entries and to perform updates of the DA list values. For export and delete there
+		    are two options, namely exporting/deleting the selected entries by means of ticking the left
+		    column, or exporting/deleting all entries. The latter option is search context sensitive. I.e.
+		    if a subset of entries has been selected through the "List Search" option, then only those entries
+		    will be exported/deleted. If no search criteria have been specified, the operation applies to the
+		    entire database and to all users. Especially "Delete All" is dangerous. Without search criteria it
+		    happily deletes the entire database for all users without asking for re-confirmation.</p>
+		<p>Observe that in this window only the Deny/Allow list values can be updated. To change an email
+		    address one has to delete the entry and add a new entry with the changed email address.
+		</p>
+                <p class="alignright"><a href="#top">Top</a></p>
+                <h5><a name="da_my_list" id="da_my_list"></a>My List</h5>
+		<p>The "My List" window allows a user who is not an administrator, to manage their own Deny/Allow
+		   list entries. Observe that the user can only specify the email address to be allowed, checked or denied.
+		   The setting is automatically applied to all external e-mail addresses the user manages. The possible settings
+		   are as described under <a href="#da_site_list">Site List</a>.
+		</p>
+                <p class="alignright"><a href="#top">Top</a></p>
+                <h5><a name="da_list_search" id="da_list_search"></a>List Search</h5>
+		<p>In the search window an administrator or a user can specify search criteria to be applied to the "Site List" or "My List" windows.
+		   An administrator can search on three different fields, whereby the different search criteria can only be "AND-ed" together. The
+		   search criteria also apply to the "Export All" and "Delete All" functions. The three fields are:</p>
+		<p>&nbsp;&nbsp;Login Name - This refers to the login name of a user.</p>
+		<p>&nbsp;&nbsp;User Email - This refers to email addresses the users manage.</p>
+		<p>&nbsp;&nbsp;Address - This refers to an external sender address.</p>
+		<p>Non-administrative users can only search on the "Address".</p>
+                <p class="alignright"><a href="#top">Top</a></p>
+                <h5><a name="da_add_list" id="da_add_list"></a>Add List Entries</h5>
+		<p>In the "Add List Entries" window an administrator or user can add a sender's email address to the Deny/Allow list. An administrator
+		   must chose to which user (login name) and external email address (User Email) the entry is added. A non-administrator user only needs to specify an external sender's address
+		   which will then be added for each of the external e-mail addresses the user manages. DA list settings are as described under
+		   <a href="#da_site_list">Site List</a>.</p>
+		<p>By pressing the "next" button the administrator or user can add a further addresses. The already entered addresses will be checked to verify that they are
+		   either email addresses, domain names or local parts, if supported. A suitable error messages shows the results.</p>
+		<p>By selecting the "ignore" tickbox the address will not be added on submission and will not normally be shown after pressing "next". This
+		   option is useful when importing large numbers of addresses from a CSV file or when a mistake in an earlier entry needs to be corrected. In the CSV file instead of deleting the line, one can set
+		   the ignore value to 1. The ignore tickboxes are only shown when there are two or more entries.</p>
+		<p>By selecting "Submit" the list is submitted to be added to the database. Submissions that fail, are shown. If all submission succeed,
+		   the <a href="#da_site_list">Site List</a> or the <a href="#da_my_list">My List</a> window is shown.</p>
+		<p>The administrator or the user can import addresses from a CSV file. First browse to find the file name, then press "Import". The import
+		   function will add the imported entries to the "Add List Entries" window. Rows which have ignore set to 1 in the CSV file will be shown
+		   with the ignore tick mark. The "Add List Entries" window does NOT page. Imports and manual entries can be mixed freely. Once done,
+		   press "Submit". To obtain a sample CSV file, select one row in the <a href="#da_site_list">Site List</a> or the <a href="#da_my_list">My List</a>
+		   window and then select "export". The administrator cannot import files generated by a user and vice-versa.</p>
+                <p class="alignright"><a href="#top">Top</a></p>
                 <p class="alignright">&nbsp;</p>
-
                 <hr width="95%" size="1" noshade="noshade"/>
             </td>
         </tr>
