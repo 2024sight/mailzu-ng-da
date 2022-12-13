@@ -1,3 +1,18 @@
+MailZu-ng 0.12.mailzu-ng-php72-f47fb6d+1 (13.12.2022)
+---------
+  - Merged administrators.
+  - Renamed the function s_admin to isAdmin and updated the code to check the merged administrators.
+  - Removed the function isMailAdmin. Fixed the COOKIE login process to recover missing data from
+    the users table. It used to set all variables to the COOKIE_ID.
+  - Added a cookie timeout configuration variable.
+  - Fixed some translations and added some where there were none.
+  - Added synchronisaton code for the users database. When a user logs in the users table entries
+    are brought in line with the data that came from the authentication system.
+
+MailZu-ng 0.12.mailzu-ng-php72-2d9503b+1 (13.12.2022)
+---------
+  - Added 'lib/Priority.php' to the file list in composer.json.
+
 MailZu-ng 0.12.mailzu-ng-php72-cdd1e6e+1 (13.12.2022)
 ---------
   - Added a library which implements the priority calculations along a model that is in line with
@@ -5,7 +20,6 @@ MailZu-ng 0.12.mailzu-ng-php72-cdd1e6e+1 (13.12.2022)
   - In addition, it implements a function which, using priority, returns an appropriate from email
     address in case a user tries to send an email to the administrator.
   - Updated minimum version of PHPMailer to 6.6 in composer.json.
-  - Added 'lib/Priority.php' to the file list in composer.json.
 
 MailZu-ng 0.12.mailzu-ng-php72-39f37ec+1 (13.12.2022)
 ---------
