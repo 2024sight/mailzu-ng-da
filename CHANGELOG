@@ -1,6 +1,6 @@
 MailZu-ng 0.12.mailzu-ng-da-php72-b614c5f+1 (13.12.2022)
 ---------
-  - Installed the DA list code, example sql data loads and documentation.
+  - Installed the DA list code.
   - Updated composer.json to include two new libraries.
 
 MailZu-ng 0.12.mailzu-ng-da-php72-64c2096+1 (13.12.2022)
