@@ -1,3 +1,21 @@
+MailZu-ng 0.12.mailzu-ng-php72-2767ae9+1 (13.12.2022)
+---------
+  - Merged administrators.
+  - Fixed an error message.
+  - In the printSearchEngine function replaced the 'My Reservations' with 'Search' so that help
+    functions properly.
+  - Fixed issue with the display of the mail id in the quarantine screen and search.  Issue was
+    that, with $conf['app']['allowMailid'] enabled, a normal user is allowed to search on mail
+    id but the mail id was is not shown. Similarly, when the user is an administrator, the
+    search window would always show a search on mail id, also when the administrator is
+    navigating in his own personal USER quarantine and $conf['app']['allowMailid'] is disabled,
+    which is the default.
+  - When the mail id is shown, it always shows a partition tag of '[0]'. This is the Amavis
+    default value and effectively means no partition (or in reality, one large partition). The
+    sql query by default returns a zero partition tag because that is the default value in
+    the database.
+  - Updated README.md.
+
 MailZu-ng 0.12.mailzu-ng-php72-02200be+1 (13.12.2022)
 ---------
   - Merged administrators.

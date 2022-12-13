@@ -21,7 +21,7 @@ This version of MailZu has the ability through a script to report to the users o
 
 This code base of MailZu has been cleaned up to some degree. The strange duality of administrators has been removed. The en-US translation has been cleaned up and completed before the extra translation required for the DA lists were added. Unfortunately this means that the other translations are all out of line. But MailZu has also been changed to show a marked, untranslated string if translation fails. The "en" help file has been updated to include DA list help.
 
-*Optional enhancements: Full user management for administrators, full policy management, tool to generate a translation template from the en-US master but re-using whatever translations are available from the original language file, multi-language mailzu quarantine reporting script.
+*Optional enhancements: Full user management for administrators, full policy management, tool to generate a translation template from the en-US master but re-using whatever translations are available from the original language file, multi-language mailzu quarantine reporting script, an improved database clean-up script based on partitions.
 
 See the INSTALL file in the docs/ directory included with this distribution. This version of MailZu requires certain extensions of the SQL database tables. These changes have no impact on Amavisd-new. These changes have been documented in the INSTALL file.
 

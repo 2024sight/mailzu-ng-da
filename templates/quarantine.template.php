@@ -33,7 +33,7 @@ function showMessagesTable($content_type, $res, $page, $order, $vert, $numRows =
     global $conf;
 
     // grab the display size limit set in config.php
-    if (Auth::isMailAdmin()) {
+    if (Auth::isAdmin()) {
         $sizeLimit = isset ($conf['app']['displaySizeLimitAdmin']) && is_numeric($conf['app']['displaySizeLimitAdmin']) ?
             $conf['app']['displaySizeLimitAdmin'] : 100;
     } else {
@@ -96,7 +96,7 @@ function showMessagesTable($content_type, $res, $page, $order, $vert, $numRows =
                             <!-- Print table's headers -->
                             <tr class="rowHeaders quarcell">
                                 <td width="2%">&nbsp;</td>
-                                <?php if ((count($_SESSION['sessionMail']) > 1) || ((Auth::isMailAdmin()) &&
+                                <?php if ((count($_SESSION['sessionMail']) > 1) || ((Auth::isAdmin()) &&
                                         ("Site Quarantine" == $_SESSION['sessionNav'] || "Site Pending Requests" == $_SESSION['sessionNav']))) { ?>
                                     <td width="15%" <?php echo "recip.email" == $order ? ' class="reservedCell"' : ''; ?>>
                                         <?php $link->doLink($_SERVER['PHP_SELF'] . '?' . CmnFns::querystring_exclude_vars(array('order', 'vert'))
@@ -123,8 +123,9 @@ function showMessagesTable($content_type, $res, $page, $order, $vert, $numRows =
                                     <?php $link->doLink($_SERVER['PHP_SELF'] . '?' . CmnFns::querystring_exclude_vars(array('order', 'vert'))
                                         . '&amp;order=msgs.content&amp;vert=' . $new_vert, translate('Content Type'), '', '', $mouseover_text) ?>
                                 </td>
-                                <?php if ((Auth::isMailAdmin()) &&
-                                    ("Site Quarantine" == $_SESSION['sessionNav'] || "Site Pending Requests" == $_SESSION['sessionNav'])) { ?>
+                                <?php if ( ((Auth::isAdmin()) &&
+                                            ("Site Quarantine" == $_SESSION['sessionNav'] || "Site Pending Requests" == $_SESSION['sessionNav'])) ||
+					    ($conf['app']['allowMailid']) ) { ?>
                                     <td width="10%" <?php echo "mail_id" == $order ? ' class="reservedCell"' : ''; ?>>
                                         <?php $link->doLink($_SERVER['PHP_SELF'] . '?' . CmnFns::querystring_exclude_vars(array('order', 'vert'))
                                             . '&amp;order=mail_id&amp;vert=' . $new_vert, translate('Mail ID'), '', '', $mouseover_text) ?>
@@ -141,7 +142,7 @@ function showMessagesTable($content_type, $res, $page, $order, $vert, $numRows =
 //					$subject = $rs['subject'] ? htmlspecialchars(mb_convert_encoding($rs['subject'],'UTF-8' )) : '(none)';
                                 $subject = $rs['subject'] ? mb_encode_numericentity($rs['subject'], array(0x80, 0xff, 0, 0xff), 'UTF-8') : '(none)';
                                 $from = $rs['from_addr'] ? htmlspecialchars($rs['from_addr'], ENT_SUBSTITUTE) : '(none)';
-                                if ((count($_SESSION['sessionMail']) > 1) || (Auth::isMailAdmin() &&
+                                if ((count($_SESSION['sessionMail']) > 1) || (Auth::isAdmin() &&
                                         ("Site Quarantine" == $_SESSION['sessionNav'] || "Site Pending Requests" == $_SESSION['sessionNav']))) {
                                     $to = $rs['email'] ? htmlspecialchars($rs['email']) : '(none)';
                                 }
@@ -150,7 +151,7 @@ function showMessagesTable($content_type, $res, $page, $order, $vert, $numRows =
 
                                 echo '  <td><input type="checkbox" onclick="ColorRow(this,\'lightyellow\')" 
 						name="mail_id_array[]" value="' . $rs['mail_id'] . '_' . $rs['email'] . '"></td>';
-                                if ((count($_SESSION['sessionMail']) > 1) || (Auth::isMailAdmin() &&
+                                if ((count($_SESSION['sessionMail']) > 1) || (Auth::isAdmin() &&
                                         ("Site Quarantine" == $_SESSION['sessionNav'] || "Site Pending Requests" == $_SESSION['sessionNav']))) {
                                     echo '  <td class="quarcell">' . $to . '</td>';
                                 }
@@ -185,9 +186,10 @@ function showMessagesTable($content_type, $res, $page, $order, $vert, $numRows =
 
                                 echo ($rs['content'] == 'V' ? '<td class="typeVirus quarcell">' : '<td class="quarcell">') . $type . '</td>';
 
-                                if (Auth::isMailAdmin() &&
-                                    ("Site Quarantine" == $_SESSION['sessionNav'] || "Site Pending Requests" == $_SESSION['sessionNav'])) {
-                                    if ( isset($rs['partition_tag']) ) {
+                                if ( ((Auth::isAdmin()) &&
+                                      ("Site Quarantine" == $_SESSION['sessionNav'] || "Site Pending Requests" == $_SESSION['sessionNav'])) ||
+				      ($conf['app']['allowMailid']) ) {
+                                    if ( isset($rs['partition_tag'])  && ( $rs['partition_tag'] != 0 )) {
                                         echo '  <td class="quarcell">' . $rs['mail_id'] .'['. $rs['partition_tag'] .']</td>';
                                     } else {
                                         echo '  <td class="quarcell">' . $rs['mail_id'] . '</td>';
@@ -209,7 +211,7 @@ function showMessagesTable($content_type, $res, $page, $order, $vert, $numRows =
         </form>
     <?php } else {
         echo '<table width="100%" border="0" cellspacing="1" cellpadding="0">';
-        echo '<tr><td align="center">' . translate('There are no matching records.') . '</td></tr>';
+        echo '<tr><td align="center">' . translate('There are no matching records') . '</td></tr>';
         echo '</table>';
     }
 
@@ -236,7 +238,7 @@ function printSearchEngine($content_type, $submit_page, $full_search = false)
                         </td>
                         <td class="tableTitle">
                             <div class="alignright">
-                                <?php $link->doLink('javascript: help(\'search\');', '?', '', 'color: #FFFFFF;', translate('Help') . ' - ' . translate('My Reservations')) ?>
+                                <?php $link->doLink('javascript: help(\'search\');', '?', '', 'color: #FFFFFF;', translate('Help') . ' - ' . translate('Search')) ?>
                             </div>
                         </td>
                     </tr>
