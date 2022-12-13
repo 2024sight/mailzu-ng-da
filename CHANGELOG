@@ -1,3 +1,11 @@
+MailZu-ng 0.12.mailzu-ng-da-php72-31d56ce+1 (13.12.2022)
+---------
+  - Added and updated documentation.
+
+MailZu-ng 0.12.mailzu-ng-da-php72-ef2e921+1 (13.12.2022)
+---------
+  - Added an example logrotate configuration in contrib/mailzu.logrotate.
+
 MailZu-ng 0.12.mailzu-ng-da-php72-b614c5f+1 (13.12.2022)
 ---------
   - Installed the DA list code.

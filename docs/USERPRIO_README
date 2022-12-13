@@ -1,0 +1,77 @@
+User Tracking
+-------------
+
+This version of MailZu-ng-da-ng can track user changes with respect to assigned external email
+addreses as they are made in the upstream authentication systems. It adds new combinations of user
+and email addresses to the users table and it also marks them for deletion should the combination
+be removed from the originating upstream authentication systems. The users table entries have an
+extra field for this purpose, namely the field "deleted". To maintain referrential integrity the
+code will only actually delete the entry from the users table when the corresponding entries have
+deleted from the DA lists.
+
+
+Mail Address Priorities
+-----------------------
+
+Mail address priorities play an important role in Amavis when used in combination with SQL DA
+Lists. There are two places where Mail Addresses appear in a SQL context, namely:
+
+1)  In the "mailaddr" table. This table stores "Email Sender" addresses, together with a priority.
+
+2)  In the "users" table. This table stores the reachable recipient addresses, together with the
+    login name, a full name, a priority and a policy.
+
+In both cases the priority is determined on basis of the email address stored in the table
+entry, using the following rules:
+
+      /* Priority blocks
+        * - user+foo@sub.example.com     full email match (default match);                  4100
+        * - user@sub.example.com         full email match (default match);                  4000
+        * - user+foo@                    local part match;                                  3100
+        * - user@                        local part match;                                  3000
+        * - sub.example.com              exact domain match;                                2000 + #domain-components
+        * - .sub.example.com             domain and all sub-domain matches (default match); 1000 + #domain-components
+        * - .example.com                 domain and all sub-domain matches (default match); 1000 + #domain-components
+        * - .com                         domain and all sub-domain matches (default match); 1000 + #domain-components
+        * - .                            all domain matches (default match);                1000
+        */
+
+The priority in the mailaddr table is used during DA list matching of Sender addresses. The priority
+ensures that the match results are presented in a certain, repeatable order. For instance:
+
+    When matching on "bloggs.com" and "joe@bloggs.com", because both are defined in the DA list
+    for a recipient user, the "joe@bloggs.com" address will be presented before the "bloggs.com"
+    address as it has a higher priority. Therefore the more specific address will determine the
+    outcome of the DA list match. This allows for the complete denial of domains while allowing
+    specific addresses.
+
+The priority in the users table is used to select the policy when matching a recipient address. If
+more than one users table entry matches the recipient address, the users table with the highest
+priority is used to determine the applicable policy.
+
+The priority in the users table may be used in addition to deal with the the external recipient
+address being received/managed by more than one internal mail user (cf. duplicate email addresses,
+DA_README).
+
+Finally, if a user manages more than one recipient email address, the priority may be used by
+MailZu or the scripts to select the appropriate "From Address" when emailing the administrator,
+or "Destination Address" when sending a quarantine report.
+
+
+Start SQL Code
+--------------
+USE amavis;
+
+ALTER TABLE	users	ADD COLUMN IF NOT EXISTS	loginname	varchar( 255 )          DEFAULT NULL;	-- not used by amavisd-new; used by MailZu
+ALTER TABLE	users	ADD COLUMN IF NOT EXISTS	locked		char(      1 )          DEFAULT 'N';	-- not used by amavisd-new; used by MailZu to lock a user entry
+														-- and prevent accidental removal. Default 'N', i.e. not locked
+ALTER TABLE	users	ADD COLUMN IF NOT EXISTS	deleted		char(      1 )          DEFAULT 'N';	-- not used by amavisd-new; used by MailZu to mark a user entry
+														-- as deleted but without breaking referential integrity if there
+														-- are wblist entries that use this users table entry. Once the
+														-- last wblist entry has been removed will the users entry be
+														-- removed
+ALTER TABLE	wblist	ADD COLUMN IF NOT EXISTS	update_time	TIMESTAMP		NOT NULL;	-- Update time
+
+ALTER TABLE	users	DROP INDEX IF EXISTS		email;							-- Remove the UNIQUE requirement from the email field
+--------------
+End  SQL  Code

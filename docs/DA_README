@@ -1,0 +1,393 @@
+Activating the Deny/Allow List Capability
+-----------------------------------------
+
+This version of MailZu-ng-da allow users and administrators to manage Deny/Allow DA lists on a
+per user basis. DA lists are what in the Amavis is called "Black and White" lists. Please read the
+USERPRIO_README document befre continuing.
+
+Email Addresses
+---------------
+
+There are several email addresses that come into play when performing DA checks. The question
+is which email addresses are used by Amavis? Answering this question is important as it helps
+users understand how to specify a DA list entry and it also shows what are the limitations of
+amavis in its own right.
+
+1) Envelope sender address
+   The amavis system uses the envelope sender address (ES) to check DA list entries. This is
+   the address that is specified in RFC5321 as part of the SMTP "Mail from" command. The address
+   is not usually easily obtainable but may be found by inspecting the headers of an email
+   message. Like any email address this address can be easily spoofed.
+
+2) From address and other addresses in the message
+   When displaying an email in a Mail User Agent (MUA), the MUA will show a "From Address"
+   (FA). This FA is defined in RFC5322 as the "From:" header field in the message. The MUA
+   will in most cases show the "Display Name" part of the FA when available. This "Display
+   Name" is a human readable form of the email address. An example of an FA is the following
+   (excluding the quotes): "Joe Bloggs <joe@bloggs.com>", where "Joe Bloggs" is the Display Name.
+   Great care has to be taken when relying just on the "Display Name". The "Display Name" is
+   free-format and may have an arbitrary value. There is no way for an mail system to guarantee
+   the validity of this name.
+
+   Careful inspection of the FA e-mail address part is advised but it is also not necessarily
+   sufficient. This email address too can be spoofed.  The linkage between FA and ES cannot be
+   checked by amavis directly. To establish a reliable linkage between FA and ES and to guanrantee
+   that the email addresses have not been spoofed, responsible organisations deploy DMARC, which
+   is truly a project in its own right. However, if configured well DMARC could be really useful
+   in the fight against a Business Email Compromise. In particular, the amavis/spamassassin system
+   can be configured to detect reliably as spam, provided the necessary technical prerequisites
+   have been met, spoofed external emails, apparently originating from within the organisation
+   but in reality originating from outside (the main form of BEC). There is no point trying to
+   detect internal spoofed email because if you need that, you have alreay been compromised.
+
+   There are three other addresses which may be present in a message, namely "Sender",
+   "Resent-From" and "Resent-Sender". Together with the "From" address, these addresses are the
+   "originating" addresses. Since RFC 6854 these fields may hold, with certain restrictions,
+   address lists.  When analysing a message amavis builds a full list of the addresses found
+   in the four fields.
+
+To the question which addresses are used by amavis to perform a DA list check, the answer is
+both the ES as well as all originating addresses, including FA, found in the message. Enabling
+full logging and analysing the logs confirms this behaviour. As far as I have been able to
+ascertain this is NOT the behaviour described in the Amavis documentaton which states that
+amavis only uses the ES address, which appears to be an incorrect or out-of-date decription.
+The actual behaviour is helpful as it allows users to correct through soft-listing certain
+mis-classifications of spam and ham.
+
+
+Amavis SQL Internal Domain Representation
+-----------------------------------------
+
+When using SQL (or LDAP) amavis has two ways of representing internally a domain. By means of
+the system wide setting $sql_lookups_no_at_means_domain (or $ldap_lookups_no_at_means_domain) in
+Amavisd-new, and which is by default false, the internal representation can be selected. Similary,
+this version of Mail-Zu has a corresponding setting, namely mailzu $conf['da']['no_at_means_domain']
+which must be the same as the amavis setting. Using the default setting of these variables implies
+that that local part match type is not supported.
+
+WARNING: Do not change these variables if there is DA list data in the database as the
+representation of amavis' da list entries will change and exisiting entries will become invalid
+as a result.
+
+To switch the internal representation while the da list data in the database, as an administrator
+do the following:
+
+1)  Make sure the are no users logged in.
+2)  Using the "Export All" capability export that da list to a CSV file. The export code represents
+    the data in a format independent of the internal amavis format.
+3)  Delete all the da list entries.
+4)  Delete any remaining entries from the users table, having taking note of their values so that
+    equivalent entries may be re-created later.
+5)  Switch amavis and mailzu to the other setting by changing $conf['sql_lookups_no_at_means_domain']
+    in the 50-user.conf file of amavis and by changing $conf['da']['no_at_means_domain'] in the mailzu
+    config.php file.
+6)  Import all the da list entries from the file. This will only work if the configuration setting
+    $conf['da']['adminCreatesUsers'] is set to true or 1. Make sure to unset this after import as it
+    exposes administrators to creating invalid records due to typing mistakes they may make in the
+    "add list entry" view of mailzu.
+7)  Re-create as necessary the entries noted down in step 4.
+
+Observe that the "local part" match is not supported if the settings are false. When importing
+a CSV file that contains "local part" matches when the settings are false, the lines with these
+matches will be marked and ignored unless the user takes corrective action.
+
+Synchronisation with authentication systems is also impacted. For synchronisation to function
+correctly e-mail addresses defined in the authentication systems must follow the same rules
+as amavis/mailzu.  Especially domain-only or local part addresses must be represented in line
+with the settings. As this is exacting, mailzu has a configuration by default to just accept
+normal e-mail addresses as their internal amavis/mailzu representation is the same for either
+setting. If a user requires special addresses it is recommend the administrator creates those for
+this user in mailzu directly using the add function in the "Site List" management window. Note
+that the user-mail addresses to be entered must follow the amavis/mailzu rules. By setting
+the variable $conf['auth']['acceptAllAddresses'] mailzu will accept all addresses provided by
+an upstream authentication, provided the comply with the internal representation rules. This
+variable is default not set (false). If the variable is false, mailzu will only accept full
+email addresses and refuse domain or local part addresses.
+
+
+Mail Address Priorities
+-----------------------
+
+Please read USERPRIO_README.
+
+
+Mail Address Matching
+---------------------
+
+There are three match types available, namely:
+
+1)  Default Match
+    The Default Match is most often used as it allows for the "full email address" match, the
+    domain only match and a "all domain match". The "full email address" match matches complete
+    email addresses. The "domain match" matches the domains and all the sub-domains. I.e. by
+    specifying "bloggs.com" the DA list entry will apply to "bloggs.com" and sub-domains like
+    "lists.bloggs.com". The latter may be given its own DA list entry thereby overruling the
+    more generic domain DA list specification.
+
+2)  Local Part Match
+    The "local part match" only matches the local part of the originating address. Local
+    part match overrules all forms of domain matching but is overruled by "full email address"
+    matching.  This match type is supported only when the $conf['da']['no_at_means_domain']
+    parameter has been set to true.
+
+3)  Exact Domain Match
+    The "exact domain match" matches only the domain but no sub-domains. One could use it for
+    example to only allow the domain "blogss.com" and deny all sub-domains by specifying a
+    "Default Match" on bloggs.com. Because the exact match has a higher priority, all emails
+    send by "bloggs.com" will be allowed but emails send by "lists.bloggs.com" would be denied
+    as the more generic default match applies.
+
+
+Duplicate Email Addresses
+-------------------------
+
+There are some challenges when dealing with the same e-mail address more than once.
+
+1)  An external email comes in and is addressed to two or more internal users (by means of
+    using their external email address). The issue is that normally the message will be presented
+    once to the Amavis system, which will then select from one of the recipients a DA action.
+
+    For example, an email comes in with recipients Alice and Bob. Both Alice and Bob have DA
+    list entries for the sender in place but they are conflicting. The Amavis system will select
+    a DA action based on one of these entries but which one is unclear as the SQL return order
+    is not fixed in this case as the external email address priority is equal (the same sender
+    and no manual changes in the database). To make sure this issue does not arise and to make
+    sure that amavis honours the DA list settings of Alice and Bob, it is most elegant (at the
+    expense of message duplication) to instruct the upstream MTA which delivers to Amavis,
+    to deliver a message per recipient. I.e. the upstream MTA creates two messages, one for
+    Alice and one for Bob. Amavis can thus honour the conflicting settings of Alice and Bob.
+
+    Postfix has a setting for this. It allows a receiving service to break up the message
+    with multiple recipients into multiple messages with single recipients. The setting is
+    <service_name>_destination_recipient_limit, where <service_name> is a service defined in
+    the master.cf file of postfix. Setting this value to 1 makes postfix create a seperate
+    message per recipient. Hence it forwards single recipient messages to Amavis in this case.
+
+2)  An external email address of an organisation is received and managed by more than one internal
+    user. I.e. in the upstream autehentication systems more than one user has been specified as
+    recipient of email delivered to an external email address.
+
+    For example, suppose Alice has been managing the email address info@example.com for a while
+    but she wants to hand it over to Bob. An administrator might just add the info@example.com
+    address to Bob's list of external addresses as specified in the upstream system. The next
+    time Bob logs into mailzu after that addition, his login will fail as MailZu will try to
+    add an entry to the users table but since there is a uniqueness requirement on the email
+    address for that table, the addition will fail, cause the login to fail. There are two ways
+    the administrator can deal with this:
+
+    a)  The administrator can go into the MailZu system and delete all DA list entries for this
+        external email address (info@example.com) from Alice' DA list. That will delete also
+        the users table entry for Alice for this address. But all her DA list entries are lost.
+
+        After that Bob logs in but if Alice then tries to log in, it will fail. To avoid
+        that the administrator has to remove the info@example.com entry from the upstream
+        authentication system.
+
+	To safeguard Alice' DA list entries Alice might decide to export her DA list settings.
+
+    b)  The administrator can drop the uniqueness requirement in the database. This means dropping
+        an index, which will possibly impact the performance as a whole, but to be determined
+        on large systems. Both Amavis and MailZu can handle this though. Quarantined messages
+        addressed to info@example.com, will be shown in both Alice' and Bob's quarantines. Both
+        can release the message. The code for dropping the index on MariaDB can be found in the
+        contrib/multiple_users.sql file.
+
+        The only remaining issue is whose DA list entry is used by Amavis to decide to quarantine
+        or not. An important issue as Bob is much more tolerant than Alice and has whitelisted
+        certain senders which Alice has blacklisted. In this case, because priorities in the
+        users table are the same, SQL may return either Alice' or Bob's DA list entry. To deal
+        with that randomness the administrator can increase either the priority of Alice or Bob
+        in the users table entry for info@example.com by an arbitrary value between 1 and 99,
+        say 1. Whoever has the higher priority decides while the DA list entries of the other
+        for info@example.com are ignored. For instance, the administrator could have increased
+        the value of Bob's entry, in which case Alice will start seeing a lot more spam because
+        of Bob's whitelisting.
+
+	Alas, problems are not over. As a result of the above change Bob and Alice will now both
+        receive Bob's nightly quarantine reporting message, generated by MailZu (cf. SCRIPTS_README),
+	as they will be sent to info@example.com. Similarly, any email Bob sends to the
+	administrator, using MailZu, will appear to originate from info@example.com. This is because
+	the info@example.com entry for Bob now has the highest priority amongst all Bob's external
+	email adddresses, including bob@example.com.  To mitigate that the administrator has to
+	increase the priority of Bob's normal external email address bob@example.com by a value
+	between 2 and 99 (because he increased by 1 the info@example.com entry). The functions that
+	determine the From Address and default destination address will use this increased priority
+	to select the right address from Bob's many external email addresses.
+
+The underlying assumption in all of the above is that info@example.com is an alias which gets
+expanded by the MTA after the message has passed through Amavis. At times this alias may be multi-
+valued, which is not an issue as long as the upstream authentication systems are not changed to
+reflect this. But if they are, for reasons of continuity for example (Alice goes on holiday), then
+then the issues above will arise.
+
+Note that there is currently no capability to manage the users table directly. Therefore, changing
+priority in the users table is only possible through direct database intervention. Developing
+a users table management function would not be exceedingly difficult, except that it requires a
+policy editing capability as well, and may be added with sufficient interest.
+
+
+Exporting/Importing DA Lists
+----------------------------
+
+The DA list system can export and import DA lists. Exports and imports are headed CSV files in an
+amavis indepedent format.
+
+
+Cookies
+-------
+
+This version of mailzu-ng restores the values of several internal variables in case of a cookie
+authentication. To achieve this it queries the users table and restores the full login name and
+user's list of external, undeleted email addresses. Cookie restoration is necessary to ensure
+that the DA list code has the full list of currently active email addresses at any time. 
+
+The cookie expiry time is now configurable through a variable in the configuration file.
+
+
+Pre-requisites
+--------------
+
+The DA list capability is turned off by default. The following pre-requisities have to be met
+before the DA list code can be used:
+
+1) MailZu-ng-da should be configured to run against an SQL database. The code has been developed
+   originally using MySQL. This version has been tested against MariaDB. The code will most likely
+   run against PostgreSQL but that has not been tested.
+
+2) The code requires a few minor changes to the Amavis database. The SQL to make these changes
+   in MariaDB can be found at the bottom of this list. The DA code requires the login name.
+   Amavis foresees the use of the Full Name of a user but that was found to be insufficently
+   unique and reliable. The DA list code also requires a field to ensure that users created
+   manually are not accidentally deleted. For this purpuse these users can be "locked" in the
+   users table. Finally, the code requires a deleted flag in the users table to track users
+   being deleted while maintaining referential integrity.
+
+3) The record which stores the DA values has been extended with an update time. The update time
+   changes when te user creates or updates an entry. Because the DA list is sorted by default
+   on a descending update time (i.e. most recent updates first), updated values are typically
+   shown first on page 1 of the list.
+
+4) The Amavis requirement that an external sender address can only be managed by a single user,
+   as foreseen by amavis, may be dropped, probably at the expense of some performance. Amavis
+   does not experience any functional side effects of this as it has code to make sure that it
+   only ever selects one DA list entry. The only challenge is that by default it is unclear
+   which user's DA setting will be used by Amavis if multiple users receiving and managing
+   the same external address is allowed. This can be fixed by changing the priority of a user
+   appropriately in the users table. In particular, the user, whose DA list entry should control
+   DA behaviour, should have a higher priority for this external email address than any other
+   user sharing the external address.
+
+5) A sender may chose to send one email to several recipients at the same time. As it could be
+   that those recipients have different DA list settings for this sender, the message should be
+   processed separately for each recipient. The easiest way to achieve this is by having the
+   upstream MTA break up the original message and offer seperate messages for each recipient
+   to Amavis so that Amavis can honour each of the individual settings. Most issues can be
+   avoided though if the MTA upstream from amavis is configured to send seperate messages for
+   each recipient user. Postfix can do this.
+
+5) A policy table must be loaded. This table should have an entry which may be used as a default
+   entry when a new user is automatically created. An example of a suitable policy table set
+   may be found in the sql directory.
+
+6) The configured authentication system should have entries for the external email addresses
+   a user manages. The code has been tested against LDAP which has the multi-valued "Mail"
+   field which the system can be configured to use.
+
+The code which makes the necessary changes to the Amavis database under MariaDB is as follows:
+
+Start SQL Code
+--------------
+USE amavis;
+
+ALTER TABLE	users	ADD COLUMN IF NOT EXISTS	loginname	varchar( 255 )          DEFAULT NULL;	-- not used by amavisd-new; used by MailZu
+ALTER TABLE	users	ADD COLUMN IF NOT EXISTS	locked		char(      1 )          DEFAULT 'N';	-- not used by amavisd-new; used by MailZu to lock a user entry
+														-- and prevent accidental removal. Default 'N', i.e. not locked
+ALTER TABLE	users	ADD COLUMN IF NOT EXISTS	deleted		char(      1 )          DEFAULT 'N';	-- not used by amavisd-new; used by MailZu to mark a user entry
+														-- as deleted but without breaking referential integrity if there
+														-- are wblist entries that use this users table entry. Once the
+														-- last wblist entry has been removed will the users entry be
+														-- removed
+ALTER TABLE	wblist	ADD COLUMN IF NOT EXISTS	update_time	TIMESTAMP		NOT NULL;	-- Update time
+
+ALTER TABLE	users	DROP INDEX IF EXISTS		email;							-- Remove the UNIQUE requirement from the email field. Optional
+--------------
+End  SQL  Code
+
+For MySQL and/or PostgresSQL please adjust the code accordingly.
+
+
+Activating the DA list capability
+---------------------------------
+
+The DA list code has a few configurations which have to be set for it to work, namely:
+
+1) $conf['da']['enable'] which indicates whether the DA code should be activated or not.
+   The DA list code is by default disabled. By setting to '1' or 'true' it will be enabled.
+
+2) $conf['da']['no_at_means_domain'] which indicates which internal representation is used
+   by amavis (cf. Amavis internal domain representation).
+
+3) $conf['da']['adminCreatesUsers'] which indicates whether an administrator is allowed to
+   create as a side-effect of adding a da list entry a new user record. If enabled, the admin
+   can create and import data on behalf of users who have not yet logged on to the system.
+   If not, then users have to log into the system before the administrator can load da list data
+   on their behalf. This option is a two-edged sword. It does NOT protect the administrator
+   against typing mistakes and as a result, an administrator may be putting in rubbish. But it
+   enables an administrator to create special records and data in advance of a user using the
+   system. A user record which has been created this way, it still requires validation by the
+   user logging in and the users table being synchronised with the upstream authentication system.
+
+4) $conf['da']['defaultUserPolicy' ] which indicates which is the default policy assigned
+   to newly minted users. The system checks that this value is set and that it is valid.
+
+5) $conf['da']['defaultUserIsLocal' ] which indicates whether the user is local or not. A
+   suitable default value is 'Y'. For the function of this field, please refer to the Amavis
+   documentation.
+
+6) $conf['da']['exportFile'] which defines the last part of an export file name. This value
+   must be set in order for exports to function. The name is prefixed with "yyyymmddhhmmss_"
+
+
+Languages
+---------
+
+The language definition for the system has been cleaned up to remove any references to unused
+translations.  Translations for the DA system have been added as a separate section of the
+en_US.lang.php file. The help text en.help.php has also been enhanced with DA related help
+texts. The translate function has been changed to at least create a semblance of working by instead
+of returning the usual '?', returning the string for which no translation was found, prefixed by
+'U-' to indicate that the string is untranslated. To create translation do the following:
+
+1)  If there is a language file already, save it before the copy.
+2)  Copy the en_US.lang.php file to a language file of your choosing.
+3)  Copy from the original language file any translations to the copied en_US file.
+4)  In the new language file, leave blank any translations for which the original file has
+    no entry.
+5)  Run the system and augment translations as you see fit. You can recognise the fields missing
+    a translation as they will have a "U-" prefix and as they will then show the untranslated
+    string.
+
+For help files, follow a similar process as the one described above.
+
+When done, please contribute back any translations.
+
+
+PHP code implementing RFC822 address matching
+---------------------------------------------
+
+This code uses the PHP RFC822/2822/5322 Email Parser code developed by Cal Henderson, which
+may be found at:
+
+	https://github.com/iamcal/rfc822/blob/master/rfc822.php
+
+The following header is in the code.
+
+	# # RFC 822/2822/5322 Email Parser # # By Cal Henderson <cal@iamcal.com>
+	# # This code is dual licensed: # CC Attribution-ShareAlike
+	2.5 - http://creativecommons.org/licenses/by-sa/2.5/ # GPLv3 -
+	http://www.gnu.org/copyleft/gpl.html
+
+The mailzu version has been enhanced to provide checks that allow a convenient and reliable
+way to determine whether a string is a full and valid email address, or a full and valid domain
+name or a full and valid local part (i.e. the string to the left of the '@'-sign of an e-mail
+address.

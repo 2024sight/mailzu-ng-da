@@ -6,6 +6,9 @@ MailZu, a quarantine management interface for amavisd-new. It allows users
 and administrators to view quarantined messages and release, request, or
 delete them. 
 
+In addition, this version of MailZu allows users to manage their Deny/Allow
+lists.
+
 MailZu need not reside on the same host as amavisd-new. MailZu also supports
 environments with multiple amavisd-new instances (as long as all instances
 report to the same SQL database). MailZu is only suitable for amavisd-new
@@ -195,6 +198,15 @@ the AM.PDP port
 
 If a connection is made than configuration of amavisd-new was successful.
 Repeat this configuration procedure for every amavisd-new instance.
+
+
+MailZu SQL extensions
+---------------------
+
+This version of MailZu has the capability to inform users of quarantine
+kept mail.  For this version of MailZu to function an extra patch needs to
+be applied to the database. This patch can be found in the sql/amavis.sql
+withing the distribution directory.
 
 
 MailZu Configuration
@@ -439,3 +451,17 @@ Set this option to determine the number of messages displayed per page:
   // Maximum number of messages displayed per page
   $conf['app']['displaySizeLimit'] = 50;
 
+
+Log Rotation
+------------
+
+In the contrib directory you will find an example logrotate configuration
+for mailzu. To install this, make the changes as you see fit and install
+in /etc/logrotate.d (on Debian) or whatever other logrotate configuration
+directory may be used on your system.
+
+
+Deny/Allow List management
+--------------------------
+This version of mailzu can manage deny/allow lists. Please refer to
+DA_README for installation instructions.
