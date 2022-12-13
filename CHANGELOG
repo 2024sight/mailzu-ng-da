@@ -1,3 +1,11 @@
+MailZu-ng 0.12.mailzu-ng-php72-9e76c14+1 (15.11.2022)
+---------
+  - The amavis database sql necessary to allow the users table tracking and future DA list update
+    to function.
+  - Added sample data files which should be edited to configure the local configuration and which
+    provide policies and default DA list entries.
+  - Added a sql contribution which enables two users to manage the same external email address.
+
 MailZu-ng-da 0.12.mailzu-ng-da-php72-b966668+1 (13.12.2022)
 ------------
   - Updated lang/{en_US.lang.php,en.help.php} to match earlier changes.

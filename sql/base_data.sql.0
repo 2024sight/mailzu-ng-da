@@ -1,0 +1,38 @@
+-- Add basic data to get this show on the road. This data can be used when sql_lookups_no_at_means_domain is false.
+
+USE	amavis;
+
+INSERT	INTO	users	VALUES ( 1, 1000, 99, '@.',		'Administrator', 'Y', 'Administrator', 'Y', 'N' );	-- catchall
+INSERT	INTO	users	VALUES ( 2, 1002,  5, '@.example.com',	'Administrator', 'Y', 'Administrator', 'Y', 'N' );	-- normal
+
+INSERT	INTO	policy
+(
+			id,
+			policy_name,
+
+			virus_lover,
+			spam_lover,
+			banned_files_lover,
+			bad_header_lover,
+
+			bypass_virus_checks,
+			bypass_spam_checks,
+			bypass_banned_checks,
+			bypass_header_checks,
+
+			spam_tag_level,
+			spam_tag2_level,
+			spam_kill_level
+)
+VALUES
+  (  1, 'Non-paying',    'N',  'N',  'N',  'N',   'Y',  'Y',  'Y',  'N',  3.0,   7,  10   ),
+  (  2, 'Uncensored',    'Y',  'Y',  'Y',  'Y',   'N',  'N',  'N',  'N',  3.0, 999, 999   ),
+  (  3, 'Wants all spam','N',  'Y',  'N',  'N',   'N',  'N',  'N',  'N',  3.0, 999, 999   ),
+  (  4, 'Wants viruses', 'Y',  'N',  'Y',  'Y',   'N',  'N',  'N',  'N',  3.0, 6.9,   6.9 ),
+  (  5, 'Normal',        'N',  'N',  'N',  'N',   'N',  'N',  'N',  'N',  3.0, 6.9,   6.9 ),
+  (  6, 'Trigger happy', 'N',  'N',  'N',  'N',   'N',  'N',  'N',  'N',  3.0,   5,   5   ),
+  (  7, 'Permissive',    'N',  'N',  'N',  'Y',   'N',  'N',  'N',  'N',  3.0,  10,  20   ),
+  (  8, '6.5/7.8',       'N',  'N',  'N',  'N',   'N',  'N',  'N',  'N',  3.0, 6.5,   7.8 ),
+  (  9, 'userB',         'N',  'N',  'N',  'Y',   'N',  'N',  'N',  'N',  3.0, 6.3,   6.3 ),
+  ( 10, 'userC',         'N',  'N',  'N',  'N',   'N',  'N',  'N',  'N',  3.0, 6.0,   6.0 ),
+  ( 99, 'CatchAll',      NULL, NULL, NULL, NULL,  NULL, NULL, NULL, NULL, 3.0,  5.6,  6.7 );
