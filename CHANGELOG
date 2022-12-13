@@ -1,3 +1,8 @@
+MailZu-ng 0.12.mailzu-ng-php72-5275fc3+1 (13.12.2022)
+---------
+  - Merged administrators.
+  - Built in the hooks to reach the DA code but disabled by default.
+
 MailZu-ng 0.12.mailzu-ng-php72-ec22fcc+1 (13.12.2022)
 ---------
   - Corrected error messages.

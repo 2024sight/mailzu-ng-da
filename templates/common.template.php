@@ -80,7 +80,7 @@ function showQuickLinks()
                                         ' <p class="quarcell"><b>&rsaquo;</b>' . "\t";
                                     $link->doLink('messagesIndex.php?ctype=A', translate('My Quarantine'));
                                     echo '</p>';
-                                    if (!Auth::isMailAdmin()) {
+                                    if (!Auth::isAdmin()) {
                                         echo "My Pending Requests" == $_SESSION['sessionNav'] ?
                                             ' <p class="selectedLink quarcell"><b>&raquo;</b>' :
                                             ' <p class="quarcell"><b>&rsaquo;</b>' . "\t";
@@ -88,9 +88,17 @@ function showQuickLinks()
                                         echo '</p>';
                                     }
                                     ?>
-                                    </p>
+				    <?php
+					if ( $conf['da']['enable'] ) {
+					    echo "My List" == $_SESSION['sessionNav'] ?
+						' <p class="selectedLink quarcell"><b>&raquo;</b>' :
+						' <p class="quarcell"><b>&rsaquo;</b>' . "\t";
+					    $link->doLink('dalist.php?site_admin=f', translate('My List'));
+                                    	    echo '</p>';
+					}
+				    ?>
                                     <br>
-                                    <?php if (Auth::isMailAdmin()) {
+                                    <?php if (Auth::isAdmin()) {
                                         if ($conf['app']['siteSummary']) {
                                             echo "Site Quarantine Summary" == $_SESSION['sessionNav'] ?
                                                 ' <p class="selectedLink quarcell"><b>&raquo;</b>' :
@@ -109,9 +117,16 @@ function showQuickLinks()
                                             ' <p class="quarcell"><b>&rsaquo;</b>' . "\t";
                                         $link->doLink('messagesPendingAdmin.php?ctype=A', translate('Site Pending Requests'));
                                         echo '</p>';
+					if ( $conf['da']['enable'] ) {
+					    echo "Site List" == $_SESSION['sessionNav'] ?
+						' <p class="selectedLink"><b>&raquo;</b>':
+						' <p class="quarcell"><b>&rsaquo;</b>' . "\t";
+					    $link->doLink('dalist.php?site_admin=t', translate('Site List'));
+					    echo '</p>';
+					}
                                         echo '<br>';
                                     }
-                                    if ((!Auth::isMailAdmin()) && ($conf['app']['showEmailAdmin'])) {
+                                    if ((!Auth::isAdmin()) && ($conf['app']['showEmailAdmin'])) {
                                         echo "Email Administrator" == $_SESSION['sessionNav'] ?
                                             ' <p class="selectedLink quarcell"><b>&raquo;</b>' :
                                             ' <p class="quarcell"><b>&rsaquo;</b>' . "\t";
@@ -238,9 +253,9 @@ function printActionButtons($printDeleteAll = true)
             <?php
             echo "<td class=\"alignright\"><input type=\"submit\" class=\"button quarcell\" name=\"action\" value=\"";
             if ($_SESSION['sessionNav'] == "My Pending Requests") {
-                echo(Auth::isMailAdmin() ? translate('Release') : translate('Cancel Request'));
+                echo(Auth::isAdmin() ? translate('Release') : translate('Cancel Request'));
             } else {
-                echo(Auth::isMailAdmin() ? translate('Release') : translate('Release/Request release'));
+                echo(Auth::isAdmin() ? translate('Release') : translate('Release/Request release'));
             }
             echo "\"></td>";
             ?>
