@@ -158,8 +158,8 @@ function translate($str, $args = array())
 
     $return = '';
 
-    if (!isset($strings[$str]) || empty($strings[$str])) {
-        return '?';
+    if (empty($strings[$str])) {
+        return 'U-' . $str;
     }
 
     if (empty($args)) {
@@ -174,38 +174,6 @@ function translate($str, $args = array())
         $sprintf_args = substr($sprintf_args, 0, strlen($sprintf_args) - 1);
         $string = addslashes($strings[$str]);
         $return = eval("return sprintf('$string',$sprintf_args);");
-        return $return;
-    }
-}
-
-/**
- * Translates an email message to the proper language
- * @param string $email_index index of the email to translate from the lang.php file
- * @param mixed unlimited number of arguments to be placed inline into the email
- * @return translated email message
- */
-function translate_email($email_index)
-{
-    global $email;
-
-    $return = '';
-    $args = func_get_args();
-
-    if (!isset($email[$email_index]) || empty($email[$email_index])) {
-        return '?';
-    }
-
-    if (func_num_args() <= 1) {
-        return $email[$email_index];
-    } else {
-        $sprintf_args = '';
-
-        for ($i = 1; $i < count($args); $i++) {
-            $sprintf_args .= "'" . addslashes($args[$i]) . "',";
-        }
-
-        $sprintf_args = substr($sprintf_args, 0, strlen($sprintf_args) - 1);
-        $return = eval('return sprintf("' . str_replace('"', '\"', $email[$email_index]) . "\",$sprintf_args);");
         return $return;
     }
 }

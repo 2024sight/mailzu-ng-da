@@ -1,3 +1,12 @@
+MailZu-ng 0.12.mailzu-ng-php72-f34abbd+1 (13.12.2022)
+---------
+  - In langs.php changed the translate function to return a marked string if a translation does
+    not exist instead of a question mark.
+  - Removed the function to translate emails.
+  - In en_US.lang.php removed references to phpScheduleIT. Removed unused translations to the best
+    of my ability. Tabulated things for readbility. Added the necessary translation for the new DA
+    list functionality.
+
 MailZu-ng 0.12.mailzu-ng-php72-2f24e0b+1 (13.12.2022)
 ---------
   - Merged administrators.
