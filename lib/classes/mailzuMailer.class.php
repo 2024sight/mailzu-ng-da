@@ -3,7 +3,7 @@
 /**
  * Use PHPMailer as a base class and extend it
  */
-class mailzuMailer extends PHPMailer
+class mailzuMailer extends PHPMailer\PHPMailer\PHPMailer
 {
     /**
      * mailzuMailer constructor.

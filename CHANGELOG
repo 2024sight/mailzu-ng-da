@@ -1,3 +1,8 @@
+MailZu-ng 0.12.mailzu-ng-php72-39f37ec+1 (13.12.2022)
+---------
+  - Fixed mailzuMailer class definition so that composer/autoload can now find the
+    PHPMailer class which it needs to extend (Did not seem to work at least on Debian 11).
+
 MailZu-ng 0.12.mailzu-ng-php72-c0d7a80+1 (13.12.2022)
 ---------
   - Added an extra break to make the window created by printsendmail more legible.
