@@ -1,3 +1,12 @@
+MailZu-ng 0.12.mailzu-ng-php72-cdd1e6e+1 (13.12.2022)
+---------
+  - Added a library which implements the priority calculations along a model that is in line with
+    the expectations of the amavis system.
+  - In addition, it implements a function which, using priority, returns an appropriate from email
+    address in case a user tries to send an email to the administrator.
+  - Updated minimum version of PHPMailer to 6.6 in composer.json.
+  - Added 'lib/Priority.php' to the file list in composer.json.
+
 MailZu-ng 0.12.mailzu-ng-php72-39f37ec+1 (13.12.2022)
 ---------
   - Fixed mailzuMailer class definition so that composer/autoload can now find the

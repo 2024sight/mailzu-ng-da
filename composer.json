@@ -14,11 +14,10 @@
     "require": {
         "php": ">=7.2",
         "ext-pdo": "*",
-        "phpmailer/phpmailer": "^6.5"
+	"phpmailer/phpmailer":"^6.6"
     },
     "autoload": {
         "classmap": [ "lib/classes/" ],
-        "files": [ "lib/htmlfilter.lib.php", "lib/Quarantine.lib.php" ]
+        "files": [ "lib/htmlfilter.lib.php", "lib/Priority.lib.php", "lib/Quarantine.lib.php" ]
     }
-
 }
