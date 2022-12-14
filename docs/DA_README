@@ -230,7 +230,23 @@ Exporting/Importing DA Lists
 ----------------------------
 
 The DA list system can export and import DA lists. Exports and imports are headed CSV files in an
-amavis indepedent format.
+amavis indepedent format. At times one may one to import many rows which may fail without warning.
+In this case try increasing the max_input_vars variable in PHP. You may find this variable in
+/etc/php/<php release number>/apache2/php.ini or some similar path, depending on your configuration.
+On Debian 11 max_input_vars is set by default to 1000. Try setting this value to 10000 as a first try.
+
+Important note on the import files: The header line is read annd interpreted by the system. It must
+be supllied but the actual order is not relevant. Columns without headers or with names it does not
+recognise, are ignored.
+
+When an administrator is importing data from a backup CSV file, it could be that the data in this
+file refers to user/email address combinations that are not (yet) present in the users table of
+amavis. This will happen especially if the administrator is restoring the system after a major
+crash. By default this import will fail because of the missing user/email combinations. By
+enabling the 'adminCreatesUsers' option in config.php the import will create this user/email
+combination in the users table instead of failing. Once done, the option should be unset. Not
+unsetting this option exposes the administrator to the risk of entering incorrect user/email
+combinations.
 
 
 Cookies
