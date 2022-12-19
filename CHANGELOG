@@ -1,3 +1,11 @@
+MailZu-ng 0.12.mailzu-ng-da-php72-3ce1595+1 (17.12.2022)
+---------
+  - Fixed the query which finds the unreviewed email messages in quarantine. The obvious effect was
+    that deleted messages to still be reported on subsequent days. This has now been fixed. The
+    script now just shows messages which have not been reviewed or which are pending administrator
+    approval prior to being released.
+  - Fixed some message wording in the reporting script.
+
 MailZu-ng 0.12.mailzu-ng-da-php72-d7c6328+1 (14.12.2022)
 ---------
   - Updated documentation.

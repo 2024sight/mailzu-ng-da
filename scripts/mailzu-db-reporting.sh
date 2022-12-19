@@ -36,9 +36,9 @@ function	User_Report()
 	EMail_Address=$(	/bin/cat << _EOF	| /usr/bin/mysql "$dbName" --disable-column-names
 					SELECT		email
 					FROM		users
-					WHERE		users.loginname="$User"
+					WHERE		users.loginname		= "$User"
+					AND		users.deleted		= 'N'
 					AND		users.priority		BETWEEN 4000 AND 4099
-					AND		users.deleted='N'
 					ORDER BY	users.priority		DESC
 					LIMIT					1;
 _EOF
@@ -51,16 +51,11 @@ _EOF
 
 	Temp_File=$( /bin/mktemp --tmpdir="$Temp_Dir" "MailZu-Report-XXXXXXXX" )
 
+	get_text "header_message" | /bin/sed s/Number_of_Days/$Number_of_Days/	> "$Temp_File"
+
 	OLD_IFS="$IFS"
 	IFS='	'
 	Line_Counter="0"
-
-	(
-
-		get_text "header_message" | /bin/sed s/Number_of_Days/$Number_of_Days/
-		echo
-
-	)	> "$Temp_File"
 
 	while read Line; do
 
@@ -83,23 +78,19 @@ _EOF
 	
 		done
 
-		/usr/bin/printf "%s\t%-30.30s\t%-30.30s\t%s\n" "$Time" "$Sender" "$Recipient" "$Subject" >> "$Temp_File"
+		/usr/bin/printf "%s\t%-30.30s\t%-30.30s\t%s\n" "$Time" "$Sender" "$Recipient" "$Subject"	>> "$Temp_File"
 
 	done
 
 	IFS="$OLD_IFS"
 
-	get_text trailer_message >> "$Temp_File"
+	get_text trailer_message	>> "$Temp_File"
 
 	Send_Report="1"
 	if [ "$Line_Counter" -eq "0" ]; then
 
 		if [ "$Send_Zero" -eq "1" ]; then
-		(
-			get_text "zero_message" | /bin/sed s/Number_of_Days/$Number_of_Days/
-			echo
-
-		)	> "$Temp_File"
+			get_text "zero_message" | /bin/sed s/Number_of_Days/$Number_of_Days/	> "$Temp_File"
 		else
 			Send_Report="0"
 		fi
@@ -146,7 +137,7 @@ function	Per_User()
 										WHERE	users.loginname="$User"
 									)
 			AND		msgrcpt.content	IN		( '', 'V', 'B', 'S', 'H' )
-			AND		msgrcpt.rs	!=		'R'
+			AND		msgrcpt.rs	IN		( '', 'P'                )
 			AND		msgs.time_iso	>=		DATE(NOW()) + INTERVAL 0 SECOND - INTERVAL $Number_of_Days DAY
 			AND		msgs.time_iso	<		DATE(NOW()) + INTERVAL 0 SECOND
 			ORDER BY	msgs.time_num			DESC;
@@ -279,9 +270,10 @@ exit 0
 _SOF_header_message
 Dear MailZu User,
 
-The last Number_of_Days days the following e-mail messages have been held in quarantine for you:
+The following un-reviewed e-mail messages, received over the last Number_of_Days days, are being held in quarantine:
 
 Date       Time         Sender                          Recipient                       Header
+---------- ------------ ------------------------------- ------------------------------- -------------------------------
 _EOF_header_message
 
 _SOF_trailer_message
@@ -296,7 +288,7 @@ _EOF_trailer_message
 _SOF_zero_message
 Dear MailZu User,
 
-The last Number_of_Days days NO e-mail messages have been held for you.
+No un-reviewed e-mail messages, received over the last Number_of_Days days, are being held in quarantine.
 
 With kind regards,
 
