@@ -1,4 +1,11 @@
-MailZu-ng 0.12.mailzu-ng-da-php72-3ce1595+1 (17.12.2022)
+MailZu-ng 0.12.mailzu-ng-da-php72-00a08b4+1 (19.12.2022)
+---------
+  - Cleaned up the changes to the RFC822 code. Gone back to just making the minimum modifications
+    to the original code and adding the extra functions for MailZu in a seperate library file. The
+    RFC822 options can now also be defined in the config file. Two more variables have been added,
+    namely $conf['da']['rfc822AllowComments'] and $conf['da']['public_internet'].
+
+MailZu-ng 0.12.mailzu-ng-da-php72-3ce1595+1 (19.12.2022)
 ---------
   - Fixed the query which finds the unreviewed email messages in quarantine. The obvious effect was
     that deleted messages to still be reported on subsequent days. This has now been fixed. The

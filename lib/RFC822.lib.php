@@ -11,27 +11,9 @@
 	#
 	# $Revision$
 	# This code has been modified to enable checking whether an address is a full email
-	# address or just a domain or just a local part. Three extra functions have been
-	# provided to perform these checks. Modified by Anton Hofland, 2024Sight.
+	# address or just a domain or just a local part.
 	#
-	# Discussion: I could have used the filter_var functionality but this functionality
-	# when using FILTER_VALIDATE_DOMAIN, does not meet the requirement. When checking the
-	# string "joe.bloggs@example.com" with this filter, it returns valid. But the Deny/Allow
-	# list code needs to know whether it is dealing with a valid e-mail address or a valid
-	# domain name. In this example it is dealing with an valid email address. This is because
-	# amavisd-new needs a prefix or postfix added when dealing with a domain or local part
-	# Deny/Allow list entry. The above example should therefore not be prefixed while for
-	# example "example.com" should be prefixed. Further this code accepts for example "com",
-	# "localhost" and "localhost.something" as valid domains.
-	#
-	# Please note that this code does not and should not check whether the domains actually
-	# exist. The reason it should not check is that by the very nature of things mailzu
-	# and amavis are dealing with transient domains, i.e. domains that are created for a
-	# specific purpose, used for a short while (like hours), and then deleted again to
-	# be re-instated some time later for a similar purpose. That implies that there is
-	# uncertain that the domain exists at the time the user is adding a Deny/Allow list
-	# entry for such a domain. Checking it and then denying it in case it does not exist,
-	# would be the wrong action.
+	# Modified by Anton Hofland, 2024Sight.
 	#
 
 	##################################################################################
@@ -45,15 +27,16 @@
 
 		$defaults = array(
 			'allow_comments'	=> true,
-			'public_internet'	=> false,	# turn this off for 'strict' mode
-			'check_localpart'	=> false,	# localpart and domain together are
+			'public_internet'	=> true,	# turn this off for 'strict' mode
+			'check_localpart'	=> true,	# localpart and domain together are
 			'check_domain'		=> true,	# an email address.
 		);
 
 		$opts = array();
 		foreach ($defaults as $k => $v) $opts[$k] = isset($options[$k]) ? $options[$k] : $v;
 		$options = $opts;
-		
+
+		if (( !$options['check_localpart'] ) && ( !$options['check_domain'] )) return 0;
 
 
 		####################################################################################
@@ -253,10 +236,13 @@
 		# we need to strip nested comments first - we replace them with a simple comment
 		#
 
-		if ($options['allow_comments']){
 
-			$email = email_strip_comments($outer_comment, $email, "(x)");
+		$stripped	= email_strip_comments($outer_comment, $email, "(x)");
+
+		if ($options['allow_comments']){
+			$email	= $stripped;
 		}
+		else if ( strcmp( $stripped, $email ) !== 0 ) return 0;
 
 
 		#
@@ -306,13 +292,22 @@
 		# way for checking IPs, label sizes, etc
 		#
 
-		if ($options['allow_comments']){
-			if ($options['check_localpart']) {
-				$bits['local']	= email_strip_comments($comment, $bits['local'] );
+		if ($options['check_localpart']) {
+			$stripped	= email_strip_comments($comment, $bits['local'] );
+
+			if ($options['allow_comments']) {
+				$bits['local' ]	= $stripped;
 			}
-			if ($options['check_domain']   ) {
-				$bits['domain']	= email_strip_comments($comment, $bits['domain']);
+			else if ( strcmp( $stripped, $bits['local' ] ) !== 0 ) return 0;
+		}
+
+		if ($options['check_domain']   ) {
+			$stripped	= email_strip_comments($comment, $bits['domain']);
+
+			if ($options['allow_comments']) {
+				$bits['domain']	= $stripped;
 			}
+			else if ( strcmp( $stripped, $bits['domain'] ) !== 0 ) return 0;
 		}
 
 
@@ -464,39 +459,6 @@
 			}
 			$email = $new;
 		}
-	}
-
-	##################################################################################
-	#
-	# is_valid_email checkes whether a supplied string is a valid email address
-	# @param string to be checked
-	# @param return true or false.
-	#
-
-	function is_valid_email( $address ) {
-		return ( is_valid_email_address( $address, array( 'check_localpart' => true,  'check_domain' => true  )) == 1 ? true : false );
-	}
-
-	##################################################################################
-	#
-	# is_valid_domain checkes whether a supplied string is a valid domain name
-	# @param string to be checked
-	# @param return true or false.
-	#
-
-	function is_valid_domain( $address ) {
-		return ( is_valid_email_address( $address, array( 'check_localpart' => false, 'check_domain' => true  )) == 1 ? true : false );
-	}
-
-	##################################################################################
-	#
-	# is_valid_localpart checkes whether a supplied string is a valid local part
-	# @param string to be checked
-	# @param return true or false.
-	#
-
-	function is_valid_localpart( $address ) {
-		return ( is_valid_email_address( $address, array( 'check_localpart' => true,  'check_domain' => false )) == 1 ? true : false );
 	}
 
 ?>

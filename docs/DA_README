@@ -403,7 +403,14 @@ The following header is in the code.
 	2.5 - http://creativecommons.org/licenses/by-sa/2.5/ # GPLv3 -
 	http://www.gnu.org/copyleft/gpl.html
 
-The mailzu version has been enhanced to provide checks that allow a convenient and reliable
-way to determine whether a string is a full and valid email address, or a full and valid domain
-name or a full and valid local part (i.e. the string to the left of the '@'-sign of an e-mail
-address.
+The version used for mailzu has been enhanced to provide checks that allow a convenient and
+reliable way to determine whether a string is a full and valid email address, or a full and
+valid domain name or a full and valid local part (i.e. the string to the left of the '@'-sign
+of an e-mail address.
+
+The modified version of this code may be found at:
+
+	https://github.com/2024sight/rfc822-eld/blob/master/rfc822.php
+
+By default this code is compatible with the original and produces the exact same reuslts in
+the tests.

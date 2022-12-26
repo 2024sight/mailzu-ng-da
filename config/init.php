@@ -39,7 +39,7 @@
 // Start the session (do not edit!)
 session_start();
 
-$conf['app']['version'] = '0.12.mailzu-ng-da-php72-3ce1595+1';
+$conf['app']['version'] = '0.12.mailzu-ng-da-php72-00a08b4+1';
 $conf['app']['footlink'] = 'https://github.com/2024sight/mailzu-ng-da';
 
 include_once('constants.php');

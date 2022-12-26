@@ -497,6 +497,21 @@ include_once('init.php');
 //
 // $conf['da']['no_at_means_domain']	not set; By default not set or false.
 
+// When specifying email addresses, local parts or domains RFC822 comments may be
+// used. This flag specifies whether this is allowed or not. Be default the flag
+// is not defined which is interpreted as "true" by the code.
+//
+// $conf['da']['rfc822AllowComments']	not set; By default true.
+
+// When specifying email addresses or domains domain strings may be specified that
+// are correct but not routable on the public Internet and should therefore not be
+// allowed (strict rules). This flag indicates whether the strict rules should be
+// used or not. By default this flag is not defined which is interpreted as "false"
+// by the code. To enforce the strict rules, turn on this flag. That means that for
+// instance DA list entries such as "org" will then not be allowed.
+//
+// $conf['da']['public_internet']	not set; By default false.
+
 // When an administrator is creating or importing user da list entries, a users
 // table record may need to be created because it does not yet exist. For example
 // the administrator may be importing a complete dump of the da list database before
