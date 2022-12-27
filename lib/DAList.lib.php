@@ -629,6 +629,8 @@ function demergeDAEmailMatch( &$email_addresses, &$match_types ) {
 		$emailAddress	= trim( $emailAddress );
 
 		if ( strlen( $emailAddress ) <= 0 ) {
+			$email_addresses[ $i ]	= "";
+			$match_types[ $i ]	= 'U';
 			continue;
 		}
 

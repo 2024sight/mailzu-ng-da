@@ -600,7 +600,7 @@ function addDAList(	$add_list_checkboxes,
 								echo $add_list_match_type[$j] == "E" ? " selected='true'>" : ">";
 								echo translate('Exact Domain') . "</option>\n";
 
-								echo "<option disabled value='U'";
+								echo "<option value='U'";
 								echo $add_list_match_type[$j] == "U" ? " selected='true'>" : ">";
 								echo translate('Unknown') . "</option>\n";
 
@@ -675,11 +675,11 @@ function addDAList(	$add_list_checkboxes,
 					echo "<option value='D' selected='true'>" . translate('Default'     ) . "</option>";
 
 					if ( $conf[ 'da' ][ 'no_at_means_domain' ] ) {
-						echo "<option value='L'>" 		  . translate('Local Part'  ) . "</option>";
+						echo "<option value='L'>"	  . translate('Local Part'  ) . "</option>";
 					}
 
-					echo "<option          value='E'>" 	  . translate('Exact Domain') . "</option>";
-					echo "<option disabled value='U'>" 	  . translate('Unknown'     ) . "</option>";
+					echo "<option value='E'>"		  . translate('Exact Domain') . "</option>";
+					echo "<option value='U'>" 		  . translate('Unknown'     ) . "</option>";
 
 				echo "</select>\n";
 				echo "</td>";

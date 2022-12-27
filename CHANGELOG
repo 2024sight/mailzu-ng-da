@@ -1,3 +1,9 @@
+MailZu-ng 0.12.mailzu-ng-da-php72-10c2b76+1 (27.12.2022)
+---------
+  - Fixed a bug to do with disabled "form" items which caused a system error when processing DA
+    list entries with errors.
+  - Updated the RFC822 AllowComments option. This option is now by default disabled.
+
 MailZu-ng 0.12.mailzu-ng-da-php72-00a08b4+1 (19.12.2022)
 ---------
   - Cleaned up the changes to the RFC822 code. Gone back to just making the minimum modifications

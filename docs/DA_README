@@ -412,5 +412,4 @@ The modified version of this code may be found at:
 
 	https://github.com/2024sight/rfc822-eld/blob/master/rfc822.php
 
-By default this code is compatible with the original and produces the exact same reuslts in
-the tests.
+By default this code is compatible with the original and produces the same results in the tests.

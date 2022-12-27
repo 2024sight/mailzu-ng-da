@@ -42,7 +42,7 @@
 
 		global	$conf;
 
-                $options	= array( 'allow_comments'	=> ( isset( $conf['da'][ 'rfc822AllowComments' ] ) ? $conf['da'][ 'rfc822AllowComments' ] : true  ),
+                $options	= array( 'allow_comments'	=> ( isset( $conf['da'][ 'rfc822AllowComments' ] ) ? $conf['da'][ 'rfc822AllowComments' ] : false  ),
 					 'public_internet'	=> ( isset( $conf['da'][ 'public_internet'     ] ) ? $conf['da'][ 'public_internet'     ] : false ),
 					 'check_localpart'	=> true,
 					 'check_domain'		=> true
@@ -63,7 +63,7 @@
 
 		global	$conf;
 
-                $options	= array( 'allow_comments'	=> ( isset( $conf['da'][ 'rfc822AllowComments' ] ) ? $conf['da'][ 'rfc822AllowComments' ] : true  ),
+                $options	= array( 'allow_comments'	=> ( isset( $conf['da'][ 'rfc822AllowComments' ] ) ? $conf['da'][ 'rfc822AllowComments' ] : false  ),
 					 'public_internet'	=> ( isset( $conf['da'][ 'public_internet'     ] ) ? $conf['da'][ 'public_internet'     ] : false ),
 					 'check_localpart'	=> false,
 					 'check_domain'		=> true
@@ -84,7 +84,7 @@
 
 		global	$conf;
 
-                $options        = array( 'allow_comments'	=> ( isset( $conf['da'][ 'rfc822AllowComments' ] ) ? $conf['da'][ 'rfc822AllowComments' ] : true  ),
+                $options        = array( 'allow_comments'	=> ( isset( $conf['da'][ 'rfc822AllowComments' ] ) ? $conf['da'][ 'rfc822AllowComments' ] : false  ),
 					 'public_internet'	=> ( isset( $conf['da'][ 'public_internet'     ] ) ? $conf['da'][ 'public_internet'     ] : false ),
 					 'check_localpart'	=> true,
 					 'check_domain'		=> false

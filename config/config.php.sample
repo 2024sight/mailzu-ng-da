@@ -497,18 +497,21 @@ include_once('init.php');
 //
 // $conf['da']['no_at_means_domain']	not set; By default not set or false.
 
-// When specifying email addresses, local parts or domains RFC822 comments may be
-// used. This flag specifies whether this is allowed or not. Be default the flag
-// is not defined which is interpreted as "true" by the code.
+// Enabling the below option allows the use of comments in email strings, as specified
+// in RFC822. By default this option is turned off.
 //
-// $conf['da']['rfc822AllowComments']	not set; By default true.
+// $conf['da']['rfc822AllowComments']	not set; By default false.
 
-// When specifying email addresses or domains domain strings may be specified that
-// are correct but not routable on the public Internet and should therefore not be
-// allowed (strict rules). This flag indicates whether the strict rules should be
-// used or not. By default this flag is not defined which is interpreted as "false"
-// by the code. To enforce the strict rules, turn on this flag. That means that for
-// instance DA list entries such as "org" will then not be allowed.
+// When specifying email addresses or domains, domain strings may be specified that
+// are correct but not routable on the public Internet or that are not used in practice.
+// An example might be a singular TLD without further sub-domaining. The RFC822 code can
+// be configured to check that the specified domain complies with public internet practices
+// instead of strict complaince with RFC822 and its successors. I.e when the below setting
+// is true then more checks are applied. That also means that specifying just a single TLD
+// in the MaiLZu DA lists is then NOT possible. Years of use suggest that denying TLDs with
+// a lesser reputation is really useful. Therefore, turning on this option is not really
+// recommended. When the option is turned off (false), the strict rules of RFC822 apply,
+// including the use of single TLDs.
 //
 // $conf['da']['public_internet']	not set; By default false.
 
