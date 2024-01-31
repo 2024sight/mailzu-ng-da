@@ -33,21 +33,19 @@
 * @param string  array dalist			holding the entire character based deny and allow list for the user
 * @param string        loginName		holds the login name of the user or <empty> if admin
 * @param integer       $page			holds current page number
-* @param string        $numRows			total number of rows in the dalist
+* @param integer       $numRows			total number of rows in the dalist
+* @param integer       $sizeLimit		number of records shown per page
 * @param string array  $query_array		array containing all the settings of the query string
 * @param string array  $search_array		contains the search criteria that apply to the list shown. Used by 'delete all' and 'export all'
 * @param boolean       $is_admin		indicates that a user is an administrative user
 */
-function showDAList($dalist, $loginName, $page, $numRows = 0, $query_array, $search_array = array(), $is_admin = false) {
+function showDAList($dalist, $loginName, $page, $numRows = 0, $sizeLimit, $query_array, $search_array = array(), $is_admin = false) {
 
 	global $link;
 	global $conf;
 
 	// Create a copy of the query array. This copy will holds an updated query string for the next invocation.
 	$new_query_array	= $query_array;
-
-	// grab the display size limit set in config.php
-	$sizeLimit    		= isset ( $conf['app']['displaySizeLimit'] ) && is_numeric( $conf['app']['displaySizeLimit'] ) ? $conf['app']['displaySizeLimit'] : 50;
 
 	// Read order and vert_order from the query_array.
 	$order			= $query_array['order'];
@@ -65,13 +63,14 @@ function showDAList($dalist, $loginName, $page, $numRows = 0, $query_array, $sea
 
 	// If there are list entries to be shown, then print them.
 	if ( $dalist ) {
+
 		// $dalist is only a subset of the list in the database.
-		// Its number of rows is $sizeLimit
-		$count = $numRows;
+		// Its number of rows is <= $sizeLimit
+
 		$start_entry = 0;
 		$end_entry = count($dalist);
 
-		$pager_html = ( $count > $sizeLimit ) ? CmnFns::genMultiPagesLinks( $page, $sizeLimit, $count) : '';
+		$pager_html = ( $numRows > $sizeLimit ) ? CmnFns::genMultiPagesLinks( $page, $sizeLimit, $numRows ) : '';
 
 		// Draw 'Add', 'Update', 'Export', 'Export All', 'Delete' and 'Delete All' buttons 
 		printShowDAListActionButtons();
@@ -89,7 +88,7 @@ function showDAList($dalist, $loginName, $page, $numRows = 0, $query_array, $sea
         			<tr>
 				<td colspan="3" class="tableTitle">
 				<?php echo translate('Showing list', 
-					array( number_format($page*$sizeLimit+1), number_format($page*$sizeLimit+$end_entry), $count )); ?>
+					array( number_format($page*$sizeLimit+1), number_format($page*$sizeLimit+$end_entry), $numRows )); ?>
 				</td>
 
         			<td class="tableTitle">
@@ -590,7 +589,7 @@ function addDAList(	$add_list_checkboxes,
 								echo $add_list_match_type[$j] == "D" ? " selected='true'>" : ">";
 								echo translate('Default') . "</option>\n";
 
-								if ( $conf[ 'da' ][ 'no_at_means_domain' ] ) {
+								if (( isset( $conf[ 'da' ][ 'no_at_means_domain' ] )) && ( $conf[ 'da' ][ 'no_at_means_domain' ] )) {
 									echo "<option value='L'";
 									echo $add_list_match_type[$j] == "L" ? " selected='true'>" : ">";
 									echo translate('Local Part')  . "</option>\n";
@@ -674,7 +673,7 @@ function addDAList(	$add_list_checkboxes,
 
 					echo "<option value='D' selected='true'>" . translate('Default'     ) . "</option>";
 
-					if ( $conf[ 'da' ][ 'no_at_means_domain' ] ) {
+					if (( isset( $conf[ 'da' ][ 'no_at_means_domain' ] )) && ( $conf[ 'da' ][ 'no_at_means_domain' ] )) {
 						echo "<option value='L'>"	  . translate('Local Part'  ) . "</option>";
 					}
 

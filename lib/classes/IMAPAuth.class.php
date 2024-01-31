@@ -36,9 +36,9 @@ class IMAPAuth
     {
         global $conf;
 
-        $this->imapHosts = $conf['auth']['imap_hosts'];
-        $this->imapType = $conf['auth']['imap_type'];
-        $this->imapDomainName = $conf['auth']['imap_domain_name'];
+        $this->imapHosts      = (( isset( $conf['auth']['imap_hosts']       )) ? $conf['auth']['imap_hosts']      : '' );
+        $this->imapType       = (( isset( $conf['auth']['imap_type']        )) ? $conf['auth']['imap_type']       : '' );
+        $this->imapDomainName = (( isset( $conf['auth']['imap_domain_name'] )) ? $conf['auth']['imap_domai_name'] : '' );
     }
 
     // User methods -------------------------------------------

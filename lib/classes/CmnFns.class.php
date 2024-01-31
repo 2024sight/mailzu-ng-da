@@ -50,7 +50,7 @@ class CmnFns
     {
         global $dates;
 
-        if (empty($format)) $format = $dates['general_date'];
+        if (empty($format)) $format = ( isset( $dates['general_date'] ) ? $dates['general_date'] : '%m/%d/%Y' );
         return strftime($format, $date);
     }
 
@@ -65,6 +65,9 @@ class CmnFns
         global $conf;
         global $dates;
 
+        $dates['general_datetime'] = ( isset( $dates['general_datetime'] ) ? $dates['general_datetime'] : '%H:%M%S' );
+        $conf['app']['timeFormat'] = ( isset( $conf['app']['timeFormat'] ) ? $conf['app']['timeFormat'] : 24        );
+
         if (empty($format))
             $format = $dates['general_datetime'] . ' ' . (($conf['app']['timeFormat'] == 24) ? '%H' : '%I') . ':%M:%S' . (($conf['app']['timeFormat'] == 24) ? '' : ' %p');
         return strftime($format, $ts);
@@ -78,7 +81,7 @@ class CmnFns
     public static function getScriptURL()
     {
         global $conf;
-        $uri = $conf['app']['weburi'];
+        $uri = ( isset( $conf['app']['weburi'] ) ? $conf['app']['weburi'] : 'weburi not set' );
         return (strrpos($uri, '/') === false) ? $uri : substr($uri, 0, strlen($uri));
     }
 
@@ -95,6 +98,8 @@ class CmnFns
         echo '<table border="0" cellspacing="0" cellpadding="0" align="center" class="alert" style="' . $style . '"><tr><td>' . $msg . '</td></tr></table>';
 
         if ($die) {
+	    $conf['app']['title'  ] = ( isset( $conf['app']['title'  ] ) ? $conf['app']['title'  ] : 'App title not set'   );
+	    $conf['app']['version'] = ( isset( $conf['app']['version'] ) ? $conf['app']['version'] : 'App version not set' );
             echo '</td></tr></table>';        // endMain() in Template
             echo '<p align="center"><a href="http://www.mailzu.net">' . $conf['app']['title'] . ' v' . $conf['app']['version'] . '</a></p></body></html>';    // printHTMLFooter() in Template
 
@@ -234,10 +239,10 @@ class CmnFns
     {
         global $conf;
         $delim = "\t";
-        $file = $conf['app']['logfile'];
+        $file = ( isset( $conf['app']['logfile'] ) ? $conf['app']['logfile'] : '/dev/null' );
         $values = '';
 
-        if (!$conf['app']['use_log'])        // Return if we aren't going to log
+        if ( !isset( $conf['app']['use_log'] ) || !$conf['app']['use_log'] )        // Return if we aren't going to log
             return;
 
         if (empty($ip))
@@ -269,19 +274,23 @@ class CmnFns
     public static function get_day_name($day_of_week, $type = 0)
     {
         global $days_full;
-        global $days_abbr;
         global $days_letter;
         global $days_two;
+        global $days_abbr;
 
         $names = array(
-            $days_full, $days_letter, $days_two, $days_letter
-            /*
-            array ('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'),
-            array ('S', 'M', 'T', 'W', 'T', 'F', 'S'),
-            array ('Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'),
-            array ('Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat')
-            */
-        );
+	    ( isset( $days_full   ) ? $days_full   : array ('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday')),
+	    ( isset( $days_letter ) ? $days_letter : array ('S', 'M', 'T', 'W', 'T', 'F', 'S')),
+	    ( isset( $days_two    ) ? $days_two    : array ('Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa')), 
+	    ( isset( $days_abbr   ) ? $days_abbr   : array ('Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'))
+	);
+
+        /*
+         *  array ('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'),
+         *  array ('S', 'M', 'T', 'W', 'T', 'F', 'S'),
+         *  array ('Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'),
+         *  array ('Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat')
+         */
 
         return $names[$type][$day_of_week];
     }
@@ -308,10 +317,11 @@ class CmnFns
         <select name="language" class="textbox" onchange="changeLanguage(this);">
             <?php
             $languages = get_language_list();
+	    $defaultLanguage = ( isset( $conf['app']['defaultLanguage'] ) ? $conf['app']['defaultLanguage'] : '' );
             foreach ($languages as $lang => $settings) {
                 echo '<option value="' . $lang . '"'
                     . ((determine_language() == $lang) ? ' selected="selected"' : '')
-                    . '>' . $settings[3] . ($lang == $conf['app']['defaultLanguage'] ? ' ' . translate('(Default)') : '') . "</option>\n";
+                    . '>' . $settings[3] . ($lang == $defaultLanguage ? ' ' . translate('(Default)') : '') . "</option>\n";
             }
             ?>
         </select>
@@ -397,7 +407,7 @@ class CmnFns
     {
         global $link;
 
-        $total_pages = $count / $sizeLimit;
+        $total_pages = ceil( $count / $sizeLimit );
 
         $php_self = $_SERVER['PHP_SELF'];
 
@@ -461,8 +471,7 @@ class CmnFns
         $fields_array = array("f" => translate('From'),
             "s" => translate('Subject')
         );
-        if ( ((Auth::isAdmin()) && ("Site Quarantine" == $_SESSION['sessionNav'] || "Site Pending Requests" == $_SESSION['sessionNav'])) ||
-	      ($conf['app']['allowMailid']) ) {
+        if ( ((Auth::isAdmin()) && ("Site Quarantine" == $_SESSION['sessionNav'] || "Site Pending Requests" == $_SESSION['sessionNav'])) || ( isset( $conf['app']['allowMailid'] ) && ( $conf['app']['allowMailid'] ))) {
             $fields_array = array_merge(array("m" => "Mail ID"), $fields_array);
         }
         if ($full_search) $fields_array = array_merge(array("t" => translate('To')), $fields_array);
@@ -521,11 +530,11 @@ class CmnFns
                                 <?php echo translate('Spam'); ?></option>
                             <option value="B" <?php echo($content_type == 'B' ? ' selected="true"' : ''); ?>>
                                 <?php echo translate('Banned'); ?></option>
-                            <?php if (Auth::isAdmin() || $conf['app']['allowViruses']) { ?>
+                            <?php if ( Auth::isAdmin() || ( isset( $conf['app']['allowViruses'] ) && ( $conf['app']['allowViruses'] ))) { ?>
                                 <option value="V" <?php echo($content_type == 'V' ? ' selected="true"' : ''); ?>>
                                     <?php echo translate('Virus'); ?></option>
                             <?php }
-                            if (Auth::isAdmin() || $conf['app']['allowBadHeaders']) { ?>
+                            if ( Auth::isAdmin() || ( isset( $conf['app']['allowBadHeaders'] ) && ( $conf['app']['allowBadHeaders'] ))) { ?>
                                 <option value="H" <?php echo($content_type == 'H' ? ' selected="true"' : ''); ?>>
                                     <?php echo translate('Bad Header'); ?></option>
                             <?php }

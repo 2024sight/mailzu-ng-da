@@ -25,11 +25,21 @@ if ( file_exists(BASE_DIR . '/config/config.php') ) {
     die('Unable to load database configuration data from '. BASE_DIR . '/config/config.php'.PHP_EOL);
 }
 
-$dbType = $conf['db']['dbType'];
-$dbName = $conf['db']['dbName'];
-$dbUser = $conf['db']['dbUser'];
-$dbPass = $conf['db']['dbPass'];
-$dbHost = $conf['db']['hostSpec'];
+$dbType = ( isset( $conf['db']['dbType']   ) ? $conf['db']['dbType']   : '' );
+$dbName = ( isset( $conf['db']['dbName']   ) ? $conf['db']['dbName']   : '' );
+$dbUser = ( isset( $conf['db']['dbUser']   ) ? $conf['db']['dbUser']   : '' );
+$dbPass = ( isset( $conf['db']['dbPass']   ) ? $conf['db']['dbPass']   : '' );
+$dbHost = ( isset( $conf['db']['hostSpec'] ) ? $conf['db']['hostSpec'] : '' );
+
+$errorCount	= 0;
+
+if ( strlen( $dbType ) == 0 ) { print "\$conf['db']['dbType'] not set\n";   $errorCount++; }
+if ( strlen( $dbName ) == 0 ) { print "\$conf['db']['dbName'] not set\n";   $errorCount++; }
+if ( strlen( $dbUser ) == 0 ) { print "\$conf['db']['dbUser'] not set\n";   $errorCount++; }
+if ( strlen( $dbPass ) == 0 ) { print "\$conf['db']['dbPass'] not set\n";   $errorCount++; }
+if ( strlen( $dbHost ) == 0 ) { print "\$conf['db']['hostSpec'] not set\n"; $errorCount++; }
+
+if ( $errorCount ) { die; }
 
 // Declare max days to keep quarantine items
 $keep_days = 14;

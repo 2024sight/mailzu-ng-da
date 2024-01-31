@@ -77,7 +77,7 @@ function determine_language()
     } else if ($lang = get_browser_lang()) {
         // Do nothing, it's done in the if
     } else {
-        $lang = $conf['app']['defaultLanguage'];
+        $lang = ( isset( $conf['app']['defaultLanguage'] ) ? $conf['app']['defaultLanguage'] : 'en_US' );
     }
 
     return $lang;
@@ -137,7 +137,7 @@ function set_language($lang)
     global $conf;
 
     if (!isset($languages[$lang])) {
-        $lang = $conf['app']['defaultLanguage'];
+        $lang = ( isset( $conf['app']['defaultLanguage'] ) ? $conf['app']['defaultLanguage'] : 'en_US' );
     }
 
     @session_start();

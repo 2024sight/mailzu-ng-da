@@ -29,7 +29,7 @@ if (!Auth::is_logged_in()) {
 }
 
 //Turn off all error reporting, useless for users
-error_reporting(0);
+// error_reporting(0);
 
 $t = new Template(translate('Message Processing'));
 

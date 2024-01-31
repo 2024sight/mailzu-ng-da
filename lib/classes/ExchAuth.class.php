@@ -39,8 +39,8 @@ class ExchAuth
     {
         global $conf;
 
-        $this->exchHost = $conf['auth']['exch_host'];
-        $this->exchLDAP = $conf['auth']['exch_ldap'];
+        $this->exchHost = ( isset( $conf['auth']['exch_host'] ) ? $conf['auth']['exch_host'] : '' );
+        $this->exchLDAP = ( isset( $conf['auth']['exch_ldap'] ) ? $conf['auth']['exch_ldap'] : '' );
     }
 
     // User methods -------------------------------------------

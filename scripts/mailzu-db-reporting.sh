@@ -1,4 +1,4 @@
-#! /bin/bash
+#! /usr/bin/bash
 
 Prog_Name=$( /usr/bin/basename    "$0"        )	|| exit 1
 Dir_Name=$(  /usr/bin/dirname     "$0"        )	|| exit 1
@@ -25,7 +25,7 @@ function	get_text()
 			[ "$Line" == "_SOF_""$Text_Name" ] && Text_Started="1"
 		fi
 
-	done <<< $( /bin/cat "$This_File" )
+	done <<< $( /usr/bin/cat "$This_File" )
 }
 
 function	User_Report()
@@ -33,7 +33,7 @@ function	User_Report()
 
 	User="$1"
 
-	EMail_Address=$(	/bin/cat << _EOF	| /usr/bin/mysql "$dbName" --disable-column-names
+	EMail_Address=$(	/usr/bin/cat << _EOF	| /usr/bin/mysql "$dbName" --disable-column-names
 					SELECT		email
 					FROM		users
 					WHERE		users.loginname		= "$User"
@@ -45,13 +45,13 @@ _EOF
 	)
 
 	if [ -z $EMail_Address ]; then
-		echo "$Prog_Name: Ignoring user $User. No suitable E-Mail Address found"	>&2
+		echo "$Prog_Name: Ignoring user $User. No suitable E-Mail Address found"			 >&2
 		return;
 	fi
 
-	Temp_File=$( /bin/mktemp --tmpdir="$Temp_Dir" "MailZu-Report-XXXXXXXX" )
+	Temp_File=$( /usr/bin/mktemp --tmpdir="$Temp_Dir" "MailZu-Report-XXXXXXXX" )
 
-	get_text "header_message" | /bin/sed s/Number_of_Days/$Number_of_Days/	> "$Temp_File"
+	get_text "header_message" | /usr/bin/sed s/Number_of_Days/$Number_of_Days/				 > "$Temp_File"
 
 	OLD_IFS="$IFS"
 	IFS='	'
@@ -90,7 +90,7 @@ _EOF
 	if [ "$Line_Counter" -eq "0" ]; then
 
 		if [ "$Send_Zero" -eq "1" ]; then
-			get_text "zero_message" | /bin/sed s/Number_of_Days/$Number_of_Days/	> "$Temp_File"
+			get_text "zero_message" | /usr/bin/sed s/Number_of_Days/$Number_of_Days/		 > "$Temp_File"
 		else
 			Send_Report="0"
 		fi
@@ -100,32 +100,32 @@ _EOF
 	if [ "$Send_Report" -eq "1" ]; then
 
 		if [ ! -x /usr/bin/txt2html -o "$Text_Email" -eq "1" ]; then
-			/bin/cat "$Temp_File" 											|\
+			/usr/bin/cat "$Temp_File" 										|\
 			/usr/bin/mail -s "MailZu Quarantine Report" "$EMail_Address"
 		else
-			Temp_HTML_File=$( /bin/mktemp --tmpdir="$Temp_Dir" "MailZu-Report-XXXXXXXX.html" )
+			Temp_HTML_File=$( /usr/bin/mktemp --tmpdir="$Temp_Dir" "MailZu-Report-XXXXXXXX.html" )
 
 			if /usr/bin/txt2html $"$Temp_File" > "$Temp_HTML_File" 2>/dev/null; then
-				/bin/cat "$Temp_HTML_File"									|\
+				/usr/bin/cat "$Temp_HTML_File"									|\
 				/usr/bin/mail -a "Content-type: text/html" -s "MailZu Quarantine Report" "$EMail_Address"
 			else
-				/bin/cat "$Temp_File" 										|\
+				/usr/bin/cat "$Temp_File" 									|\
 				/usr/bin/mail -s "MailZu Quarantine Report" "$EMail_Address"
 			fi
 
-			/bin/rm "$Temp_HTML_File"
+			/usr/bin/rm "$Temp_HTML_File"
 
 		fi
 	fi
 
-	/bin/rm "$Temp_File"
+	/usr/bin/rm "$Temp_File"
 }
 
 function	Per_User()
 {
 	while read User; do
 
-		/bin/cat << _EOF	| /usr/bin/mysql "$dbName" --disable-column-names	| User_Report "$User"
+		/usr/bin/cat << _EOF	| /usr/bin/mysql "$dbName" --disable-column-names	| User_Report "$User"
 			SELECT		msgs.time_iso,
 					msgs.from_addr,
 					recip.email,
@@ -167,16 +167,16 @@ while read Line; do
 	Counter=$(( Counter + 1 ))
 
 done <<< $(	cd $Dir_Name
-		/usr/bin/php -r	'	include("../config/config.php");
-					print $conf["db"    ]["dbType"    ] . "\n";
-					print $conf["db"    ]["dbUser"    ] . "\n";
-					print $conf["db"    ]["dbPass"    ] . "\n";
-					print $conf["db"    ]["dbName"    ] . "\n";
-					print $conf["db"    ]["hostSpec"  ] . "\n";
-					print $conf["script"]["reportDays"] . "\n";
-					print $conf["script"]["sendZero"  ] . "\n";
-					print $conf["script"]["textEmail" ] . "\n";	' )
-
+		/usr/bin/php -r	'	include( "../config/config.php" );
+					print (isset( $conf["db"    ]["dbType"    ] ) ? $conf["db"    ]["dbType"    ] : "") . "\n";
+					print (isset( $conf["db"    ]["dbUser"    ] ) ? $conf["db"    ]["dbUser"    ] : "") . "\n";
+					print (isset( $conf["db"    ]["dbPass"    ] ) ? $conf["db"    ]["dbPass"    ] : "") . "\n";
+					print (isset( $conf["db"    ]["dbName"    ] ) ? $conf["db"    ]["dbName"    ] : "") . "\n";
+					print (isset( $conf["db"    ]["hostSpec"  ] ) ? $conf["db"    ]["hostSpec"  ] : "") . "\n";
+					print (isset( $conf["script"]["reportDays"] ) ? $conf["script"]["reportDays"] :  3) . "\n";
+					print (isset( $conf["script"]["sendZero"  ] ) ? $conf["script"]["sendZero"  ] :  0) . "\n";
+					print (isset( $conf["script"]["textEmail" ] ) ? $conf["script"]["textEmail" ] :  0) . "\n";	' 
+	)
 
 digit_regex="^[[:digit:]]+$"
 
@@ -237,7 +237,7 @@ if [ "$dbPort" -le "0" ]; then
 	exit 1
 fi
 
-if ! Temp_Dir=$( /bin/mktemp --directory --tmpdir="/tmp" "MailZu-Dir-XXXX" ); then
+if ! Temp_Dir=$( /usr/bin/mktemp --directory --tmpdir="/tmp" "MailZu-Dir-XXXX" ); then
 	echo "$Prog_Name: failed to create a temporary directory"
 	exit 1
 fi
@@ -246,7 +246,7 @@ fi
 	cd $Temp_Dir
 	export HOME="$Temp_Dir"
 
-	/bin/cat << _EOF	> .my.cnf
+	/usr/bin/cat << _EOF	> .my.cnf
 
 	[client]
 	host		= $dbHost
@@ -256,14 +256,14 @@ fi
 
 _EOF
 
-	/bin/cat << _EOF	| /usr/bin/mysql "$dbName" --disable-column-names	| Per_User
+	/usr/bin/cat << _EOF	| /usr/bin/mysql "$dbName" --disable-column-names	| Per_User
 		SELECT	DISTINCT	users.loginname
 		FROM			users
 		WHERE			users.priority BETWEEN 4000 AND 4099;
 _EOF
 )
 
-/bin/rm -rf "$Temp_Dir"
+/usr/bin/rm -rf "$Temp_Dir"
 
 exit 0
 

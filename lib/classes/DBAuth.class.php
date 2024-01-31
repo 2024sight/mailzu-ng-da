@@ -71,17 +71,17 @@ class DBAuth
     {
         global $conf;
 
-        $this->dbType = $conf['auth']['dbType'];
-        $this->dbHost = $conf['auth']['dbHostSpec'];
-        $this->dbName = $conf['auth']['dbName'];
-        $this->dbUser = $conf['auth']['dbUser'];
-        $this->dbPass = $conf['auth']['dbPass'];
-        $this->isMd5 = $conf['auth']['dbIsMd5'];
-        $this->dbTable = $conf['auth']['dbTable'];
-        $this->dbTableUsername = $conf['auth']['dbTableUsername'];
-        $this->dbTablePassword = $conf['auth']['dbTablePassword'];
-        $this->dbTableName = $conf['auth']['dbTableName'];
-        $this->dbTableMail = $conf['auth']['dbTableMail'];
+        $this->dbType          = ( isset( $conf['auth']['dbType']          ) ? $conf['auth']['dbType']          : '' );
+        $this->dbHost          = ( isset( $conf['auth']['dbHostSpec']      ) ? $conf['auth']['dbHostSpec']      : '' );
+        $this->dbName          = ( isset( $conf['auth']['dbName']          ) ? $conf['auth']['dbName']          : '' );
+        $this->dbUser          = ( isset( $conf['auth']['dbUser']          ) ? $conf['auth']['dbUser']          : '' );
+        $this->dbPass          = ( isset( $conf['auth']['dbPass']          ) ? $conf['auth']['dbPass']          : '' );
+        $this->isMd5           = ( isset( $conf['auth']['dbIsMd5']         ) ? $conf['auth']['dbIsMd5']         : '' );
+        $this->dbTable         = ( isset( $conf['auth']['dbTable']         ) ? $conf['auth']['dbTable']         : '' );
+        $this->dbTableUsername = ( isset( $conf['auth']['dbTableUsername'] ) ? $conf['auth']['dbTableUsername'] : '' );
+        $this->dbTablePassword = ( isset( $conf['auth']['dbTablePassword'] ) ? $conf['auth']['dbTablePassword'] : '' );
+        $this->dbTableName     = ( isset( $conf['auth']['dbTableName']     ) ? $conf['auth']['dbTableName']     : '' );
+        $this->dbTableMail     = ( isset( $conf['auth']['dbTableMail']     ) ? $conf['auth']['dbTableMail']     : '' );
 
         $this->db_connect();
     }

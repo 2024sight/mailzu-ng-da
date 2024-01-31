@@ -4,7 +4,6 @@ Description	= Daily timer to run Amavis/MailZu quarantine reporting to end-users
 [Timer]
 OnCalendar	= daily
 AccuracySec	= 30m
-Persistence	= false
 
 [Install]
 WantedBy	= timers.target

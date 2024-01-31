@@ -16,11 +16,11 @@
 include_once('lib/autoload.php');
 
 if (!Auth::is_logged_in()) {
-	Auth::print_login_msg();	// Check if user is logged in
+	(new Auth())->print_login_msg();	// Check if user is logged in
 }
 
 //Turn off all error reporting, useless for users
-error_reporting(0);
+// error_reporting(0);
 
 // Get the globals
 global	$conf;

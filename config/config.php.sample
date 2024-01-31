@@ -293,14 +293,14 @@ $conf['auth']['imap_domain_name'] = 'example.com';
 *
 *  Example:
 *  If you login as 'userid1' then..
-*  conf['auth']['admins'] = array ('userid1','userid2');
+*  $conf['auth']['admins'] = array ('userid1','userid2');
 *
 *  OR
 *
 *  If you login as 'userid1@example.com' then...
-*  conf['auth']['admins'] = array ('userid1@example.com',
-*				   'userid2@example.com'
-*				  );
+*  $conf['auth']['admins'] = array ('userid1@example.com',
+*				    'userid2@example.com'
+*				   );
 *
 */
 
@@ -371,7 +371,7 @@ $conf['app']['emailType'] = 'mail';
 
 // SMTP email host address []
 // This is only required if emailType is SMTP
-$conf['app']['smtpHost'] = '';
+$conf['app']['smtpHost'] = 'localhost';
 
 // SMTP port [25]
 // This is only required if emailType is SMTP
@@ -465,8 +465,12 @@ $conf['app']['debug'] = 0;
 // Specify as /directory/filename.extension
 $conf['app']['logfile'] = '/var/log/mailzu.log';
 
-// Maximum number of messages displayed per page
+// Maximum number of messages displayed per page for non-administrative users
 $conf['app']['displaySizeLimit'] = 50;
+
+// Maximum number of messages displayed per page for administrative users when
+// operating in their administrative capacity.
+$conf['app']['displaySizeLimitAdmin'] = 100;
 
 // Allow users to view quarantined Bad Header messages
 // Bad headers are treated like spam and released
@@ -529,8 +533,6 @@ include_once('init.php');
 // Policy must be greater than 0. See DA_README.
 //
 // $conf['da']['defaultUserPolicy' ]	not set; Should be an integer value > 0
-// $conf['da']['defaultUserIsLocal']	not set; Should be 'Y', 'y', 'N' or 'n';
-//
 
 // Set the export file name and extension. The name will be prefixed with
 // date and time followed by an underscore.
@@ -540,25 +542,17 @@ include_once('init.php');
 // e-mailed quarantine report. If set to 0, the script will not report.
 //
 // $conf['script']['reportDays']	= 3; Should be a non-negative integer.
-//
-// DO NOT COMMENT OUT THE LINE BELOW
-$conf['script']['reportDays']		= 3;
 
 // Configure whether the reporting script should send a zero line report as
 // notification. The default is to not send a zero line report.
 //
 // $conf['script']['sendZero']		= 0; Should be 0 or 1;
-//
-// DO NOT COMMENT OUT THE LINE BELOW
-$conf['script']['sendZero']		= 0;
 
-// Configure whether the reporting script should send a zero line report as
-// notification. The default is to not send a zero line report.
+// Configure whether the reporting script should send a plain text email
+// notification even if an HTML converter (text2html) is available. The default
+// is to send an HTML message if the converter is installed.
 //
 // $conf['script']['textEmail']		= 0; Should be 0 or 1;
-//
-// DO NOT COMMENT OUT THE LINE BELOW
-$conf['script']['textEmail']		= 0;
 
 // Configure the number of days a quarantined message should be kept in quarantine
 // before being removed. If not set the default of 14 days will be applied.

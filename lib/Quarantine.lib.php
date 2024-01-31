@@ -114,7 +114,7 @@ function releaseMessages($emailaddresses, $mail_id_array)
     global $conf;
 
     // If release request needs to be sent to Admins
-    if (is_array($release_req_messages) && !empty($release_req_messages) && $conf['app']['notifyAdmin'])
+    if (is_array($release_req_messages) && !empty($release_req_messages) && isset( $conf['app']['notifyAdmin'] ) && $conf['app']['notifyAdmin'] )
         sendMailToAdmin(translate('Request release'), $release_req_messages);
 
     // If release needs to be done
@@ -219,7 +219,7 @@ function updateMessages($flag, $content_type, $emailaddresses, $mail_id_array, $
     $db->check_for_error($result, $db->db);
 
     if ($all) {
-        $res = $db->get_user_messages($content_type, $emailaddresses, 'msgs.time_num', 'DESC', '', false, 0, 0, true);
+        $res = $db->get_user_messages($content_type, $emailaddresses, 'msgs.time_num', 'DESC', '', false, 0, 0, 0, true);
         for ($i = 0; is_array($res) && $i < count($res); $i++) {
             $rs = $res[$i];
 
@@ -291,8 +291,8 @@ function sendMailToAdmin($myaction, $messages_array)
 {
 
     global $conf;
-    $title = $conf['app']['title'];
-    $adminEmail = $conf['app']['adminEmail'];
+    $title = ( isset( $conf['app']['title'] ) ? $conf['app']['title'] : 'Unknown title' );
+    $adminEmail = ( isset( $conf['app']['adminEmail'] ) ? $conf['app']['adminEmail'] : array());
 
     $sub = "[" . $title . "] Notification from '" . $_SESSION['sessionID'] . "'";
     $msg = "Mail notification sent by '" . $_SESSION['sessionID'] . "' <" . getFromMailAddr() . ">.\r\n\r\n";

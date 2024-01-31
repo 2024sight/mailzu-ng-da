@@ -37,12 +37,6 @@ For LDAP or Active Directory PHP must be built with '--with-ldap'.
 For the database backends you can use '--with-pgsql', '--with-mysql', 
 etc. 
 
-For the included and optional database cleanup script
-(scripts/mz_db_clean.pl):
-
-1) Perl 5.6 
-2) Perl DBI with respective database driver
-
 MailZu utilizes the recommended values for the SQL field msgrcpt.rs as
 stated in the README_FILES/README.sql that comes with the amavisd-new
 distribution. The cleanup script performs database purging based on old
@@ -152,9 +146,6 @@ additional hosts you desire.
     inet_acl => [qw( 127.0.0.1 [::1] <IP of MailZu host> )],
   };
 
-
-
-
 The configuration settings above is the minimal setting required by MailZu. 
 
 This allows MailZu to give an index of all messages that were considered spam
@@ -186,8 +177,6 @@ with
   $bad_header_quarantine_to= 'bad-header-quarantine';
   $spam_quarantine_to      = 'spam-quarantine';
 
-
-
 This optional setting has no impact on MailZu's capability to release or
 request mail.
 
@@ -198,6 +187,17 @@ the AM.PDP port
 
 If a connection is made than configuration of amavisd-new was successful.
 Repeat this configuration procedure for every amavisd-new instance.
+
+For amavis to function properly it requires SELECT privileges on amavis
+database tables. In addition it needs INSERT and UPDATE privileges on the
+maddr, msgs, msgrcpt and quanrantine tables. Note that amavis does not need
+DELETE privileges on any of those tables.
+
+Maintenance of the database is done by a maintenance script as described in
+SCRIPTS_README. The maintenance script needs the DELETE privilege on the above
+mentioned tables. Mailzu can have its own user credentials which, in addition to
+the above privileges, would also need DELETE privileges on the above mentioned
+tables. The maintenance script runs with the Mailzu user credentials.
 
 
 MailZu SQL extensions

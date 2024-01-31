@@ -31,8 +31,9 @@ if (!Auth::is_logged_in()) {
 }
 
 // grab the display size limit set in config.php
-$sizeLimit = isset ($conf['app']['displaySizeLimitAdmin']) && is_numeric($conf['app']['displaySizeLimitAdmin']) ?
-    $conf['app']['displaySizeLimitAdmin'] : 50;
+$sizeLimit = (( isset ( $conf['app']['displaySizeLimitAdmin'] )) ? $conf['app']['displaySizeLimitAdmin'] : ( isset( $conf['app']['displaySizeLimit'] ) ? $conf['app']['displaySizeLimit'] : 100 ));
+$sizeLimit = (( is_int( $sizeLimit ) && ( $sizeLimit > 0 ))      ? $sizeLimit : 100 );
+
 // Get current page number
 $requestedPage = CmnFns::getGlobalVar('page', GET);
 
@@ -80,7 +81,7 @@ if (!Auth::isAdmin()) {
         // Print a loading message until database returns...
         printMessage(translate('Retrieving Messages...'));
 
-        $messages = $db->get_user_messages($content_type, $_SESSION['sessionMail'], CmnFns::get_value_order($order), CmnFns::get_vert_order(), $search_array, 1, 0, $requestedPage);
+        $messages = $db->get_user_messages($content_type, $_SESSION['sessionMail'], CmnFns::get_value_order($order), CmnFns::get_vert_order(), $search_array, true, 0, $requestedPage, $sizeLimit);
     }
 
 // Compute maximum number of pages
@@ -94,7 +95,7 @@ if (!Auth::isAdmin()) {
     }
 
     if (CmnFns::getGlobalVar('searchOnly', GET) != 1) {
-        showMessagesTable($content_type, $messages, $requestedPage, CmnFns::get_value_order($order), CmnFns::get_vert_order(), $db->numRows);
+        showMessagesTable($content_type, $messages, $requestedPage, $sizeLimit, CmnFns::get_value_order($order), CmnFns::get_vert_order(), $db->numRows);
 
         // Hide the message after the table loads.
         hideMessage(translate('Retrieving Messages...'));

@@ -35,11 +35,11 @@ include_once('templates/common.template.php');
 include_once('templates/dalists.template.php');
 
 if (!Auth::is_logged_in()) {
-	Auth::print_login_msg();	// Check if user is logged in
+	(new Auth())->print_login_msg();	// Check if user is logged in
 }
 
 //Turn off all error reporting, useless for users
-error_reporting(0);
+// error_reporting(0);
 
 /*
 * Initialise first and then check whether we are authorised
@@ -104,11 +104,17 @@ startDataDisplayCol();
 switch ( $action ) {
 
        case translate('Submit'):
-	       	$add_list_checkboxes      = CmnFns::getGlobalVar('add_list_checkboxes',      POST);
-       		$add_list_email_addresses = CmnFns::getGlobalVar('add_list_email_addresses', POST);
-		$add_list_match_type	  = CmnFns::getGlobalVar('add_list_match_type',      POST);
-       		$add_list_davalues        = CmnFns::getGlobalVar('add_list_davalues',        POST);
-       		$add_list_dasoftlist      = CmnFns::getGlobalVar('add_list_dasoftlist',      POST);
+	       	$add_list_checkboxes		= CmnFns::getGlobalVar('add_list_checkboxes',      POST);
+       		$add_list_email_addresses	= CmnFns::getGlobalVar('add_list_email_addresses', POST);
+		$add_list_match_type		= CmnFns::getGlobalVar('add_list_match_type',      POST);
+       		$add_list_davalues		= CmnFns::getGlobalVar('add_list_davalues',        POST);
+       		$add_list_dasoftlist		= CmnFns::getGlobalVar('add_list_dasoftlist',      POST);
+
+		$add_list_checkboxes		= ( isset( $add_list_checkboxes      ) ? $add_list_checkboxes      : array());
+		$add_list_email_addresses	= ( isset( $add_list_email_addresses ) ? $add_list_email_addresses : array());
+		$add_list_match_type		= ( isset( $add_list_match_type      ) ? $add_list_match_type      : array());
+		$add_list_davalues		= ( isset( $add_list_davalues        ) ? $add_list_davalues        : array());
+		$add_list_dasoftlist		= ( isset( $add_list_dasoftlist      ) ? $add_list_dasoftlist      : array());
 
        		if ( $is_admin ) {
        			$add_list_user_loginname	= CmnFns::getGlobalVar('add_list_user_loginname', POST);
@@ -136,8 +142,9 @@ switch ( $action ) {
        		foreach( $add_list_email_addresses as $address ) {
 
 			// When a add list screen is submitted, the last line may be empty. But because that is now actively checked,
-			// it causes an error to be raised, unless processing of a line which has no Address value is ignored. This
-			// what the below test implements. Similarly a line may just have an empty address because the user removed it.
+			// it causes an error to be raised, unless processing of a last line which has no Address value. This is what
+			// the below test implements. In fact the code checks it for every line but the user cannot delete an address
+			// on the add list screen. Therefore the net-effect of this code is a check on the last line.
 
 			if ( strlen( $address ) <= 0 ) {
 				continue;
@@ -311,6 +318,12 @@ switch ( $action ) {
        			$add_list_davalues		= CmnFns::getGlobalVar('add_list_davalues',        POST);
        			$add_list_dasoftlist		= CmnFns::getGlobalVar('add_list_dasoftlist',      POST);
 
+			$add_list_checkboxes		= ( isset( $add_list_checkboxes      ) ? $add_list_checkboxes      : array());
+			$add_list_email_addresses	= ( isset( $add_list_email_addresses ) ? $add_list_email_addresses : array());
+			$add_list_match_type		= ( isset( $add_list_match_type      ) ? $add_list_match_type      : array());
+			$add_list_davalues		= ( isset( $add_list_davalues        ) ? $add_list_davalues        : array());
+			$add_list_dasoftlist		= ( isset( $add_list_dasoftlist      ) ? $add_list_dasoftlist      : array());
+
        			if ( $is_admin ) {
        				$add_list_user_loginname	= CmnFns::getGlobalVar('add_list_user_loginname', POST);
        				$add_list_user_email		= CmnFns::getGlobalVar('add_list_user_email',     POST);
@@ -389,7 +402,7 @@ switch ( $action ) {
 			}
 
 			$suppressIgnore	= true;
-			fclose( $fileImportHandle );
+			fclose( $importFileHandle );
 		}
 
 		if ( $action != translate( 'Submit' )) {

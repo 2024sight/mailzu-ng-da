@@ -124,14 +124,14 @@ class Auth
 
         $_SESSION['sessionID'] = null;
         $_SESSION['sessionName'] = null;
-        $_SESSION['sessionMail'] = null;
+        $_SESSION['sessionMail'] = array();		// _SESSION['sessionMail'] must be an array, even if just an empty array.
         $_SESSION['sessionAdmin'] = null;
         $_SESSION['sessionNav'] = null;
 
         $login = stripslashes($login);
         $pass = stripslashes($pass);
         $ok_user = $ok_pass = false;
-        $authMethod = $conf['auth']['serverType'];
+        $authMethod = ( isset( $conf['auth']['serverType'] ) ? $conf['auth']['serverType'] : 'Not set' );
 
         if ($isCookie != false) {        // Cookie is set
             $id = $isCookie;
@@ -276,17 +276,10 @@ class Auth
 
 		$msg			= "";
 
-		$defaultUserPolicy	=             $conf['da']['defaultUserPolicy' ];
-		$defaultUserIsLocal	= strtoupper( $conf['da']['defaultUserIsLocal'] );
+		$defaultUserPolicy	= ( isset( $conf['da']['defaultUserPolicy'] ) ? $conf['da']['defaultUserPolicy'] : 0 );
 
 		if (( ! is_int( $defaultUserPolicy )) || ( $defaultUserPolicy <= 0 )) {
 			$msg		= translate('System Error: defaultUserPolicy');
-                 	CmnFns::write_log( translate('Authentication failed') . ': ' . $msg, $login );
-                 	return $msg;
-		}
-
-		if (( ! isset( $defaultUserIsLocal )) || (( $defaultUserIsLocal != 'Y' ) && ( $defaultUserIsLocal != 'N' ))) {
-			$msg		= translate('System Error: defaultUserIsLocal');
                  	CmnFns::write_log( translate('Authentication failed') . ': ' . $msg, $login );
                  	return $msg;
 		}
@@ -310,7 +303,7 @@ class Auth
 				$checkFailed	= 1;
 				break;
 			}
-			else if ( ! $conf['auth']['acceptAllAddresses'] ) {
+			else if (( ! isset( $conf['auth']['acceptAllAddresses'] )) || ( ! $conf['auth']['acceptAllAddresses'] )) {
 
 				if ( $checkMatchTypes[ $i ] == 'D' ) {
 
@@ -342,7 +335,7 @@ class Auth
 
 			if ( ! in_array( $authEmailAddress, $userEmailAddresses )) {
 				$priority	= determineMailaddrPriority( $authEmailAddress );
-				if ( ! $db -> add_Users( $login, $data[ 'firstName' ], array( $authEmailAddress ), array( $priority ), $defaultUserPolicy, $defaultUserIsLocal )) {
+				if ( ! $db -> add_Users( $login, $data[ 'firstName' ], array( $authEmailAddress ), array( $priority ), $defaultUserPolicy )) {
 					$msg		= translate('System Error: Import user data');
                  			CmnFns::write_log( translate('Authentication failed') . ': ' . $msg, $login );
                  			return $msg;
@@ -476,7 +469,11 @@ class Auth
         // If not defined or set to false, $username is allowed to log in
         if (!isset($conf['auth']['login_restriction']) || !$conf['auth']['login_restriction']) return true;
         // merge the allowed users together and match case-insensitive
-        $allowed = array_merge($conf['auth']['admins'], $conf['auth']['restricted_users']);
+
+	$admins	= array();	$admins = ( isset( $conf['auth']['admins']           ) ? $conf['auth']['admins']           : array());
+	$users	= array();	$users	= ( isset( $conf['auth']['restricted_users'] ) ? $conf['auth']['restricted_users'] : array());
+
+        $allowed = array_merge( $admins, $users );
         foreach ($allowed as $allow) {
             if (strtolower($username) == strtolower($allow)) {
                 return (true);

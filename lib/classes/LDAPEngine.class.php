@@ -93,34 +93,34 @@ class LDAPEngine
     {
         global $conf;
 
-        $this->serverType = strtolower($conf['auth']['serverType']);
+        $this->serverType = strtolower((( isset( $conf['auth']['serverType'] )) ? $conf['auth']['serverType'] : '' ));
 
         switch ($this->serverType) {
             case "ldap":
-                $this->hosts = $conf['auth']['ldap_hosts'];
-                $this->ssl = $conf['auth']['ldap_ssl'];
-                $this->tls = $conf['auth']['ldap_tls'];
-                $this->basedn = $conf['auth']['ldap_basedn'];
-                $this->userIdentifier = $conf['auth']['ldap_user_identifier'];
-                $this->userContainer = $conf['auth']['ldap_user_container'];
-                $this->login = $conf['auth']['ldap_login'];
-                $this->name = $conf['auth']['ldap_name'];
-                $this->mailAttr = $conf['auth']['ldap_mailAttr'];
-                $this->searchUser = $conf['auth']['ldap_searchUser'];
-                $this->searchPassword = $conf['auth']['ldap_searchPassword'];
+                $this->hosts          = (( isset( $conf['auth']['ldap_hosts']           )) ? $conf['auth']['ldap_hosts']           : '' );
+                $this->ssl            = (( isset( $conf['auth']['ldap_ssl']             )) ? $conf['auth']['ldap_ssl']             : '' );
+                $this->tls            = (( isset( $conf['auth']['ldap_tls']             )) ? $conf['auth']['ldap_tls']             : '' );
+                $this->basedn         = (( isset( $conf['auth']['ldap_basedn']          )) ? $conf['auth']['ldap_basedn']          : '' );
+                $this->userIdentifier = (( isset( $conf['auth']['ldap_user_identifier'] )) ? $conf['auth']['ldap_user_identifier'] : '' );
+                $this->userContainer  = (( isset( $conf['auth']['ldap_user_container']  )) ? $conf['auth']['ldap_user_container']  : '' );
+                $this->login          = (( isset( $conf['auth']['ldap_login']           )) ? $conf['auth']['ldap_login']           : '' );
+                $this->name           = (( isset( $conf['auth']['ldap_name']            )) ? $conf['auth']['ldap_name']            : '' );
+                $this->mailAttr       = (( isset( $conf['auth']['ldap_mailAttr']        )) ? $conf['auth']['ldap_mailAttr']        : '' );
+                $this->searchUser     = (( isset( $conf['auth']['ldap_searchUser']      )) ? $conf['auth']['ldap_searchUser']      : '' );
+                $this->searchPassword = (( isset( $conf['auth']['ldap_searchPassword']  )) ? $conf['auth']['ldap_searchPassword']  : '' );
                 break;
             case "ad":
-                $this->hosts = $conf['auth']['ad_hosts'];
-                $this->ssl = $conf['auth']['ad_ssl'];
-                $this->tls = $conf['auth']['ad_tls'];
-                $this->basedn = $conf['auth']['ad_basedn'];
-                $this->userIdentifier = $conf['auth']['ad_user_identifier'];
-                $this->domain = $conf['auth']['ad_domain'];
-                $this->login = $conf['auth']['ad_login'];
-                $this->name = $conf['auth']['ad_name'];
-                $this->mailAttr = $conf['auth']['ad_mailAttr'];
-                $this->searchUser = $conf['auth']['ad_searchUser'];
-                $this->searchPassword = $conf['auth']['ad_searchPassword'];
+                $this->hosts          = (( isset( $conf['auth']['ad_hosts']           )) ? $conf['auth']['ad_hosts']           : '' );
+                $this->ssl            = (( isset( $conf['auth']['ad_ssl']             )) ? $conf['auth']['ad_ssl']             : '' );
+                $this->tls            = (( isset( $conf['auth']['ad_tls']             )) ? $conf['auth']['ad_tls']             : '' );
+                $this->basedn         = (( isset( $conf['auth']['ad_basedn']          )) ? $conf['auth']['ad_basedn']          : '' );
+                $this->userIdentifier = (( isset( $conf['auth']['ad_user_identifier'] )) ? $conf['auth']['ad_user_identifier'] : '' );
+                $this->userContainer  = (( isset( $conf['auth']['ad_user_container']  )) ? $conf['auth']['ad_user_container']  : '' );
+                $this->login          = (( isset( $conf['auth']['ad_login']           )) ? $conf['auth']['ad_login']           : '' );
+                $this->name           = (( isset( $conf['auth']['ad_name']            )) ? $conf['auth']['ad_name']            : '' );
+                $this->mailAttr       = (( isset( $conf['auth']['ad_mailAttr']        )) ? $conf['auth']['ad_mailAttr']        : '' );
+                $this->searchUser     = (( isset( $conf['auth']['ad_searchUser']      )) ? $conf['auth']['ad_searchUser']      : '' );
+                $this->searchPassword = (( isset( $conf['auth']['ad_searchPassword']  )) ? $conf['auth']['ad_searchPassword']  : '' );
                 break;
             default:
                 CmnFns::do_error_box(translate('Unknown server type'), '', false);

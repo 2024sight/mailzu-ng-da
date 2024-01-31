@@ -23,23 +23,15 @@
  * @param string $content_type 'B', 'S', ...
  * @param mixed $res array of message data
  * @param integer $page current page number
+ * @param integer $sizeLimit maximum number of records per page
  * @param string $order previous order field
  * @param string $vert previous vertical order
  * @param string $numRows total number of rows in table
  */
-function showMessagesTable($content_type, $res, $page, $order, $vert, $numRows = 0)
+function showMessagesTable($content_type, $res, $page, $sizeLimit, $order, $vert, $numRows = 0)
 {
     global $link;
     global $conf;
-
-    // grab the display size limit set in config.php
-    if (Auth::isAdmin()) {
-        $sizeLimit = isset ($conf['app']['displaySizeLimitAdmin']) && is_numeric($conf['app']['displaySizeLimitAdmin']) ?
-            $conf['app']['displaySizeLimitAdmin'] : 100;
-    } else {
-        $sizeLimit = isset ($conf['app']['displaySizeLimit']) && is_numeric($conf['app']['displaySizeLimit']) ?
-            $conf['app']['displaySizeLimit'] : 50;
-    }
 
     if ('ASC' == $vert) {
         $new_vert = 'DESC';
@@ -125,7 +117,7 @@ function showMessagesTable($content_type, $res, $page, $order, $vert, $numRows =
                                 </td>
                                 <?php if ( ((Auth::isAdmin()) &&
                                             ("Site Quarantine" == $_SESSION['sessionNav'] || "Site Pending Requests" == $_SESSION['sessionNav'])) ||
-					    ($conf['app']['allowMailid']) ) { ?>
+					    (( isset( $conf['app']['allowMailid'] )) && ( $conf['app']['allowMailid'] ))) { ?>
                                     <td width="10%" <?php echo "mail_id" == $order ? ' class="reservedCell"' : ''; ?>>
                                         <?php $link->doLink($_SERVER['PHP_SELF'] . '?' . CmnFns::querystring_exclude_vars(array('order', 'vert'))
                                             . '&amp;order=mail_id&amp;vert=' . $new_vert, translate('Mail ID'), '', '', $mouseover_text) ?>
@@ -188,7 +180,7 @@ function showMessagesTable($content_type, $res, $page, $order, $vert, $numRows =
 
                                 if ( ((Auth::isAdmin()) &&
                                       ("Site Quarantine" == $_SESSION['sessionNav'] || "Site Pending Requests" == $_SESSION['sessionNav'])) ||
-				      ($conf['app']['allowMailid']) ) {
+				      (( isset( $conf['app']['allowMailid'] )) && ( $conf['app']['allowMailid'] ))) {
                                     if ( isset($rs['partition_tag'])  && ( $rs['partition_tag'] != 0 )) {
                                         echo '  <td class="quarcell">' . $rs['mail_id'] .'['. $rs['partition_tag'] .']</td>';
                                     } else {

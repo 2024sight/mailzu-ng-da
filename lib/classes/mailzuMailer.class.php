@@ -18,28 +18,28 @@ class mailzuMailer extends PHPMailer\PHPMailer\PHPMailer
 
         //Don't forget to do this or other things may not be set correctly!
         parent::__construct($exceptions);
-        $this->CharSet = $charset;
+        $this->CharSet = (( isset( $charset )) ? $charset : 'utf-8' );
 
         if ($lang = determine_language()) {    // Functions exist in the langs.php file
             $this->setLanguage($lang);
         }
 
-        switch ($conf['app']['emailType']) {
+        switch (( isset( $conf['app']['emailType'] )) ? $conf['app']['emailType'] : 'mail' ) {
             case 'smtp':
                 $this->isSMTP();
                 $this->Mailer = 'smtp';
-                $this->Host = $conf['app']['smtpHost'];
-                $this->Port = $conf['app']['smtpPort'];
+                $this->Host = (( isset( $conf['app']['smtpHost'] )) ? $conf['app']['smtpHost'] : 'localhost' );
+                $this->Port = (( isset( $conf['app']['smtpPort'] )) ? $conf['app']['smtpPort'] : 25          );
                 break;
             case 'sendmail':
                 $this->isSendmail();
                 $this->Mailer = 'sendmail';
-                $this->Sendmail = $conf['app']['sendmailPath'];
+                $this->Sendmail = (( isset( $conf['app']['sendmailPath'] )) ? $conf['app']['sendmailPath'] : '/usr/sbin/sendmail' );
                 break;
             case 'qmail':
                 $this->isQmail();
                 $this->Mailer = 'qmail';
-                $this->Sendmail = $conf['app']['qmailPath'];
+                $this->Sendmail = (( isset( $conf['app']['qmailPath'] )) ? $conf['app']['qmailPath'] : '/var/qmail/bin/sendmail' );
                 break;
             case 'mail':
             default:
@@ -51,7 +51,10 @@ class mailzuMailer extends PHPMailer\PHPMailer\PHPMailer
     //Create the Send() function
     public function Send()
     {
-        $this->XMailer = 'mailzu-ng mailer';
+	global $conf;
+
+        $this->XMailer = ( isset( $conf['app']['mailer'] ) ? $conf['app']['mailer'] : 'mailzu-ng mailer' );
+
         $r = parent::send();
         return $r;
     }

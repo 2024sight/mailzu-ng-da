@@ -21,7 +21,7 @@ function printsendmail()
                     <tr>
                         <td class="tableTitle">
                             <?php
-                            $adminEmail = $conf['app']['adminEmail'];
+                            $adminEmail = ( isset( $conf['app']['adminEmail'] ) ? $conf['app']['adminEmail'] : array ());
                             $emailList = '';
                             if (is_array($adminEmail)) {
                                 foreach ($adminEmail as $email) {
@@ -71,7 +71,7 @@ function verifyAndSendMail()
     $subject = "[MailZu] " . stripslashes(CmnFns::getGlobalVar('subject', POST));
     $body = stripslashes(CmnFns::getGlobalVar('body', POST));
     if ($subject != '' && $body != '') {
-        $adminEmail = $conf['app']['adminEmail'];
+        $adminEmail = ( isset( $conf['app']['adminEmail'] ) ? $conf['app']['adminEmail'] : array ());
         $sub = "[ Email Administrator ] Notification from '" . $_SESSION['sessionID'] . "'";
         $mailer = new mailzuMailer( false );
         if (is_array($adminEmail)) {

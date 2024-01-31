@@ -33,7 +33,7 @@ class Template
     {
         global $conf;
 
-        $this->title = (!empty($title)) ? $title : $conf['ui']['welcome'];
+        $this->title = (!empty($title)) ? $title : ( isset( $conf['ui']['welcome'] ) ? $conf['ui']['welcome'] : 'Welcome' );;
         $this->dir_path = str_repeat('../', $depth);
         $this->link = CmnFns::getNewLink();
         //Auth::Auth();	// Starts session
@@ -48,7 +48,6 @@ class Template
      */
     function printHTMLHeader()
     {
-        global $conf;
         global $languages;
         global $lang;
         global $charset;
@@ -159,9 +158,13 @@ function endMain()
     function printHTMLFooter()
     {
         global $conf;
+
+	$appFootLink	= ( isset( $conf['app']['footlink'] ) ? $conf['app']['footlink'] : 'Footlink not set' );
+	$appTitle   	= ( isset( $conf['app']['title'   ] ) ? $conf['app']['title'   ] : 'Title not set'    );
+	$appVersion 	= ( isset( $conf['app']['version' ] ) ? $conf['app']['version' ] : 'Version not set'  );
         ?>
-        <p align="center"><a href="<?php echo $conf['app']['footlink']; ?>"><?php echo $conf['app']['title']; ?>
-                v<?php echo $conf['app']['version']; ?></a></p>
+        <p align="center"><a href="<?php echo $appFootLink; ?>"><?php echo $appTitle; ?>
+                v<?php echo $appVersion; ?></a></p>
         </body>
         </html>
         <?php

@@ -262,7 +262,6 @@ $strings['Site List']				= 'Site List';
 $strings['Soft']				= 'Soft';
 $strings['Soft List']				= 'Soft List';
 $strings['Submit']				= 'Submit';
-$strings['System Error: defaultUserIsLocal']	= 'System Error: \$conf[\'da\'][\'defaultUserIsLocal\'] not set or not equal to \'Y\' or \'N\'';
 $strings['System Error: defaultUserPolicy']	= 'System Error: \$conf[\'da\'][\'defaultUserPolicy\'] not set, not an integer or not > 0';
 $strings['System Error: exportFile']		= 'System Error: \$conf[\'da\'][\'exportFile\'] not set or not a valid file name';
 $strings['System Error: Failed deleted flag']	= 'System Error: failed to update deleted flag';

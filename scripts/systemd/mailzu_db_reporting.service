@@ -1,6 +1,6 @@
 [Unit]
 Description		= Amavis/MailZu email quarantine reporting service to end-users
-Documentation		= /usr/share/mailzu/docs/SCRIPTS_README
+Documentation		= file://usr/share/mailzu/docs/SCRIPTS_README
 After			= mariadb.service
 
 [Service]

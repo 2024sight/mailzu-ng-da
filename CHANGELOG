@@ -1,3 +1,15 @@
+MailZu-ng 0.12.mailzu-ng-da-php82-4882420+1 (22.07.2023)
+---------
+  - Fixed issues related to the PHP 8.2 upgrade with respect to in_array.
+  - Fixed issues with referencing unset configuration values (accessing an unset array element).
+  - Fixed the TIMESTAMP issue in the DA List code.
+  - Fixed an upgrade issue to do with calling non-static method print_login_msg using the '::' syntax.
+    This is no longer supported on PHP 8.0.
+  - Removed the support for the user's "Local" field in the database which is deprecated within Amavis.
+  - Corrected documentation.
+  - Fixed an issue with the naming of the days.
+  - Fixed issues with display sizes for administrators.
+
 MailZu-ng 0.12.mailzu-ng-da-php72-10c2b76+1 (27.12.2022)
 ---------
   - Fixed a bug to do with disabled "form" items which caused a system error when processing DA

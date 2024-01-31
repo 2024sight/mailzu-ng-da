@@ -48,11 +48,11 @@ class DBEngine
     {
         global $conf;
 
-        $this->dbType = $conf['db']['dbType'];
-        $this->dbName = $conf['db']['dbName'];
-        $this->dbUser = $conf['db']['dbUser'];
-        $this->dbPass = $conf['db']['dbPass'];
-        $this->dbHost = $conf['db']['hostSpec'];
+        $this->dbType = ( isset( $conf['db']['dbType']   ) ? $conf['db']['dbType']   : '' );
+        $this->dbName = ( isset( $conf['db']['dbName']   ) ? $conf['db']['dbName']   : '' );
+        $this->dbUser = ( isset( $conf['db']['dbUser']   ) ? $conf['db']['dbUser']   : '' );
+        $this->dbPass = ( isset( $conf['db']['dbPass']   ) ? $conf['db']['dbPass']   : '' );
+        $this->dbHost = ( isset( $conf['db']['hostSpec'] ) ? $conf['db']['hostSpec'] : '' );
 
         $this->db_connect();
     }
@@ -103,8 +103,6 @@ class DBEngine
      */
     function get_site_summary()
     {
-        global $conf;
-
         $rval = array();
         $total = array('spam' => 0, 'banned' => 0, 'virus' => 0, 'header' => 0, 'pending' => 0, 'total' => 0);
 
@@ -215,8 +213,6 @@ class DBEngine
      */
     function get_user_summary($emailaddresses)
     {
-        global $conf;
-
         $rval = array();
         $total = array('spam' => 0, 'banned' => 0, 'virus' => 0, 'header' => 0, 'pending' => 0, 'total' => 0);
 
@@ -224,7 +220,7 @@ class DBEngine
         $recipEmailClause = $this->convertEmailaddresses2SQL($emailaddresses);
 
         # mysql seems to run faster with a left join
-        if ($conf['db']['dbType'] == 'mysql') {
+        if ($this->dbType == 'mysql') {
             $join_type = ' LEFT JOIN';
         } else {
             $join_type = ' INNER JOIN';
@@ -346,28 +342,16 @@ class DBEngine
      * @param boolean $get_all , if true get all messages. False by default.
      * @return array of messages in quarantine
      */
-    function get_user_messages($content_type, $emailaddresses, $order = 'msgs.time_num', $vert = 'DESC', $search_array = '', $msgs_all = false, $rs_option = 0, $page = 0, $get_all = false)
+    function get_user_messages($content_type, $emailaddresses, $order = 'msgs.time_num', $vert = 'DESC', $search_array = '', $msgs_all = false, $rs_option = 0, $page = 0, $sizeLimit = 0, $get_all = false)
     {
         global $conf;
 
         # MySQL seems to run faster with a LEFT JOIN
-        if ($conf['db']['dbType'] == 'mysql') {
+        if ($this->dbType == 'mysql') {
             $join_type = ' LEFT JOIN';
         } else {
             $join_type = ' INNER JOIN';
         }
-
-        // grab the display size limit set in config.php
-//		$sizeLimit = isset ( $conf['app']['displaySizeLimit'] ) &&
-//				is_numeric( $conf['app']['displaySizeLimit'] ) ? $conf['app']['displaySizeLimit'] : 50;
-        if (isset($_SESSION['sessionAdmin'])) {
-            $sizeLimit = isset ($conf['app']['displaySizeLimitAdmin']) && is_numeric($conf['app']['displaySizeLimitAdmin']) ?
-                $conf['app']['displaySizeLimitAdmin'] : 100;
-        } else {
-            $sizeLimit = isset ($conf['app']['displaySizeLimit']) && is_numeric($conf['app']['displaySizeLimit']) ?
-                $conf['app']['displaySizeLimit'] : 50;
-        }
-
 
         $rowsval = array();
         $rval = array();
@@ -405,8 +389,8 @@ class DBEngine
         } else {
             if ($content_type == 'A') {
                 $type_clause = ' msgs.content in (\'S\', \'B\'';
-                $type_clause = ($conf['app']['allowBadHeaders'] ? $type_clause . ', \'H\'' : $type_clause);
-                $type_clause = ($conf['app']['allowViruses'] ? $type_clause . ', \'V\')' : $type_clause . ')');
+                $type_clause = (( isset( $conf['app']['allowBadHeaders'] ) && $conf['app']['allowBadHeaders'] ) ? $type_clause . ', \'H\''  : $type_clause      );
+                $type_clause = (( isset( $conf['app']['allowViruses']    ) && $conf['app']['allowViruses']   )  ? $type_clause . ', \'V\')' : $type_clause . ')');
             } else {
                 $type_clause = ' msgs.content=?';
             }
@@ -489,10 +473,8 @@ class DBEngine
      */
     function get_message($emailaddress, $mail_id)
     {
-        global $conf;
-
         # MySQL seems to run faster with a LEFT JOIN
-        if ($conf['db']['dbType'] == 'mysql') {
+        if ($this->dbType == 'mysql') {
             $join_type = ' LEFT JOIN';
         } else {
             $join_type = ' INNER JOIN';
@@ -615,15 +597,15 @@ class DBEngine
         $mail_text_column = ' mail_text';
         # If using the bytea or BLOB type for sql quarantine use proper conversion
         # (since amavisd 2.4.4
-        if ($conf['db']['binquar']) {
-            if ($conf['db']['dbType'] == 'mysql') {
+        if (( ! isset( $conf['db']['binquar'] )) || ( $conf['db']['binquar'] )) {
+            if ($this->dbType == 'mysql') {
                 $mail_text_column = ' CONVERT(mail_text USING utf8) AS mail_text';
             } else {
                 $mail_text_column = " encode(mail_text,'escape') AS mail_text";
             }
         }
 
-        if (isset($_SESSION['sessionAdmin'])) {
+        if (( isset($_SESSION['sessionAdmin'] )) && ( $_SESSION['sessionAdmin'] )) {
             $values = array($mail_id);
             $query = 'SELECT' . $mail_text_column . ' FROM quarantine ' .
                 'WHERE mail_id=?';
@@ -699,16 +681,15 @@ class DBEngine
      * @param string array	$emailAddresses	of the user whose list entries for the specified address need to be added.
      * @param int array		$priority	contains the priority a new user-email combination should be assigned.
      * @param integer 		$policy		contains the policy a new user-email combination should be assigned.
-     * @param char    		$local		contains the local setting a new user-email combination should be assigned.
      * @param char		$deleted	contains the deleted setting. By default this setting is 'N' (cf. DA_README).
      */
-    function add_Users($loginName, $fullName, $emailAddresses, $priority, $policy, $local, $deleted = 'N') {
+    function add_Users($loginName, $fullName, $emailAddresses, $priority, $policy, $deleted = 'N') {
 
 	$existing	= $this->get_column("users", "email", "users.loginname='" . $loginName . "'");
 
 	$query		= "INSERT
-			   INTO		users	( priority, policy_id, email, fullname, loginname, local, deleted )
-			   VALUES	( ?, ?, ?, ?, ?, ?, ? )";
+			   INTO		users	( priority, policy_id, email, fullname, loginname, deleted )
+			   VALUES	( ?, ?, ?, ?, ?, ? )";
 
 	// Prepare query
 	$q 		= $this->db->prepare($query);
@@ -722,7 +703,6 @@ class DBEngine
 					$emailAddresses[ $i ],
 					$fullName,
 					$loginName,
-					$local,
 					$deleted
 				);
 
@@ -789,8 +769,8 @@ class DBEngine
      * @param string	$fieldValue	Holds the new field value.
      * Updates a users table record. With the exception of the id, email and fullname fields
      * all fields can be updated. Priority and policy_id must be postitive, non-zero integers.
-     * In addition a policy_id with the specified id must exist. The fields local, locked and
-     * deleted must be either 'Y' or 'N',
+     * In addition a policy_id with the specified id must exist. The fields locked and deleted
+     * must be either 'Y' or 'N'.
      */
     function upd_Users( $loginName, $emailAddress, $fieldName, $fieldValue ) {
 
@@ -818,7 +798,7 @@ class DBEngine
 
 		}
 	}
-	else if ( in_array( $fieldName, array( "local", "locked", "deleted" ))) {
+	else if ( in_array( $fieldName, array( "locked", "deleted" ))) {
 
 		if (( $fieldValue != 'Y' ) && ( $fieldValue != 'N' )) {
 			return false;
@@ -857,8 +837,6 @@ class DBEngine
      */
     function add_Mailaddr($address, $priority) {
 
-	global	$conf;
-
 	$existing	= $this->get_column("mailaddr", "email", "mailaddr.email='" . $address . "'" );
 
 	if ( ! in_array( $address, $existing )) {
@@ -890,7 +868,7 @@ class DBEngine
      * lock the mailaddr table for updates as a user may be deleting a mail address while another is at exactly
      * the same time adding a list entry with this mail address, which would then fail. I.e. a true race
      * condition. In a system with thousands of users this will happen but it is still a very rare case from
-     * which the secodnd user may recover by adding the entry again.
+     * which the second user may recover by adding the entry again.
      */
     function del_Mailaddr( $emailAddress = NULL ) {
 
@@ -902,7 +880,7 @@ class DBEngine
 
 	$query = "DELETE
 		  FROM		mailaddr
-		  WHERE		$extraFields
+		  WHERE		$extraField
 				mailaddr.id NOT IN	( SELECT DISTINCT	sid	FROM wblist )";
 
 	// Prepare query
@@ -1082,12 +1060,13 @@ class DBEngine
     * @param string	$order sql order string.
     * @param string	$vert sql vertical order string.
     * @param array	$search_array for search engine.
+    * @param integer	$sizeLimit: the number of entries to be shown per page.
     * @param integer	$page: page number, 0 by default.
     * @param boolean	$get_all, if true get all list entries. False by default. 
     * @param boolean	$is_admin, if true the the user is an administrator,
     * @return array 	list entries.
     */
-    function get_entry_DAList($loginName, $order = 'da_update_time', $vert = 'DESC', $search_array = array(), $page = 0, $get_all = false, $is_admin = false) {
+    function get_entry_DAList($loginName, $order = 'da_update_time', $vert = 'DESC', $search_array = array(), $sizeLimit, $page = 0, $get_all = false, $is_admin = false) {
 
 	global $conf;
 
@@ -1168,17 +1147,10 @@ class DBEngine
 	*/
 
 	if ( ! $get_all ) {
-
-	    // grab the display size limit set in config.php
-	    $sizeLimit	= isset (	$conf['app']['displaySizeLimit'] ) &&
-					is_numeric( $conf['app']['displaySizeLimit'] ) ? $conf['app']['displaySizeLimit'] : 50;
-
 	    // the row to start fetching
-	    $from = $page * $sizeLimit;
-	    // how many results per page
-	    $res_per_page = $sizeLimit;
+	    $from	= $page * $sizeLimit;
 	    // the last row to fetch for this page
-	    $to = $from + $res_per_page - 1;
+	    $to 	= $from + $sizeLimit - 1;
 	}
 
 	$rowCount	= 0;
@@ -1201,13 +1173,14 @@ class DBEngine
 
 	    if (( $get_all ) || (( $from <= $rowCount ) && ( $rowCount <= $to ))) {
 		$return[]	= $clean_results;
-		$this->numRows++;
 	    }
 
 	    $rowCount++;
 	}
 
-	// Set the number of retrieved rows.
+	// numRows contains the total number of rows found which meet the search selection criteria after de-
+	// duplication. It does not necessarily reflect the number of rows returned in the return array.
+
 	$this->numRows	= $rowCount;
 
 	unset( $duplicate_log );
@@ -1265,6 +1238,7 @@ class DBEngine
     function check_for_error($result, $q)
     {
         global $conf;
+
         if ( $result === false ) {
             $err_array = $q->errorInfo();
             $this->err_msg = 'Error['.$err_array[1].']: '.$err_array[2].' SQLSTATE='.$err_array[0];
@@ -1275,7 +1249,7 @@ class DBEngine
                 . $this->err_msg
                 . '<br />' . '<a href="javascript: history.back();">' . translate('Back') . '</a>');
         } else {
-            if ($conf['app']['debug']) {
+            if ( isset( $conf['app']['debug'] ) && $conf['app']['debug'] ) {
                 CmnFns::write_log("[DEBUG SQL QUERY]: ".$q->queryString);
             }
 

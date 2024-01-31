@@ -199,6 +199,7 @@ function processDAList($flag, $update_array, &$update_results, &$checkboxes, $al
 					}
 					elseif ( $flag == 'E' ) {
 
+						$sizeLimit	= 0;
 						$requestedPage	= 0;
 
 						if ( $is_admin ) {
@@ -212,6 +213,7 @@ function processDAList($flag, $update_array, &$update_results, &$checkboxes, $al
 												CmnFns::get_value_order($order),
 												CmnFns::get_vert_order(),
 												$search_array,
+												$sizeLimit,
 												$requestedPage,
 												true,
 												$is_admin			);
@@ -255,7 +257,7 @@ function processDAList($flag, $update_array, &$update_results, &$checkboxes, $al
 
 							if ( ! in_array( $email, $existing )) {
 
-								if ( $conf['da']['adminCreatesUsers'] ) {
+								if (( isset( $conf['da']['adminCreatesUsers'] )) && ( $conf['da']['adminCreatesUsers'] )) {
 									$addAddresses[]	= $email;
 									$priority[]	= determineMailaddrPriority( $email );
 									$addUser	= 1;
@@ -273,14 +275,14 @@ function processDAList($flag, $update_array, &$update_results, &$checkboxes, $al
 							}
 						}
 
-						if ( $addUser ) {
+
+						if (( $addUser ) && ( isset( $conf['da']['defaultUserPolicy'] )) && ( $conf['da']['defaultUserPolicy'] )) {
 
 							if ( ! $db->add_Users(	$loginName,
 										$fullName,
 										$addAddresses,
 										$priority,
 										$conf['da']['defaultUserPolicy'],
-										$conf['da']['defaultUserIsLocal'],
 										'Y'					)) {
 
 								$update_results[$i]	= "(FAILED) DB Error. Failed to add users records";
@@ -419,7 +421,7 @@ function internalRepresentation( $criterion, $value ) {
 
 	$return_array	= array();
 
-	if ( ! $conf['da']['no_at_means_domain'] ) {
+	if (( ! isset( $conf['da']['no_at_means_domain'] )) || ( ! $conf['da']['no_at_means_domain'] )) {
 
 		if ( in_array( $criterion, array( 'begins_with', 'not_begin_with', 'equals', 'not_equal' ))) {
 			$return_array[]	= '@.' . $value;
@@ -460,23 +462,21 @@ function constructDASearchArray( $query_array, $is_admin ) {
 	$db		= new DBEngine();
 	$search_array	= array();
 
-	if ( $conf['db']['dbType'] == 'mysql' ) {
+	if (( isset( $conf['db']['dbType'] )) && ( $conf['db']['dbType'] == 'mysql' )) {
 
-		$values		= internalRepresentation( $query_array[ 'a_criterion' ], $query_array[ 'a_string' ] );
-		$search_array	= ( isset( $query_array[ 'a_string' ] ) ? $db->convertSearch2SQL( 'mailaddr.email', $query_array[ 'a_criterion' ], $values ) : array());
-		unset( $values );
+		if (( isset( $query_array[ 'a_criterion' ] )) && ( isset( $query_array[ 'a_string' ] ))) {
+			$search_array	= $db->convertSearch2SQL( 'mailaddr.email', $query_array[ 'a_criterion' ], internalRepresentation( $query_array[ 'a_criterion' ], $query_array[ 'a_string' ] ));
+		}
 
 		if ( $is_admin ) {
 
-			$search_array_temp	= array();
+			if (( isset( $query_array[ 'b_criterion' ] )) && ( isset( $query_array[ 'b_string' ] ))) {
+				$search_array	= array_merge( $search_array, $db->convertSearch2SQL( 'users.email',     $query_array[ 'b_criterion' ], internalRepresentation( $query_array[ 'b_criterion' ], $query_array[ 'b_string' ] )));
+			}
 
-			$values			= internalRepresentation( $query_array[ 'b_criterion' ], $query_array[ 'b_string' ] );
-			$search_array_temp	= ( isset( $query_array[ 'b_string' ] ) ? $db->convertSearch2SQL( 'users.email',     $query_array[ 'b_criterion' ], values ) : array());
-			$search_array		= array_merge( $search_array, $search_array_temp );
-			unset( $values );
-
-			$search_array_temp	= ( isset( $query_array[ 'c_string' ] ) ? $db->convertSearch2SQL( 'users.loginname', $query_array[ 'c_criterion' ], $query_array[ 'c_string' ] ) : array());
-			$search_array		= array_merge( $search_array, $search_array_temp );
+			if (( isset( $query_array[ 'c_criterion' ] )) && ( isset( $query_array[ 'c_string' ] ))) {
+				$search_array	= array_merge( $search_array, $db->convertSearch2SQL( 'users.loginname', $query_array[ 'c_criterion' ], $query_array[ 'c_string' ] ));
+			}
 
 		}
 	}
@@ -507,17 +507,13 @@ function checkMergeDAEmailMatch( &$email_addresses, $match_types, &$errors, &$er
 	$number_email_addresses	= count( $email_addresses );
 	$number_match_types	= count( $match_types     );
 
-	if (( $number_email_addresses <= 0 ) || ( $number_match_types <= 0 )) {
-		CmnFns::do_error_box( "System error: checkMergeDAEmailMatch called with zero-array arguments" );
-	}
-
 	if ( $number_email_addresses != $number_match_types ) {
 		CmnFns::do_error_box( "System error: checkMergeDAEmailMatch called with unequal length array arguments" );
 	}
 
 	$i	= 0;
 
-	$Domain_Prefix	= ( $conf[ 'da' ][ 'no_at_means_domain' ] ? '' : '@' );
+	$Domain_Prefix	= (( isset( $conf[ 'da' ][ 'no_at_means_domain' ] ) && ($conf[ 'da' ][ 'no_at_means_domain' ] )) ? '' : '@' );
 
 	foreach( $email_addresses as $emailAddress ) {
 
@@ -553,7 +549,7 @@ function checkMergeDAEmailMatch( &$email_addresses, $match_types, &$errors, &$er
 		}
 		else if ( $match_types[ $i ] == 'L' ) {
 
-			if ( $conf[ 'da' ][ 'no_at_means_domain' ] ) {
+			if (( isset( $conf[ 'da' ][ 'no_at_means_domain' ] )) && ( $conf[ 'da' ][ 'no_at_means_domain' ] )) {
 				if ( is_valid_localpart( $emailAddress )) {
 					$email_addresses[ $i ]	= $emailAddress . '@';
 					$errors[ $i ]		= false;
@@ -634,7 +630,7 @@ function demergeDAEmailMatch( &$email_addresses, &$match_types ) {
 			continue;
 		}
 
-		if ( $conf[ 'da' ][ 'no_at_means_domain' ] ) {
+		if (( isset( $conf[ 'da' ][ 'no_at_means_domain' ] )) && ( $conf[ 'da' ][ 'no_at_means_domain' ] )) {
 			if      ( preg_match( '/^\.([^@]*)$/', $emailAddress, $matches )) {
 				if ( is_valid_domain( $matches[ 1 ] )) {
 					$email_addresses[ $i ]	= $matches[ 1 ];

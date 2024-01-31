@@ -55,18 +55,18 @@ function printLoginForm($msg = '', $resume = '')
                                 <input type="password" name="password" class="textbox"/>
                             </td>
                         </tr>
-                        <?php if ($conf['auth']['serverType'] === 'exchange') { ?>
+                        <?php if (( isset( $conf['auth']['serverType'] )) && ( $conf['auth']['serverType'] === 'exchange')) { ?>
                             <tr bgcolor="#FFFFFF">
                                 <td>
                                     <p><b><?php echo translate('Domain') ?></b></p>
                                 </td>
                                 <td>
                                     <input type="text" name="domain" class="textbox"
-                                           value="<?php echo $conf['auth']['exch_domain'] ?>"/>
+                                           value="<?php $exchDomain = ( isset( $conf['auth']['exch_domain'] ) ? $conf['auth']['exch_domain'] : 'Not set' ); echo $exchDomain ?>"/>
                                 </td>
                             </tr>
                         <?php }
-                        if ($conf['app']['selectLanguage']) { ?>
+                        if (( isset( $conf['app']['selectLanguage'] )) && ( $conf['app']['selectLanguage'] )) { ?>
                             <tr bgcolor="#FFFFFF">
                                 <td>
                                     <p><b><?php echo translate('Language') ?></b></p>

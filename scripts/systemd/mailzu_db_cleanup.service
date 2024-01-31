@@ -1,6 +1,6 @@
 [Unit]
 Description		= Amavis/MailZu email quarantine cleanup service
-Documentation		= /usr/share/mailzu/docs/SCRIPTS_README
+Documentation		= file://usr/share/mailzu/docs/SCRIPTS_README
 After			= mariadb.service
 
 [Service]

@@ -27,12 +27,13 @@ this confguration, do the following:
     4) Either reboot the system or start the timer manually 'systemct start mailzu_db_cleanup.timer'.
 
 The script has to reside in and run from the scripts directory adjacent to the config directory
-as it requires access to the config.php file to retrieve some configuration settings.  Apart from
-being installed and run from the right directory, the script has no other pre-requisites.
+as it requires access to the config.php file to retrieve some configuration settings. You also
+need to make sure that the db user configured, in the config file, has the right to delete entries
+from what the amavis developers call the Read/Write part of the database.
 
 
-mailzu-db-rporting.sh
----------------------
+mailzu-db-reporting.sh
+----------------------
 
 The mailzu-db-reporting.sh script sends an email, containing an overview of the retained messages
 in the last N days, whereby N is 3 by default. The script accepts three parameters which may be defined
@@ -108,3 +109,6 @@ On DEBIAN systems you can install txt2html as follows:
 
 	sudo apt-get -y install txt2html
 
+Note: The script has been updated to comply with the DEBIAN convergence of /bin and /usr/bin. For
+security reasons the script uses hard-coded path. The compliance means that the script expects
+that /bin and /usr/bin have been merged. 

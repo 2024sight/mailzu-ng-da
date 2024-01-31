@@ -131,7 +131,7 @@ function MsgDisplayOptions($mail_id, $recip_email)
 <?php if ( "My Quarantine" == $_SESSION['sessionNav'] ) {
 $link->doLink('messagesIndex.php?ctype=A', "&#8249;&#8249; ".translate('BackMessageIndex'));
 } else if ( "Site Quarantine" == $_SESSION['sessionNav'] ) {
-$link->doLink('messagesAdmin.php?ctype=A&searchOnly=' . $conf['app']['searchOnly'], "&#8249;&#8249; ".translate('BackMessageIndex'));
+$link->doLink('messagesAdmin.php?ctype=A&searchOnly=' . ( isset( $conf['app']['searchOnly'] ) ? $conf['app']['searchOnly'] : 1 ), "&#8249;&#8249; ".translate('BackMessageIndex'));
 } else { ?>
                 <a href="javascript: history.back();">&#8249;&#8249; <?php echo translate('BackMessageIndex'); ?> </a>
 <?php } ?>

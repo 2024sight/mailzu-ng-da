@@ -3,7 +3,7 @@ Activating the Deny/Allow List Capability
 
 This version of MailZu-ng-da allow users and administrators to manage Deny/Allow DA lists on a
 per user basis. DA lists are what in the Amavis is called "Black and White" lists. Please read the
-USERPRIO_README document befre continuing.
+USERPRIO_README document before continuing.
 
 Email Addresses
 ---------------
@@ -31,11 +31,11 @@ amavis in its own right.
 
    Careful inspection of the FA e-mail address part is advised but it is also not necessarily
    sufficient. This email address too can be spoofed.  The linkage between FA and ES cannot be
-   checked by amavis directly. To establish a reliable linkage between FA and ES and to guanrantee
+   checked by amavis directly. To establish a reliable linkage between FA and ES and to guarantee
    that the email addresses have not been spoofed, responsible organisations deploy DMARC, which
    is truly a project in its own right. However, if configured well DMARC could be really useful
    in the fight against a Business Email Compromise. In particular, the amavis/spamassassin system
-   can be configured to detect reliably as spam, provided the necessary technical prerequisites
+   can be configured to detect reliably as spam, provided the necessary technical pre-requisites
    have been met, spoofed external emails, apparently originating from within the organisation
    but in reality originating from outside (the main form of BEC). There is no point trying to
    detect internal spoofed email because if you need that, you have alreay been compromised.
@@ -79,7 +79,7 @@ do the following:
 4)  Delete any remaining entries from the users table, having taking note of their values so that
     equivalent entries may be re-created later.
 5)  Switch amavis and mailzu to the other setting by changing $conf['sql_lookups_no_at_means_domain']
-    in the 50-user.conf file of amavis and by changing $conf['da']['no_at_means_domain'] in the mailzu
+    in the 50-user file of amavis and by changing $conf['da']['no_at_means_domain'] in the mailzu
     config.php file.
 6)  Import all the da list entries from the file. This will only work if the configuration setting
     $conf['da']['adminCreatesUsers'] is set to true or 1. Make sure to unset this after import as it
@@ -100,7 +100,7 @@ setting. If a user requires special addresses it is recommend the administrator 
 this user in mailzu directly using the add function in the "Site List" management window. Note
 that the user-mail addresses to be entered must follow the amavis/mailzu rules. By setting
 the variable $conf['auth']['acceptAllAddresses'] mailzu will accept all addresses provided by
-an upstream authentication, provided the comply with the internal representation rules. This
+an upstream authentication, provided they comply with the internal representation rules. This
 variable is default not set (false). If the variable is false, mailzu will only accept full
 email addresses and refuse domain or local part addresses.
 
@@ -124,18 +124,20 @@ There are three match types available, namely:
     "lists.bloggs.com". The latter may be given its own DA list entry thereby overruling the
     more generic domain DA list specification.
 
-2)  Local Part Match
-    The "local part match" only matches the local part of the originating address. Local
-    part match overrules all forms of domain matching but is overruled by "full email address"
-    matching.  This match type is supported only when the $conf['da']['no_at_means_domain']
-    parameter has been set to true.
-
-3)  Exact Domain Match
+2)  Exact Domain Match
     The "exact domain match" matches only the domain but no sub-domains. One could use it for
     example to only allow the domain "blogss.com" and deny all sub-domains by specifying a
     "Default Match" on bloggs.com. Because the exact match has a higher priority, all emails
     send by "bloggs.com" will be allowed but emails send by "lists.bloggs.com" would be denied
     as the more generic default match applies.
+
+3)  Local Part Match
+    The "local part match" only matches the local part of the originating address. Local
+    part match overrules all forms of domain matching but is overruled by "full email address"
+    matching.  This match type is supported only when the $conf['da']['no_at_means_domain']
+    parameter has been set to true. In addition, local part match only works within Amavis for
+    domains that have been specified as local domains using one of the Amavis local_domains_*
+    configuration values which are internally rolled-up to local_domains_maps.
 
 
 Duplicate Email Addresses
@@ -164,7 +166,7 @@ There are some challenges when dealing with the same e-mail address more than on
     message per recipient. Hence it forwards single recipient messages to Amavis in this case.
 
 2)  An external email address of an organisation is received and managed by more than one internal
-    user. I.e. in the upstream autehentication systems more than one user has been specified as
+    user. I.e. in the upstream authentication systems more than one user has been specified as
     recipient of email delivered to an external email address.
 
     For example, suppose Alice has been managing the email address info@example.com for a while
@@ -172,7 +174,7 @@ There are some challenges when dealing with the same e-mail address more than on
     address to Bob's list of external addresses as specified in the upstream system. The next
     time Bob logs into mailzu after that addition, his login will fail as MailZu will try to
     add an entry to the users table but since there is a uniqueness requirement on the email
-    address for that table, the addition will fail, cause the login to fail. There are two ways
+    address for that table, the addition will fail, causing the login to fail. There are two ways
     the administrator can deal with this:
 
     a)  The administrator can go into the MailZu system and delete all DA list entries for this
@@ -279,7 +281,7 @@ before the DA list code can be used:
    being deleted while maintaining referential integrity.
 
 3) The record which stores the DA values has been extended with an update time. The update time
-   changes when te user creates or updates an entry. Because the DA list is sorted by default
+   changes when the user creates or updates an entry. Because the DA list is sorted by default
    on a descending update time (i.e. most recent updates first), updated values are typically
    shown first on page 1 of the list.
 
@@ -313,6 +315,10 @@ The code which makes the necessary changes to the Amavis database under MariaDB 
 
 Start SQL Code
 --------------
+GRANT	SELECT, INSERT, UPDATE, DELETE
+	ON	amavis.*
+	TO	'amavis'@'localhost';
+
 USE amavis;
 
 ALTER TABLE	users	ADD COLUMN IF NOT EXISTS	loginname	varchar( 255 )          DEFAULT NULL;	-- not used by amavisd-new; used by MailZu
@@ -325,7 +331,7 @@ ALTER TABLE	users	ADD COLUMN IF NOT EXISTS	deleted		char(      1 )          DEFA
 														-- removed
 ALTER TABLE	wblist	ADD COLUMN IF NOT EXISTS	update_time	TIMESTAMP		NOT NULL;	-- Update time
 
-ALTER TABLE	users	DROP INDEX IF EXISTS		email;							-- Remove the UNIQUE requirement from the email field. Optional
+ALTER TABLE	users	DROP INDEX IF EXISTS		email;							-- Remove the UNIQUE requirement from the email field (Optional)
 --------------
 End  SQL  Code
 
@@ -350,18 +356,18 @@ The DA list code has a few configurations which have to be set for it to work, n
    on their behalf. This option is a two-edged sword. It does NOT protect the administrator
    against typing mistakes and as a result, an administrator may be putting in rubbish. But it
    enables an administrator to create special records and data in advance of a user using the
-   system. A user record which has been created this way, it still requires validation by the
+   system. A user record which has been created this way, still requires validation by the
    user logging in and the users table being synchronised with the upstream authentication system.
 
 4) $conf['da']['defaultUserPolicy' ] which indicates which is the default policy assigned
    to newly minted users. The system checks that this value is set and that it is valid.
 
-5) $conf['da']['defaultUserIsLocal' ] which indicates whether the user is local or not. A
-   suitable default value is 'Y'. For the function of this field, please refer to the Amavis
-   documentation.
-
-6) $conf['da']['exportFile'] which defines the last part of an export file name. This value
+5) $conf['da']['exportFile'] which defines the last part of an export file name. This value
    must be set in order for exports to function. The name is prefixed with "yyyymmddhhmmss_"
+
+6) The database user, which is used by Mailzu, needs to be given SELECT, INSERT, UPDATE and
+   DELETE privileges on all the amavis database tables in order for the DA capability to
+   function properly.
 
 
 Languages

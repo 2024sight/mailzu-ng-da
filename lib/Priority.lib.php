@@ -37,17 +37,17 @@ function determineMailaddrPriority( $address ) {
 	* - .                            all domain matches (default match);                1000
 	*/
 
-	if      (( ! ( $conf[ 'da' ][ 'no_at_means_domain' ] ) && ( preg_match( '/^@\.$/',	$address )))  ||
-		 (   ( $conf[ 'da' ][ 'no_at_means_domain' ] ) && ( preg_match( '/^\.$/',	$address )))) {
+	if	(((( ! ( isset( $conf[ 'da' ][ 'no_at_means_domain' ] ))) || ( ! ( $conf[ 'da' ][ 'no_at_means_domain' ] ))) && ( preg_match( '/^@\.$/',      $address ))) ||
+		 (((   ( isset( $conf[ 'da' ][ 'no_at_means_domain' ] ))) && (   ( $conf[ 'da' ][ 'no_at_means_domain' ] ))) && ( preg_match( '/^\.$/',       $address )))) {
 
 		/**
-		* This matches exactly the string "@.", which is the all domain match.
+		* This matches exactly the string "[@].", which is the all domain match.
 		*/
 		$priority	= 1000;
 
 	}
-	else if (( ! ( $conf[ 'da' ][ 'no_at_means_domain' ] ) && ( preg_match( '/^@\.[^@]+$/',	$address )))  ||
-		 (   ( $conf[ 'da' ][ 'no_at_means_domain' ] ) && ( preg_match( '/^\.[^@]+$/',	$address )))) {
+	else if	(((( ! ( isset( $conf[ 'da' ][ 'no_at_means_domain' ] ))) || ( ! ( $conf[ 'da' ][ 'no_at_means_domain' ] ))) && ( preg_match( '/^@\.[^@]+$/', $address ))) ||
+		 (((   ( isset( $conf[ 'da' ][ 'no_at_means_domain' ] ))) && (   ( $conf[ 'da' ][ 'no_at_means_domain' ] ))) && ( preg_match( '/^\.[^@]+$/',  $address )))) {
 
 		/**
 		* Domain and sub-domain match. One of the two default match options. Because of the
@@ -58,8 +58,8 @@ function determineMailaddrPriority( $address ) {
 		$priority	= 1000 + substr_count( $address, '.' );
 
 	}
-	else if (( ! ( $conf[ 'da' ][ 'no_at_means_domain' ] ) && ( preg_match( '/^@[^@]+$/',	$address )))  ||
-		 (   ( $conf[ 'da' ][ 'no_at_means_domain' ] ) && ( preg_match( '/^[^@]+$/',	$address )))) {
+	else if	(((( ! ( isset( $conf[ 'da' ][ 'no_at_means_domain' ] ))) || ( ! ( $conf[ 'da' ][ 'no_at_means_domain' ] ))) && ( preg_match( '/^@[^@]+$/',   $address ))) ||
+		 (((   ( isset( $conf[ 'da' ][ 'no_at_means_domain' ] ))) && (   ( $conf[ 'da' ][ 'no_at_means_domain' ] ))) && ( preg_match( '/^[^@]+$/'  ,  $address )))) {
 
 		/**
 		* Exact domain match. The number of dots is 1 less than the number of sub-domains.
@@ -118,7 +118,6 @@ function determineMailaddrPriority( $address ) {
 * The function takes its input from the $_SESSION variables. In case of errors, other than errors
 * in the get_column call, the function returns at first the fallback Email Address. If that is not
 * set, it returns an empty string.
-*
 */
 
 function getFromMailAddr() {

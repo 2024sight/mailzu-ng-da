@@ -17,7 +17,7 @@
 include_once('lib/autoload.php');
 
 if (!Auth::is_logged_in()) {
-    Auth::print_login_msg();    // Check if user is logged in
+    (new Auth())->print_login_msg();    // Check if user is logged in
 }
 
 $mail_id = CmnFns::get_mail_id();

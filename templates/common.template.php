@@ -89,7 +89,7 @@ function showQuickLinks()
                                     }
                                     ?>
 				    <?php
-					if ( $conf['da']['enable'] ) {
+					if (( isset( $conf['da']['enable'] )) && ( $conf['da']['enable'] )) {
 					    echo "My List" == $_SESSION['sessionNav'] ?
 						' <p class="selectedLink quarcell"><b>&raquo;</b>' :
 						' <p class="quarcell"><b>&rsaquo;</b>' . "\t";
@@ -99,7 +99,7 @@ function showQuickLinks()
 				    ?>
                                     <br>
                                     <?php if (Auth::isAdmin()) {
-                                        if ($conf['app']['siteSummary']) {
+                                        if (( isset( $conf['app']['siteSummary'] )) && ( $conf['app']['siteSummary'] )) {
                                             echo "Site Quarantine Summary" == $_SESSION['sessionNav'] ?
                                                 ' <p class="selectedLink quarcell"><b>&raquo;</b>' :
                                                 ' <p class="quarcell"><b>&rsaquo;</b>' . "\t";
@@ -110,14 +110,14 @@ function showQuickLinks()
                                         echo "Site Quarantine" == $_SESSION['sessionNav'] ?
                                             ' <p class="selectedLink quarcell"><b>&raquo;</b>' :
                                             ' <p class="quarcell"><b>&rsaquo;</b>' . "\t";
-                                        $link->doLink('messagesAdmin.php?ctype=A&searchOnly=' . $conf['app']['searchOnly'], translate('Site Quarantine'));
+                                        $link->doLink('messagesAdmin.php?ctype=A&searchOnly=' . ( isset( $conf['app']['searchOnly'] ) ? $conf['app']['searchOnly'] : 1 ), translate('Site Quarantine'));
                                         echo '</p>';
                                         echo "Site Pending Requests" == $_SESSION['sessionNav'] ?
                                             ' <p class="selectedLink quarcell"><b>&raquo;</b>' :
                                             ' <p class="quarcell"><b>&rsaquo;</b>' . "\t";
                                         $link->doLink('messagesPendingAdmin.php?ctype=A', translate('Site Pending Requests'));
                                         echo '</p>';
-					if ( $conf['da']['enable'] ) {
+					if (( isset( $conf['da']['enable'] )) && ( $conf['da']['enable'] )) {
 					    echo "Site List" == $_SESSION['sessionNav'] ?
 						' <p class="selectedLink"><b>&raquo;</b>':
 						' <p class="quarcell"><b>&rsaquo;</b>' . "\t";
@@ -126,7 +126,7 @@ function showQuickLinks()
 					}
                                         echo '<br>';
                                     }
-                                    if ((!Auth::isAdmin()) && ($conf['app']['showEmailAdmin'])) {
+                                    if ((!Auth::isAdmin()) && ( isset( $conf['app']['showEmailAdmin'] )) && ( $conf['app']['showEmailAdmin'] )) {
                                         echo "Email Administrator" == $_SESSION['sessionNav'] ?
                                             ' <p class="selectedLink quarcell"><b>&raquo;</b>' :
                                             ' <p class="quarcell"><b>&rsaquo;</b>' . "\t";

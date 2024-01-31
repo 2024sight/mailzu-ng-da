@@ -1,6 +1,6 @@
 <?php
 /**
-* This program is the entry point for dalist management for autheticated users. This program is based
+* This program is the entry point for dalist management for authenticated users. This program is based
 * on messagesIndex.php, written by:
 *
 * @author Samuel Tran
@@ -34,7 +34,7 @@ include_once('templates/common.template.php');
 include_once('templates/dalists.template.php');
 
 if (!Auth::is_logged_in()) {
-    Auth::print_login_msg();	// Check if user is logged in
+    (new Auth())->print_login_msg();	// Check if user is logged in
 }
 
 // Get the query string. This query sytring should tell us whether we are running
@@ -60,12 +60,21 @@ if ( $query_array[ 'site_admin' ] == 't' ) {
 	}
 	$is_admin			= true;
 
+	// grab the display size limit set in config.php
+	$sizeLimit			= ( isset ( $conf['app']['displaySizeLimitAdmin'] ) ? $conf['app']['displaySizeLimitAdmin'] : ( isset( $conf['app']['displaySizeLimit'] ) ? $conf['app']['displaySizeLimit'] : 100 ));
+
 } else {
 
 	$is_admin			= false;
 	$query_array[ 'site_admin' ]	= 'f';
 
+	// grab the display size limit set in config.php
+	$sizeLimit			= ( isset ( $conf['app']['displaySizeLimit'] ) ? $conf['app']['displaySizeLimit'] : 50 );
+
 }
+
+// Check that sizeLimit is integer and greater than 0.
+$sizeLimit	= (( is_int( $sizeLimit ) && ( $sizeLimit > 0 )) ? $sizeLimit : 50 );
 
 // Check first whether we are clearing the search results. If yes, best to do it right away.
 if ( CmnFns::getGlobalVar('search_action', GET) == translate('Clear search results')) {
@@ -76,9 +85,6 @@ if ( CmnFns::getGlobalVar('search_action', GET) == translate('Clear search resul
 														'search_action'			), false ));
 
 }
-
-// grab the display size limit set in config.php
-$sizeLimit	= isset ( $conf['app']['displaySizeLimit'] ) && is_numeric( $conf['app']['displaySizeLimit'] ) ? $conf['app']['displaySizeLimit'] : 50;
 
 // Get current page number and search array
 $requestedPage	= CmnFns::getGlobalVar('page', GET);
@@ -132,10 +138,11 @@ $search_array	= constructDASearchArray( $query_array, $is_admin );
 
 // Open the database connection
 $db		= new DBEngine();
-$dalist		= $db->get_entry_DAList($_SESSION['sessionID'], $query_array['order'], $query_array['vert'], $search_array, $requestedPage, false, $is_admin);
+$dalist		= $db->get_entry_DAList($_SESSION['sessionID'], $query_array['order'], $query_array['vert'], $search_array, $sizeLimit, $requestedPage, false, $is_admin);
 
-// Compute maximum number of pages
-$maxPage	= (ceil($db->numRows/$sizeLimit)-1);
+// Compute maximum number of pages. The 1 has to be substracted because pages start counting at 0.
+// Not to be confused with calculating the number of pages.
+$maxPage	= (ceil($db->numRows/$sizeLimit) - 1);
 
 // If $requestedPage > $maxPage, then redirect to $maxPage instead of $requestedPage
 if ( $requestedPage > $maxPage ) {
@@ -143,7 +150,7 @@ if ( $requestedPage > $maxPage ) {
 	CmnFns::redirect_js($_SERVER['PHP_SELF'].'?'. CmnFns::array_to_query_string( $query_array, array(), false ));
 }
 
-showDAList($dalist, $session_id,  $requestedPage, $db->numRows, $query_array, $search_array, $is_admin);
+showDAList($dalist, $session_id,  $requestedPage, $db->numRows, $sizeLimit, $query_array, $search_array, $is_admin);
 
 // Hide the message after the table loads.
 hideMessage(translate('Retrieving List...'));
