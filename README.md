@@ -2,14 +2,14 @@ mailzu-ng-da
 ============
 
 Rewritten MailZu-ng
-Compatible PHP 7.2+, PHP-PDO
+Compatible PHP 8.2+, PHP-PDO
 
 Please use `composer install` to load phpmailer package, and generate class autoloader
 
 Based on 2024sight's fork from https://github.com/gnanet/mailzu
 
 MailZu is a simple and intuitive web interface to manage quarantining of email by Amavisd-new (http://www.ijs.si/software/amavisd/).
-MailZu is written in PHP and requires Amavisd-new version greater than 2.7.0
+MailZu is written in PHP and requires Amavisd-new version greater than 2.7.0. This version of Mailzu now works on PHP 8.2 and has been tested on Debian 12 - Bookworm. For other fixes please refer to the CHANGELOG.
 
 MailZu provides users and administrators access to email that is suspected to be spam or contain banned contents and gives users the ability to release, request, or delete these messages from their quarantine.
 
@@ -25,4 +25,4 @@ See the INSTALL file in the docs/ directory included with this distribution. Thi
 
 This version of MailZu has two external scripts, whereby the external database clean-up script has been inherited from the gnanet/mailzu project. The scripts require extra installation steps which are also documented in the SCRIPTS_README document.
 
-*Optional enhancements: Full user management for administrators, full policy management, tool to generate a translation template from the en-US master but re-using whatever translations are available from the original language file, multi-language mailzu quarantine reporting script, an improved database clean-up script based on partitions.
+*Optional enhancements: Full user management for administrators, full policy management, a tool to generate a translation template from the en-US master but re-using whatever translations are available from the original language file, multi-language mailzu quarantine reporting script, an improved database clean-up script based on partitions.
