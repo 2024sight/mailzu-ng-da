@@ -1,3 +1,8 @@
+MailZu-ng 0.12.mailzu-ng-da-php82-a63b41b+1 (10.03.2024)
+---------
+  - Fixed the create_function obsolence in PHP 8.2.
+  - Checked for further deprecated language constructs.
+
 MailZu-ng 0.12.mailzu-ng-da-php82-4882420+1 (22.07.2023)
 ---------
   - Fixed issues related to the PHP 8.2 upgrade with respect to in_array.

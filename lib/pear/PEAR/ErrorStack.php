@@ -859,7 +859,7 @@ class PEAR_ErrorStack {
             if (isset($funcbacktrace['function']) && isset($backtrace[1])) {
                 if ($funcbacktrace['function'] != 'eval') {
                     if ($funcbacktrace['function'] == '__lambda_func') {
-                        $ret['function'] = 'create_function() code';
+                        $ret['function'] = 'function() code';
                     } else {
                         $ret['function'] = $funcbacktrace['function'];
                     }
