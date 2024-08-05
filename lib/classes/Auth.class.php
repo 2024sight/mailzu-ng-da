@@ -65,7 +65,10 @@ class Auth
     {
         global $conf;
         if (isset($_COOKIE['ID'])) {
-            if (self::isAllowedToLogin($_COOKIE['ID'])) {
+
+	    $cookie_Auth			= new Auth();
+
+            if ($cookie_Auth->isAllowedToLogin($_COOKIE['ID'])) {
 
 	        include_once('DBEngine.class.php');
 	        $db				= new DBEngine();

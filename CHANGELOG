@@ -1,7 +1,19 @@
+MailZu-ng 0.12.mailzu-ng-da-php82-23ac353+1 (04.08.2024)
+---------
+  - Fixed a call to the non-static function isallowedlogin in Auth.class.php. The code path it is in
+    is only used when the users elects to have a cookie that keeps this user logged in. This change
+    is necessary for PHP 8.2, which does not allow a call to a non-static function outside the
+    appropriate class context.
+
 MailZu-ng 0.12.mailzu-ng-da-php82-a63b41b+1 (10.03.2024)
 ---------
   - Fixed the create_function obsolence in PHP 8.2.
   - Checked for further deprecated language constructs.
+
+MailZu-ng 0.12.mailzu-ng-da-php82-5640dcc+1 (31.01.2024)
+---------
+  - Applied further PHP 8.2 fixes.
+  - Updated README.md
 
 MailZu-ng 0.12.mailzu-ng-da-php82-4882420+1 (22.07.2023)
 ---------
